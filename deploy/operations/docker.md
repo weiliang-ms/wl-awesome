@@ -412,7 +412,11 @@
 	Otherwise, it returns EXDEV error (“cross-device link not permitted”).
     Your application needs to be designed to handle EXDEV and fall back to a “copy and unlink” strategy.
 
-	#重命名容器内目录
+	#重命名容器内目录：（不太理解）
+	只有当源路径和目标路径都位于顶层时，才允许为目录调用rename(2)。
+	否则，它将返回EXDEV错误(“不允许跨设备链接”)。您的应用程序需要设计成能够处理EXDEV并返回到“复制和断开链接”策略。
+
+
 
 	
 
