@@ -268,7 +268,7 @@
 > 6、安装依赖，卸载旧版本openssh
 
 	yum install -y gcc openssl-devel pam-devel rpm-build pam-devel
-	rpm -e `rpm -qa | grep openssh` --nodep
+	rpm -e `rpm -qa | grep openssh` --nodeps
 
 > 7、编译新的openssh
 
