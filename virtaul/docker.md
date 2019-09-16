@@ -284,6 +284,146 @@ tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主
 
 	存储敏感数据（swarm利用tmpfs存放secrets于内存中）
 
+> 数据共享
+
+与`volume`、`bind mounts`方式不同，`tmpfs`无法跨容器共享数据，即仅适用于单机模式。
+
+> 环境依赖说明
+
+`tmpfs`仅支持Linux环境下docker使用
+
+> 使用方式
+
+	#nginx容器内/app下的数据将写入至宿主机内存之中。
+
+	#1、方式一
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app \
+	  nginx:latest
+
+	#2、方式二
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --tmpfs /app \
+	  nginx:latest
+
+> 验证数据是否存储于内存中
+
+	#1、分配虚拟机8G内存
+
+![](./images/vm_memory.png)
+
+	#2、启动nginx容器，指定--tmpfs方式存储数据
+	
+
+	#3、查看内存占用
+	docker ps
+
+	#bf5605056391为容器ID
+	ps -ef|grep bf5605056391
+
+	#11298为容器进程PID
+	top -p 11298
+
+![](./images/container_memory_01.png)
+
+![](./images/container_memory_02.png)
+
+	#4、拷贝918M大小文件至容器/app下 ，观察内存变化
+	docker cp CentOS-7-x86_64-Minimal-1810.iso bf5605056391:/app/
+
+	#5、查看内存占用
+	free -h
+
+	#6、多次拷贝观察宿主机内存变化（文件名注意修改，避免被覆盖）
+	docker cp CentOS-7-x86_64-Minimal-1810.iso bf5605056391:/app/CentOS-7-x86_64-Minimal-1810.iso2
+	docker cp CentOS-7-x86_64-Minimal-1810.iso bf5605056391:/app/CentOS-7-x86_64-Minimal-1810.iso2
+	docker cp CentOS-7-x86_64-Minimal-1810.iso bf5605056391:/app/CentOS-7-x86_64-Minimal-1810.iso4
+
+	#7、内存变化（大约900M左右的递减，与文件大小相匹配）
+
+![](./images/container_memory04.png)
+
+	#8、让我们看下容器内部/app下存储了什么(nothing,说明容器内写入/app的数据都被写入到了内存里，/app下也并不会持久化)
+	
+![](./images/container_app_dir.png)
+
+	#9、如果我们通过不断向容器内/app下写入数据会怎样？(竟然没有出现crash相关情况发生，初步猜测最开始存放的数据被回收释放)
+
+![](./images/outofmemory_test.png)
+
+	#10、测试删除容器，内存是否会被释放
+	docker container rm -f bf5605056391
+
+![](./images/delete_container.png)
+
+> 验证tmpfs存储大小限制
+
+	#1、启动nginx容器，1073741824为字节数（等于1GB）
+
+**换算地址**
+[http://www.elecfans.com/tools/zijiehuansuan.html](http://www.elecfans.com/tools/zijiehuansuan.html)
+
+**官方配置说明**
+
+![](./images/tmpfs_size.png)
+
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app,tmpfs-size=1073741824 \
+	  nginx:latest
+
+	#2、不断拷贝数据到容器内部，观察内存大小
+
+![](./images/tmpfs_size_test.png)
+
+竟然没有生效，难道是配置错了？
+
+	#3、删除容器，重启配置(官方提供信息指出默认单位是字节，可实际看来怎么是MB，难道理解有误？)
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app,tmpfs-size=1024 \
+	  nginx:latest
+
+![](./images/tmpfs_size_test_02.png)
+
+	#4、删除容器，重启配置(1GB大小限制未生效，难道单位问题？)
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app,tmpfs-size=1GB \
+	  nginx:latest
+
+![](./images/tmpfs_size_test_03.png)
+
+	#5、删除容器，重启配置(1G大小限制未生效)
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app,tmpfs-size=1G \
+	  nginx:latest
+
+
+![](./images/tmpfs_size_test_04.png)
+
+	#6、删除容器，重启配置，限制大小10M(？？？竟然也未生效？，难道第三步测试有误)
+	docker run -d \
+	  -it \
+	  --name tmptest \
+	  --mount type=tmpfs,destination=/app,tmpfs-size=10 \
+	  nginx:latest
+
+![](./images/tmpfs_size_test_05.png)
+
+**仔细观察第三步测试，拷贝到容器内的文件名一样，果然测试有误**
+
+	#7、看来这个配置项并未生效
+
 ## 存储驱动 ##
 
 **以下内容基于**`overlay2`
