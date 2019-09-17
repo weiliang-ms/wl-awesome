@@ -15,3 +15,28 @@
 	docker-compose --version
 
 ![](./images/docker-compose_version.jpg)
+
+
+> 多副本集样例
+
+创建5个实例、每个实例限制最多使用50M内存、CPU单核10%的时间
+
+	version: "3"
+	services:
+	  web:
+	    # replace username/repo:tag with your name and image details
+	    image: username/repo:tag
+	    deploy:
+	      replicas: 5
+	      resources:
+	        limits:
+	          cpus: "0.1"
+	          memory: 50M
+	      restart_policy:
+	        condition: on-failure
+	    ports:
+	      - "4000:80"
+	    networks:
+	      - webnet
+	networks:
+	  webnet:

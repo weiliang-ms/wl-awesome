@@ -2,9 +2,13 @@
 
 先安装配置raid10,挂载路径/data
 
+**根据磁盘数量创建阵列、推荐raid5**
+
 ![](./images/raid_10.png)
 
 ## oVirt安装
+
+配置阿里yum源
 
 关闭selinux
 	
@@ -27,6 +31,7 @@ gpgcheck=1调整为gpgcheck=0
 
 	sed -i 's#gpgcheck=1#gpgcheck=0#g' /etc/yum.repos.d/*.repo
 	yum -y update --nogpgcheck
+	yum install firewalld -y
 	yum install -y ovirt-engine --nogpgcheck
 
 启动
@@ -39,6 +44,8 @@ gpgcheck=1调整为gpgcheck=0
 **确保80没被占用,或修改httpd服务端口**
 
 [参考地址](https://blog.csdn.net/aydragon/article/details/80250599)
+
+**需要开启防火墙，不然配置报错**
 
 	engine-setup
 

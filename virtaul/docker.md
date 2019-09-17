@@ -1,3 +1,5 @@
+![](./images/laurel-docker-containers.png)
+
 ## 安装docker ##
 
 `适用于CentOS7&Red Hat 7`
@@ -160,6 +162,18 @@
 	docker save -o /root/elasticsearch-7.3.0.tar docker.elastic.co/elasticsearch/elasticsearch:7.3.0
 
 ![](./images/docker_save.png)
+
+**容器VS虚机**
+
+![](./images/container_vm.png)
+
+官方解释:
+
+A container runs natively on Linux and shares the kernel of the host machine with other containers. It runs a discrete process, taking no more memory than any other executable, making it lightweight.
+
+By contrast, a virtual machine (VM) runs a full-blown “guest” operating system with virtual access to host resources through a hypervisor. In general, VMs provide an environment with more resources than most applications need
+
+显然，docker相较传统的VM占用更少的资源（内存、CPU、磁盘等）
 
 ## 数据持久 ##
 
