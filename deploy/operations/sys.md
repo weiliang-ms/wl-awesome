@@ -197,6 +197,10 @@
 	service iptables start
 	chkconfig iptables on
 
+> 4.关闭selinux
+
+	setenforce 0
+	sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
 
 ### linux7 ###
 
@@ -221,6 +225,11 @@
 	#开启防火墙服务，并设置防火墙开机自启动
 	systemctl start firewalld.service
 	systemctl enable firewalld.service
+
+> 4.关闭selinux
+
+	setenforce 0
+	sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
 
 
 
