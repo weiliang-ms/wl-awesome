@@ -6,5 +6,4 @@
 
 - 相关文档
 
-  - [nginx](/deploy/docs/nginx)
   - [mysql](/deploy/docs/mysql)
