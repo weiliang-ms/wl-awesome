@@ -2,7 +2,6 @@
   
   - [nginx](/middleware/nginx/index)
 
-- mysql
+- 数据库
 
-  - [nginx](/deploy/docs/nginx)
-  - [mysql](/deploy/docs/mysql)
+  - [mysql](/middleware/database/mysql)

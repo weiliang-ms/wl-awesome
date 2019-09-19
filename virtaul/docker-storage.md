@@ -1,182 +1,3 @@
-![](./images/laurel-docker-containers.png)
-
-## 安装docker ##
-
-`适用于CentOS7&Red Hat 7`
-
-> 查看操作系统版本与内核
-
-	#内核要求3.1以上
-
-![](./images/sys_kernel.png)
-
-> 下载docker安装包
-
-	#互联网下载地址
-	https://download.docker.com/linux/static/stable/x86_64/docker-19.03.1.tgz
-
-> 上传安装
-
-	#上传至/tmp下，root用户安装
-	cd /tmp && tar -xvf docker-19.03.1.tgz && cp docker/* /usr/bin/
-
-> 关闭selinux
-
-	setenforce 0
-	sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
-
-> 配置为系统服务
-
-	cat >/etc/systemd/system/docker.service <<EOF
-	[Unit]
-
-	Description=Docker Application Container Engine
-	
-	Documentation=https://docs.docker.com
-	
-	After=network-online.target firewalld.service
-	
-	Wants=network-online.target
-	
-	[Service]
-	
-	Type=notify
-	
-	# the default is not to use systemd for cgroups because the delegate issues still
-	
-	# exists and systemd currently does not support the cgroup feature set required
-	
-	# for containers run by docker
-	
-	ExecStart=/usr/bin/dockerd
-	
-	ExecReload=/bin/kill -s HUP 
-	
-	# Having non-zero Limit*s causes performance problems due to accounting overhead
-	
-	# in the kernel. We recommend using cgroups to do container-local accounting.
-	
-	LimitNOFILE=infinity
-	
-	LimitNPROC=infinity
-	
-	LimitCORE=infinity
-	
-	# Uncomment TasksMax if your systemd version supports it.
-	
-	# Only systemd 226 and above support this version.
-	
-	#TasksMax=infinity
-	
-	TimeoutStartSec=0
-	
-	# set delegate yes so that systemd does not reset the cgroups of docker containers
-	
-	Delegate=yes
-	
-	# kill only the docker process, not all processes in the cgroup
-	
-	KillMode=process
-	
-	# restart the docker process if it exits prematurely
-	
-	Restart=on-failure
-	
-	StartLimitBurst=3
-	
-	StartLimitInterval=60s
-	
-	
-	
-	[Install]
-	
-	WantedBy=multi-user.target
-	EOF
-
-> 启动并设置为开机自启动
-
-	#重载unit配置文件
-	systemctl daemon-reload                                                       
-
-	#启动Docker
-	systemctl start docker                                                            
-	
-	#设置开机自启
-	systemctl enable docker.service 
-
-> 查看docker状态
-
-	docker --version
-	systemctl status docker
-
-![](./images/docker_status.png)  
-
-## 管理docker ##
-
-> 配置代理
-
-	#适用场景：内网访问互联网docker镜像仓库
-	mkdir -p /etc/systemd/system/docker.service.d
-
-	cat > /etc/systemd/system/docker.service.d/http-proxy.conf <<EOF
-	[Service]
-	Environment="HTTP_PROXY=http://xxx.xxx.xxx.xxx:xxxx"
-	EOF
-
-	systemctl daemon-reload && systemctl restart docker
-
-> 配置阿里云加速
-
-	#参考地址
-	https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
-
-	sudo mkdir -p /etc/docker
-	sudo tee /etc/docker/daemon.json <<-'EOF'
-	{
-	  "registry-mirrors": ["https://jz73200c.mirror.aliyuncs.com"]
-	}
-	EOF
-	sudo systemctl daemon-reload
-	sudo systemctl restart docker   
-
-> 下载镜像
-
-`docker pull`
-
-	docker pull docker.elastic.co/elasticsearch/elasticsearch:7.3.0
-
-![](./images/docker_pull.png)
-
-> 查看本地镜像
- 
-`docker images`
-
-	docker images
-
-![](./images/docker_images.png)
-
-> 持久化镜像至本地磁盘
-
-`docker save -o 目标目录/镜像文件名称 本地镜像:镜像tag值`
-
-	docker save -o /root/elasticsearch-7.3.0.tar docker.elastic.co/elasticsearch/elasticsearch:7.3.0
-
-![](./images/docker_save.png)
-
-**容器VS虚机**
-
-![](./images/container_vm.png)
-
-官方解释:
-
-A container runs natively on Linux and shares the kernel of the host machine with other containers. It runs a discrete process, taking no more memory than any other executable, making it lightweight.
-
-By contrast, a virtual machine (VM) runs a full-blown “guest” operating system with virtual access to host resources through a hypervisor. In general, VMs provide an environment with more resources than most applications need
-
-显然，docker相较传统的VM占用更少的资源（内存、CPU、磁盘等）
-
-## 数据持久 ##
-
 **几种数据持久方案区别**
 
 ![](./images/types-of-mounts.png)
@@ -187,11 +8,11 @@ Bind mounts：宿主机与容器以映射的方式共享目录，对宿主机文
 
 tmpfs：数据存储于内存中，不持久化
 
-### volums ###
+## volums ##
 
 Volumes方式的数据存储于docker宿主机的/var/lib/docker/volumes/下（Linux系统下），由于linux严格的权限管理，非docker进程无法修改该目录下数据，具有很好的隔离性，volums为目前最好的docker容器数据持久化的方式。
 
-> 管理方式
+### 管理方式 ###
 
 	由docker进行创建管理，创建方式为两种：
 
@@ -201,7 +22,7 @@ Volumes方式的数据存储于docker宿主机的/var/lib/docker/volumes/下（L
 	2、自动创建
 	随容器/服务的创建而被创建
 
-> 使用场景
+### 使用场景 ###
 
 	1、多容器运行时共享数据
 
@@ -212,7 +33,7 @@ Volumes方式的数据存储于docker宿主机的/var/lib/docker/volumes/下（L
 	4、备份、迁移容器数据等至远程主机，备份目录
 	/var/lib/docker/volumes/<volume-name>
 
-> 管理volume
+### 管理volume ###
 
 	#1、手动创建
 	docker volume create my-volume
@@ -239,7 +60,7 @@ Volumes方式的数据存储于docker宿主机的/var/lib/docker/volumes/下（L
 ![](./images/delete-volume.png)
 
 
-> volume指定为只读方式
+volume指定为只读方式
 
 	#创建启动容器，指定volumew名为nginx-vol（实际路径为/var/lib/docker/volumes/nginx-vol），对应容器内/usr/share/nginx/html目录，并且为只读状态（容器内禁止写操作）
 	docker run -d --name=nginxtest --mount source=nginx-vol,destination=/usr/share/nginx/html,readonly nginx:latest
@@ -253,7 +74,7 @@ Volumes方式的数据存储于docker宿主机的/var/lib/docker/volumes/下（L
 	echo 1 >> 50x.html
 ![](./images/readonly-system.png)
 
-### Bind mounts ###
+## Bind mounts ##
 
 Bind mounts方式理论上可以在宿主机任意位置持久化数据，显然非docker进程可以修改这部分数据，隔离性较差。
 
@@ -266,7 +87,7 @@ Bind mounts方式理论上可以在宿主机任意位置持久化数据，显然
 
 	3、Docker主机的文件或目录结构与容器所需的绑定挂载一致时。（例如容器内读取配置文件目录为/etc/redis.conf,而宿主机/etc/redis.conf并不存在，则需要匹配路径进行挂载）
 
-### volums与Bind mounts对比 ###
+## volums与Bind mounts对比 ##
 
 1. Volumes方式更容易备份、迁移
 
@@ -282,7 +103,7 @@ Bind mounts方式理论上可以在宿主机任意位置持久化数据，显然
 
 
 
-### 关于volums与Bind mounts使用说明 ###
+## 关于volums与Bind mounts使用说明 ##
 
 1. 如果你挂载一个空的volums到容器的/data目录，并且容器内/data下数据非空，则容器内的/data数据会拷贝到新挂载的卷上；相似的，如果你挂载了宿主机不存在的volums至容器内部，这个不存在的目录则会自动创建
 
@@ -290,7 +111,7 @@ Bind mounts方式理论上可以在宿主机任意位置持久化数据，显然
 
 
 
-### tmpfs ###
+## tmpfs ##
 
 tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主机的文件系统中（磁盘）
 
@@ -600,7 +421,7 @@ tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主
 
 	总结：节省存储空间、容器启动快
 
-### overlay2 ###
+## overlay2 ##
 
 `overlay2`可理解为连接`container (upperdir)`与`image (lowerdir)`的纽带，类比显卡驱动等
 
@@ -673,95 +494,3 @@ tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主
 	#重命名容器内目录：（不太理解）
 	只有当源路径和目标路径都位于顶层时，才允许为目录调用rename(2)。
 	否则，它将返回EXDEV错误(“不允许跨设备链接”)。您的应用程序需要设计成能够处理EXDEV并返回到“复制和断开链接”策略。
-
-## 精简镜像 ##
-
-镜像体积小的优势：传输快、加载快、
-
-1、根据场景选取基础镜像
-
-	jdk -> 选取openjdk镜像作为基础镜像 非不是centos ubuntu等操作系统镜像
-
-2、利用`multistage-build`
-
-	Use multistage builds. 
-	For instance, you can use the maven image to build your Java application,
-	then reset to the tomcat image and copy the Java artifacts into the correct location to deploy your app, 
-	all in the same Dockerfile. This means that your final image doesn’t include all of the libraries and dependencies pulled in by the build, 
-	but only the artifacts and the environment needed to run them.
-
-
-	#以下整个流程在一个Dockerfile内实现
-	1、选取maven基础镜像进行打包JAVA程序
-	2、拷贝Jar至tomcat基础镜像内（spring boot的话直接jdk基础镜像）
-	3、发布
-
-
-**`multistage-build`**样例
-
-	FROM golang:1.7.3
-	WORKDIR /go/src/github.com/alexellis/href-counter/
-	RUN go get -d -v golang.org/x/net/html  
-	COPY app.go .
-	RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
-	
-	FROM alpine:latest  
-	RUN apk --no-cache add ca-certificates
-	WORKDIR /root/
-	COPY --from=0 /go/src/github.com/alexellis/href-counter/app .
-	CMD ["./app"]  
-
-显然，只是把多个步骤合并到同一Dockfile呢，降低构造镜像成本。
-
-3、减少层级
-
-**场景一**
-
-	合并命令，每一行命令均产生一个层级
-
-	#合并前
-	RUN apt-get -y update
-	RUN apt-get install -y python
-
-	#合并后
-	RUN apt-get -y update && apt-get install -y python
-
-**场景二**
-
-	#制作适合自己的基础镜像（适用于多个application场景，并且基础层级相同较多的）
-	Docker only needs to load the common layers once, and they are cached. 
-	This means that your derivative images use memory on the Docker host more efficiently and load more quickly
-
-**场景**
-	
-	由于测试镜像的话，可能需要安装一些测试软件等，保证两者的区别处于镜像最高层级（还是为了充分复用相同层级）
-
-	To keep your production image lean but allow for debugging, consider using the production image as the base image for the debug image. Additional testing or debugging tooling can be added on top of the production image
-	
-**场景四**
-
-制作镜像时，打上tag标签
-
-	When building images, always tag them with useful tags which codify version information, intended destination (prod or test, for instance), stability,
-	or other information that is useful when deploying the application in different environments. 
-	Do not rely on the automatically-created latest tag
-
-4、程序数据持久化问题
-
-	#避免将数据写入容器内部，这样不仅会增加容器体积，并且I/O读写效率比挂载模式要低
-	
-	Avoid storing application data in your container’s writable layer using storage drivers. This increases the size of your container and is less efficient from an I/O perspective than using volumes or bind mounts.
-
-
-
-
-
-
-
-
-
-		
-
-	
-	
-	
