@@ -231,6 +231,38 @@
 	setenforce 0
 	sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
 
+## 系统调优 ##
+
+内核调优
+
+	cat >>/etc/sysctl.conf <<EOF
+	net.ipv4.tcp_fin_timeout = 30
+	net.ipv4.tcp_keepalive_time = 1200
+	net.ipv4.route.gc_timeout = 100
+	net.ipv4.ip_local_port_range = 1024 65000
+	net.ipv4.tcp_tw_reuse = 1
+	net.ipv4.tcp_tw_recycle = 1
+	net.ipv4.tcp_syn_retries = 1
+	net.ipv4.tcp_synack_retries = 1
+	net.ipv4.tcp_max_syn_backlog = 262144
+	net.core.netdev_max_backlog = 262144
+	net.core.somaxconn = 262144
+	net.ipv4.tcp_mem = 94500000 915000000 927000000
+	EOF
+
+	sysctl -p
+
+## 查看系统信息
+
+### 查看tcp连接数
+
+	netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+
+### 查看80服务连接数
+
+	netstat -an | grep 80 | awk '{print $5}' | awk 'BEGIN {FS=":"} NF==2 {print $1} NF==5 {print $4}' | sort | uniq -c | sort -n
+
+
 
 
 

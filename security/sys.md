@@ -87,13 +87,22 @@
 	iptables -I INPUT -p ICMP --icmp-type timestamp-request -m comment --comment "deny ICMP timestamp" -j DROP
 	iptables -I INPUT -p ICMP --icmp-type timestamp-reply -m comment --comment "deny ICMP timestamp" -j DROP
 
-## 允许Traceroute探测 ##
+## 禁Ping、Traceroute配置
 
-描述：本插件使用Traceroute探测来获取扫描器与远程主机之间的路由信息。攻击者也可以利用这些信息来了解目标网络的网络拓扑。
+	echo "net.ipv4.icmp_echo_ignore_all=1"  >> /etc/sysctl.conf
+	sysctl -p
 
-处理：调整防火墙规则
+## 隐藏Linux版本信息
 
-	iptables -I INPUT -p icmp --icmp-type 11 -m comment --comment "deny traceroute" -j DROP
+	> /etc/issue
+	> /etc/issue.net 
+
+## 锁定系统关键文件
+
+防止被篡改
+
+	chattr +i /etc/passwd /etc/shadow /etc/group /etc/gshadow /etc/inittab
+
 
 ## 中间件版本信息泄露 ##
 
