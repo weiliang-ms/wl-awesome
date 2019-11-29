@@ -2,6 +2,13 @@
 ## 编程语言
 ### golang
 
+资源
+
+- [标准库](https://studygolang.com/pkgdoc)
+- [golang圣经](https://books.studygolang.com/gopl-zh)
+
+环境初始化
+
 - [环境安装](/program/golang/install.md)
 - [配置代理](/program/golang/delegate.md)
 - [awesome](https://github.com/avelino/awesome-go)
