@@ -2,7 +2,7 @@
 
 ### 配置代理-windows ###
 
-[goproxy](https://goproxy.io/)
+[项目地址](https://github.com/goproxy/goproxy.cn)s
 
 > 介绍
 
@@ -26,7 +26,7 @@
 	# Enable the go modules feature
 	$env:GO111MODULE="on"
 	# Set the GOPROXY environment variable
-	$env:GOPROXY="https://goproxy.io"
+	$env:GOPROXY="https://goproxy.cn"
 
 
 > 过滤不经过代理的仓储
@@ -36,14 +36,4 @@
 	go env -w GOPROXY=https://goproxy.io,direct
 	# 设置不走 proxy 的私有仓库，多个用逗号相隔
 	go env -w GOPRIVATE=*.corp.example.com
-
-> 其他代理地址
-
-	https://athens.azurefd.net/
-
-	#国内的比较快
-	#$env:GOPROXY="https://goproxy.cn"
-	https://goproxy.cn
-
-[项目地址](https://github.com/goproxy/goproxy.cn)
 
