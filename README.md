@@ -13,6 +13,9 @@
 - [配置代理](/program/golang/delegate.md)
 - [awesome](https://github.com/avelino/awesome-go)
 
+## 集成
+
+- [install git](/shell/git.md)
 
 ## container
 ### docker
