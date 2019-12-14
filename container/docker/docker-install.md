@@ -43,8 +43,7 @@
     
 启动
 
-    systemctl start docker
-    systemctl enable docker
+    systemctl enable docker --now
     
 阿里云加速
 

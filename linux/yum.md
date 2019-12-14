@@ -6,7 +6,7 @@
 
 > 2、删除原有yum源repo文件
 
-	cd /etc/yum.repos.d && rm -f *.repo
+	rm -f /etc/yum.repos.d/*.repo
 	
 > 3、下载阿里yum源文件
 

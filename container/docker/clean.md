@@ -21,3 +21,7 @@
 根据容器的状态，删除Exited状态的容器
     
     sudo docker rm $(sudo docker ps -qf status=exited)
+    
+### 清理镜像
+
+    echo "y" | docker image prune -a
