@@ -74,9 +74,12 @@
 
 	CentOS 6
 	http://mirrors.aliyun.com/repo/Centos-6.repo
+	
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
 
 	CentOS 7
 	http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 
 > 3、删除原有yum源repo文件
 
