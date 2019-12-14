@@ -27,6 +27,7 @@
 - [multi-stage](/container/docker/docker-multi-stage.md)
 - [build-image](/container/docker/docker-image.md)
 - [network](/container/docker/docker-network.md)
+- [清理容器](/container/docker/clean.md)
 
 ### k8s
 
