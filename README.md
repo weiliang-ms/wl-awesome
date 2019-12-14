@@ -19,6 +19,8 @@
 
 - [yum](/linux/yum.md)
 
+- [升级kernel](/linux/kernel.md)
+
 ## container
 ### docker
 
