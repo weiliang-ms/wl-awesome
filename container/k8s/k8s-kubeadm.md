@@ -19,6 +19,7 @@
     
 设置内核参数
 
+    modprobe br_netfilter
     cat << EOF | tee /etc/sysctl.d/k8s.conf
     net.bridge.bridge-nf-call-iptables=1
     net.bridge.bridge-nf-call-ip6tables=1
@@ -83,5 +84,10 @@
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
+    
+安装网络
+
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
     
 
