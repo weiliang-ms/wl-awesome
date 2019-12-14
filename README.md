@@ -17,7 +17,7 @@
 
 - [install git](/shell/git.md)
 
-- [yum](/)
+- [yum](/linux/yum.md)
 
 ## container
 ### docker
@@ -30,6 +30,8 @@
 - [清理容器](/container/docker/clean.md)
 
 ### k8s
+
+- [k8s镜像库国内访问仓库地址](/container/k8s/mirror.md)
 
 安装
 

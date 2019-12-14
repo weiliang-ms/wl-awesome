@@ -49,19 +49,39 @@
 
     yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
     
+安装命令补全
+
+    yum install -y bash-completion
+    source /usr/share/bash-completion/bash_completion
+    source <(kubectl completion bash)
+    echo "source <(kubectl completion bash)" >> ~/.bashrc
+    
 启动kubelet
 
     systemctl enable --now kubelet
     
 下载k8s相关镜像
 
-    for i in `kubeadm config images list 2>/dev/null`; do
-        docker pull mirrorgooglecontainers/${i}
-        docker tag mirrorgooglecontainers/${i} k8s.gcr.io/${i}
-        docker rmi mirrorgooglecontainers/${i}
+    for i in `kubeadm config images list 2>/dev/null |sed 's/k8s.gcr.io\///g'`; do
+        docker pull gcr.azk8s.cn/google-containers/${i}
+        docker tag gcr.azk8s.cn/google-containers/${i} k8s.gcr.io/${i}
+        docker rmi gcr.azk8s.cn/google-containers/${i}
     done
-
     
+修改kubelet配置
 
+    sed -i "s;KUBELET_EXTRA_ARGS=;KUBELET_EXTRA_ARGS=\"--fail-swap-on=false\";g" /etc/sysconfig/kubelet
 
+初始化集群
+    
+    k8sversion=`kubeadm version -o yaml|grep gitVersion|sed 's#gitVersion:##g'|sed 's/ //g'`
+    echo "k8s version: $k8sversion"
+    kubeadm init --kubernetes-version=$k8sversion --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
+   
+配置授权
+
+    mkdir -p $HOME/.kube
+    cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+    
 
