@@ -23,6 +23,9 @@
 
 - [升级openssl](/linux/openssl.md)
 
+- 修改
+    - [修改hostname](/linux/hostname.md)
+
 ## container
 ### docker
 

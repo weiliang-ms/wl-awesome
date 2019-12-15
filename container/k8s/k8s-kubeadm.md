@@ -89,5 +89,19 @@
 
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+### HA
+
+- 节点说明
+
+    | hostname | IP地址 | 应用|
+    | :----: | :----: | :----:|
+    | node1 | 172.16.145.160 | docker kubelet kubeadm|
+    | node2 | 172.16.145.161 | docker kubelet kubeadm|
+    | node3 | 172.16.145.162 | docker kubelet kubeadm|
+    
+- [所有节点升级内核](/linux/kernel.md)
+- [所有节点安装docker](/container/docker/docker-install.md)
+
+
     
 
