@@ -110,6 +110,13 @@
 ![](./images/docker_status.png) 
 
 
+> 镜像加速
+
+[官方地址](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
+
+
+
+
 
 
 
