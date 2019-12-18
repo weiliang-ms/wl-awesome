@@ -25,6 +25,11 @@
 
 - 修改
     - [修改hostname](/linux/hostname.md)
+    
+## 数据库
+### nosql
+
+- [redis cluster k8s解决方案](/database/redis-cluster-k8s.md)
 
 ## container
 ### docker

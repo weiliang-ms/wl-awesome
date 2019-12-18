@@ -4,4 +4,4 @@
 
 - 数据库
 
-  - [mysql](/middleware/database/mysql)
+  - [mysql](/database/mysql)

@@ -27,6 +27,17 @@
     
     sysctl -p /etc/sysctl.d/k8s.conf
     
+修改Linux 资源配置文件,调高ulimit最大打开数和systemctl管理的服务文件最大打开数
+
+    echo "* soft nofile 655360" >> /etc/security/limits.conf
+    echo "* hard nofile 655360" >> /etc/security/limits.conf
+    echo "* soft nproc 655360" >> /etc/security/limits.conf
+    echo "* hard nproc 655360" >> /etc/security/limits.conf
+    echo "* soft memlock unlimited" >> /etc/security/limits.conf
+    echo "* hard memlock unlimited" >> /etc/security/limits.conf
+    echo "DefaultLimitNOFILE=1024000" >> /etc/systemd/system.conf
+    echo "DefaultLimitNPROC=1024000" >> /etc/systemd/system.conf
+    
 配置k8s源
 
     cat <<EOF > /etc/yum.repos.d/kubernetes.repo

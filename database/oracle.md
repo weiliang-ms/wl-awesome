@@ -35,7 +35,7 @@
 	#查看当前系统运行级别(即多用户级别)
 	systemctl get-default  或 runlevel
 
-![](./images/runlevel.jpg)
+![](images/runlevel.jpg)
 
 	运行级别的原理：
 	1。在目录/etc/rc.d/init.d下有许多服务器脚本程序，一般称为服务(service)
