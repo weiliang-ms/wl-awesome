@@ -23,6 +23,10 @@
 
 - [升级openssl](/linux/openssl.md)
 
+- [时区配置](/linux/timezone.md)
+
+- [ntp配置](/linux/ntp.md)
+
 - 修改
     - [修改hostname](/linux/hostname.md)
     
