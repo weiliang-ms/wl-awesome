@@ -75,3 +75,13 @@ CentOS 7
 
 	yum clean all && yum makecache
 	yum install -y telnet vim
+	
+### 导出依赖
+
+    yum install yum-plugin-downloadonly -y
+    yum install --downloadonly --downloaddir=<directory> <package-name>
+    
+### 升级为指定版本
+
+
+    

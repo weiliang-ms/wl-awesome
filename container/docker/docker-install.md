@@ -52,6 +52,7 @@
     sudo mkdir -p /etc/docker
     sudo tee /etc/docker/daemon.json <<EOF
     {
+      "exec-opts": ["native.cgroupdriver=systemd"],
       "registry-mirrors": ["https://jz73200c.mirror.aliyuncs.com"]
     }
     EOF
