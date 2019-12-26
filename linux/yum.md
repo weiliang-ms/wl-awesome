@@ -83,5 +83,9 @@ CentOS 7
     
 ### 升级为指定版本
 
+### 安装加速插件
+
+    yum install yum-plugin-fastestmirror -y
+
 
     

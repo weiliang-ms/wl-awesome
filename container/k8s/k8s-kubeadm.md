@@ -373,14 +373,18 @@ node3节点配置
 配置网络
 
     kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
-    
-其他master节点加入
+
+根据init输出信息，获取到tocken等信息进行节点添加
+  
+- 其他master节点加入
+
 
     kubeadm join 172.16.145.200:8443 --token awtvoq.ljszotcg6j99uy66 \
         --discovery-token-ca-cert-hash sha256:7e902395862e37d768dc4df48300013ad5571902a52302b2443856fa565fd657 \
         --control-plane --certificate-key dcd50768c16c5f124b86248820eca802f44ed1e9e4f546661e0f4d81750ee7fa
     
-其他node节点加入集群
+- 其他node节点加入集群
+
 
     kubeadm join 172.16.145.200:8443 --token awtvoq.ljszotcg6j99uy66 \
         --discovery-token-ca-cert-hash sha256:7e902395862e37d768dc4df48300013ad5571902a52302b2443856fa565fd657
@@ -399,7 +403,9 @@ node2 node3加入集群成为control-plane
 
 [配置yum源](/linux/yum.md)
 
-[升级内核](/linux/kernel.md)
+可选
+
+- [升级内核](/linux/kernel.md)
 
 [安装docker](/container/docker/docker-install.md)
 
@@ -455,6 +461,7 @@ node2 node3加入集群成为control-plane
     
 下载k8s相关镜像
 
+    #k8s.gcr.io被墙，需要走微软代理地址
     for i in `kubeadm config images list 2>/dev/null |sed 's/k8s.gcr.io\///g'`; do
         docker pull gcr.azk8s.cn/google-containers/${i}
         docker tag gcr.azk8s.cn/google-containers/${i} k8s.gcr.io/${i}
