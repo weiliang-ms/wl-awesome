@@ -527,5 +527,11 @@ Insert DELAYED已经处理完了所有待处理的插入操作，正在等待新
 	SHOW STATUS LIKE '%Com_insert%';
 	SHOW STATUS LIKE '%Com_update%';
 	SHOW STATUS LIKE '%Com_delete%';
+	
+### 修改密码
+
+    use mysql
+    update user set authentication_string=password('1qaz#EDC') where user='root';
+    flush privileges;
 
 
