@@ -40,6 +40,8 @@
 
 - [docker安装](/container/docker/docker-install.md)
 
+- [docker离线安装](/container/docker/docker-install-offline.md)
+
 - [docker-compose](/container/docker/docker-compose.md)
 
 - [multi-stage](/container/docker/docker-multi-stage.md)
@@ -59,6 +61,10 @@
 - [rke](/container/k8s/k8s-rke.md)
 
 - [ansible](https://github.com/easzlab/kubeasz)
+
+- [kebeadm安装HA](/container/k8s/k8s-kubeadm.md)
+
+- [kubeadm离线安装](/container/k8s/kubeadm-offline.md)
 
 ### rancher
 
