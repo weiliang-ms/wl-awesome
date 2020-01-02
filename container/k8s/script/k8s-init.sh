@@ -1,4 +1,6 @@
 #!/bin/bash
+
+TYPE=$1
 # 格式为： http://username:password@ip:port
 proxy=
 ntpserver=
@@ -20,6 +22,7 @@ function configYum() {
 }
 
 function updateKernel() {
+  configYum
   echo "[kernel]导入公钥..."
   rpm --import ./RPM-GPG-KEY-elrepo.org
   echo "[kernel]添加源..."
@@ -76,9 +79,9 @@ function installDocker() {
   echo "[docker]调整docker驱动"
   sudo mkdir -p /etc/docker
   sudo tee /etc/docker/daemon.json <<EOF
-    {
-      "exec-opts": ["native.cgroupdriver=systemd"],
-    }
+{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
 EOF
 
   echo "[docker]重载docker"
@@ -151,10 +154,10 @@ EOF
   yum install -y kubelet-$k8sversion kubeadm-$k8sversion kubectl-$k8sversion --disableexcludes=kubernetes
 
   echo "[kubelet]修改kubelet配置..."
-  sed -i "s;KUBELET_EXTRA_ARGS=;KUBELET_EXTRA_ARGS=\"--fail-swap-on=false\";g" /etc/sysconfig/kubelet
+  echo "KUBELET_EXTRA_ARGS=\"--fail-swap-on=false\"" > /etc/sysconfig/kubelet
 
-  echo "[kubelet]启动kubelet..."
-  systemctl enable --now kubelet
+  echo "[kubelet]配置kubelet自启动..."
+  systemctl enable kubelet
 
   echo "[completion]安装命令补全..."
   yum install -y bash-completion
@@ -162,6 +165,12 @@ EOF
   source <(kubectl completion bash)
   echo "source <(kubectl completion bash)" >> ~/.bashrc
 
+}
+
+function initNfs() {
+    echo "[nfs]安装nfs..."
+    yum install -y nfs-utils rpcbind
+    systemctl enable rpcbind --now
 }
 
 function installNtp() {
@@ -173,8 +182,8 @@ function installNtp() {
 }
 
 function main() {
-    TYPE=$1
-    case "$TYPE" in
+
+  case "$TYPE" in
 	"k")
 	  updateKernel
     ;;
@@ -183,6 +192,7 @@ function main() {
     installDocker
     modifySysconfig
     installK8s
+    initNfs
   esac
 }
 

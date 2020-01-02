@@ -486,10 +486,9 @@ node2 node3加入集群成为control-plane
 
     systemctl enable --now kubelet
     
-加入集群
+获取加入集群的token等
 
-    kubeadm join 172.16.145.200:8443 --token awtvoq.ljszotcg6j99uy66 \
-            --discovery-token-ca-cert-hash sha256:7e902395862e37d768dc4df48300013ad5571902a52302b2443856fa565fd657
+    kubeadm token create --print-join-command
           
 设置Hostname
 
@@ -500,6 +499,10 @@ node2 node3加入集群成为control-plane
     kubectl get node
     
 ![](./images/work-node.png)
+
+重复添加解决
+
+    https://blog.csdn.net/wzygis/article/details/84098247
 
    
 

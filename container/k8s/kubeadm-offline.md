@@ -105,9 +105,9 @@
     hostnamectl --static set-hostname master
     echo "172.16.145.140 master" >> /etc/hosts
 
-启动kubelet
+配置kubelet自启动
 
-    systemctl enable --now kubelet
+    systemctl enable kubelet
     
 初始化集群
     

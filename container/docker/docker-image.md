@@ -133,3 +133,7 @@
 	docker build -t nginx:1.16.1 .
 
 11/16/2019 1:55:59 PM 
+
+批量导出
+
+    docker images |awk '{print $1}' |sed -n '2,$p' |xargs docker save -o k8s.tar
