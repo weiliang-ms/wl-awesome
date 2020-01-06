@@ -25,3 +25,7 @@
 ### 清理镜像
 
     echo "y" | docker image prune -a
+    
+清理所有镜像
+
+    

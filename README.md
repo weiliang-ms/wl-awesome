@@ -27,6 +27,8 @@
 
 - [ntp配置](/linux/ntp.md)
 
+- [访问"卡"等](/linux/block.md)
+
 - 修改
     - [修改hostname](/linux/hostname.md)
     
