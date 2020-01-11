@@ -27,6 +27,8 @@
 
 - [ntp配置](/linux/ntp.md)
 
+- [ssl证书签发](/linux/cert.md)
+
 - [访问"卡"等](/linux/block.md)
 
 - 修改
