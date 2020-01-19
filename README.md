@@ -54,6 +54,8 @@
 
 - [network](/container/docker/docker-network.md)
 
+- [gosu](https://blog.csdn.net/boling_cavalry/article/details/93380447)
+
 - [清理容器](/container/docker/clean.md)
 
 ### k8s
