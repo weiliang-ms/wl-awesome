@@ -46,6 +46,7 @@
 
 - [mysql安装部署](/database/mysql/install.md)
 - [mysql常用命令](/database/mysql/cmd.md)
+- [binlog管理](/database/mysql/binlog.md)
 
 ### nosql
 
