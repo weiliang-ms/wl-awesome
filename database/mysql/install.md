@@ -30,53 +30,71 @@
 
 > 安装卸载依赖
 
-	yum install net-tools -y
-	yum remove mysql* -y
+```bash
+yum install net-tools -y
+yum remove mysql* -y
+```
+centos7需要卸载mariadb
 
-	#centos7需要卸载mariadb
-	yum remove -y mariadb-libs
+```bash
+yum remove -y mariadb-libs
+```
 
 > 上传安装包至/tmp下，进行安装
 
-	cd /tmp
-	rpm -ivh mysql-community-common-*.el7.x86_64.rpm
-    rpm -ivh mysql-community-libs-*.el7.x86_64.rpm
-    rpm -ivh mysql-community-client-*.el7.x86_64.rpm
-    rpm -ivh mysql-community-server-*.el7.x86_64.rpm
+```bash
+cd /tmp
+rpm -ivh mysql-community-common-*.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-*.el7.x86_64.rpm
+rpm -ivh mysql-community-client-*.el7.x86_64.rpm
+rpm -ivh mysql-community-server-*.el7.x86_64.rpm
+```
 
 > 配置
 
-	echo "default-storage-engine=INNODB" >>/etc/my.cnf
-    echo "character-set-server=utf8"  >>/etc/my.cnf
-    echo "collation-server=utf8_general_ci"  >>/etc/my.cnf
-    echo "lower_case_table_names=1" >>/etc/my.cnf
+```bash
+echo "default-storage-engine=INNODB" >>/etc/my.cnf
+echo "character-set-server=utf8"  >>/etc/my.cnf
+echo "collation-server=utf8_general_ci"  >>/etc/my.cnf
+echo "lower_case_table_names=1" >>/etc/my.cnf
+```
 
 > 启动
 
-	#centos7
-    systemctl daemon-reload;systemctl enable mysqld;systemctl start mysqld
+centos7
+    
+```bash
+systemctl daemon-reload
+systemctl enable mysqld --now
+```
 	
-	#centos6
-	service mysqld start
-	chkconfig mysqld on
+centos6
+
+```bash
+service mysqld start
+chkconfig mysqld on
+```
 
 > 修改防火墙、SElinux策略
 
-    firewall-cmd --permanent --zone=public --add-port=3306/tcp
-    firewall-cmd --reload
-    setenforce 0
+```bash
+firewall-cmd --permanent --zone=public --add-port=3306/tcp
+firewall-cmd --reload
+setenforce 0
+```
 
 > 修改root密码
 
-	password=`grep 'temporary password' /var/log/mysqld.log|awk '{print $NF}'|awk 'END {print}'`
-        mysql -uroot -p$password --connect-expired-password <<EOF
-        set global validate_password_policy=0;
-        set global validate_password_length=1;
-        set password=passworD("root");
-        FLUSH PRIVILEGES;
-        quit
-
-	EOF
+```sql
+password=`grep 'temporary password' /var/log/mysqld.log|awk '{print $NF}'|awk 'END {print}'`
+mysql -uroot -p$password --connect-expired-password <<EOF
+set global validate_password_policy=0;
+set global validate_password_length=1;
+set password=passworD("root");
+FLUSH PRIVILEGES;
+quit
+EOF
+```
 
 ## 配置优化
 

@@ -35,6 +35,12 @@
     - [修改hostname](/linux/hostname.md)
     
 ## 数据库
+
+### mysql
+
+- [mysql安装部署](/database/mysql/install.md)
+- [mysql常用命令](/database/mysql/cmd.md)
+
 ### nosql
 
 - [redis cluster k8s解决方案](/database/redis-cluster-k8s.md)
