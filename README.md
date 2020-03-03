@@ -17,11 +17,14 @@
 
 - [install git](/shell/git.md)
 
-- [yum](/linux/yum.md)
-
-- [升级kernel](/linux/kernel.md)
-
-- [升级openssl](/linux/openssl.md)
+- 软件源更改
+    - [yum](/linux/yum.md)
+    - [apt-get配置管理](/linux/apt.md)
+    - [gem](/linux/gem.md)
+    
+- 软件升级
+    - [升级kernel](/linux/kernel.md)
+    - [升级openssl](/linux/openssl.md)
 
 - [时区配置](/linux/timezone.md)
 
@@ -30,6 +33,9 @@
 - [ssl证书签发](/linux/cert.md)
 
 - [访问"卡"等](/linux/block.md)
+
+- 软件安装
+    - [redmine](/linux/redmine.md)
 
 - 修改
     - [修改hostname](/linux/hostname.md)
