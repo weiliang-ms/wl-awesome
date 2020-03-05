@@ -15,8 +15,6 @@
 
 ## linux环境
 
-- [install git](/shell/git.md)
-
 - 软件源更改
     - [yum](/linux/yum.md)
     - [apt-get配置管理](/linux/apt.md)
@@ -36,9 +34,11 @@
 
 - 软件安装
     - [redmine](/linux/redmine.md)
+    - [install git](/shell/git.md)
 
-- 修改
+- 配置调整
     - [修改hostname](/linux/hostname.md)
+    - [关闭图形化]()
     
 ## 数据库
 
