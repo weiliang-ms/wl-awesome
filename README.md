@@ -40,6 +40,8 @@
     - [修改hostname](/linux/hostname.md)
     - [关闭图形化]()
     
+- [vsphere磁盘扩容](http://blog.sina.com.cn/s/blog_56a70c0401018dlv.html)
+    
 ## 数据库
 
 ### mysql
