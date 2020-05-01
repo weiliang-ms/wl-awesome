@@ -36,6 +36,9 @@
     - [redmine](/linux/redmine.md)
     - [install git](/shell/git.md)
 
+- 监控
+   - [磁盘使用率](/linux/monitor/disk.md)
+
 - 配置调整
     - [修改hostname](/linux/hostname.md)
     - [关闭图形化]()
@@ -87,5 +90,7 @@
 
 - [kubeadm离线安装](/container/k8s/kubeadm-offline.md)
 
-### rancher
+## 软考
+
+### 系统规划与管理师
 
