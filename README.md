@@ -42,7 +42,10 @@
 - 配置调整
     - [修改hostname](/linux/hostname.md)
     - [关闭图形化]()
-    
+
+- 安全策略
+    - [防火墙](/linux/security/firewalld.md)
+        
 - [vsphere磁盘扩容](http://blog.sina.com.cn/s/blog_56a70c0401018dlv.html)
     
 ## 数据库
