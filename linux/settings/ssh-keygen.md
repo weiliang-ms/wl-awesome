@@ -5,6 +5,10 @@
 ssh-keygen -t rsa
 ```
 
+非交互生成密钥（无密码）
+
+    ssh-keygen -t rsa -n '' -f ~/.ssh/id_rsa
+
 安装公钥
 ```bash
 cd ~/.ssh
