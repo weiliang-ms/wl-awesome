@@ -1,36 +1,71 @@
 ## 安装java
 
-> 下载虚拟控制台连接文件
+> 1.下载虚拟控制台连接文件
 
-![](./images/iDRAC_jnlp.jpg)
+![](images/iDRAC_jnlp.jpg)
 
-修改文件为：
+> 2.widows环境下下载安装java1.7
 
-    viewer.jnlp
+[jre1.7下载地址](https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html)
 
-> widows环境下下载安装java1.7
+![](./images/iDRAC_jre.jpg)
 
-[jre1.7下载地址](https://download.oracle.com/otn/java/jdk/7u80-b15/jre-7u80-windows-x64.exe)
+> 3.调整java设置
 
-> 调整java安全级别
+控制面板->程序->Java
 
-控制面板 -> 程序 -> java
-    
 ![](./images/iDRAC_control_java.jpg)
 
-安全 -> 编辑站点列表
+Java->查看->勾选取消高版本->确定
 
-![](./images/iDRAC_java_edict_sites.jpg)
+![](./images/iDRAC_cancle_high_version.jpg)
 
-添加 -> 输入iDRAC控制台IP地址 -> 确定
+高级->勾选调试三项->应用确定
 
-![](./images/iDRAC_add_site.jpg)
+![](./images/iDRAC_open_debug.jpg)
 
-应用 -> 确定
+> 4.设置引导
 
-> 运行jnlp文件
+登录iDRAC控制台,配置如下
 
-鼠标右键viewer.jnlp -> 打开方式 -> 选择jre1.7的javaws.exe文件
+![](./images/iDRAC_set_guide.jpg)
 
-![](./images/iDRAC_open_jnlp.jpg)
+> 5.运行jnlp文件
+
+鼠标右键步骤1下载的文件 -> 打开方式 -> 选择jre1.7的javaws.exe文件
+
+![](images/iDRAC_open_jnlp.jpg)
+
+允许使用过期版本
+
+![](./images/iDRAC_use_outdate_jre.jpg)
+
+控制台日志输出
+
+![](./images/iDRAC_jre_console.png)
+
+iDRAC虚拟控制台
+
+![](./images/iDRAC_virtaul_console.jpg)
+
+> 6.安装操作系统
+
+添加虚拟介质
+
+![](./images/iDRAC_virtaul_media.jpg)
+
+添加映射本地iso
+
+![](./images/iDRAC_add_iso.jpg)
+
+执行温引导
+
+![](./images/iDRAC_warm_lead.jpg)
+
+
+
+
+
+
+
     
