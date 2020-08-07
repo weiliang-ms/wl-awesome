@@ -26,7 +26,7 @@
     
     - [ntp配置](/linux/ntp.md)
     
-    - [ssl证书签发](/linux/cert.md)
+    - [ssl证书签发](https://github.com/weiliang-ms/ssl)
     
     - [访问"卡"等](/linux/block.md)
 
