@@ -41,6 +41,8 @@
 - 软件安装
     - [redmine](/linux/redmine.md)
     - [install git](/shell/git.md)
+    - [redis](https://github.com/weiliang-ms/deploy/blob/master/redis/README.md)
+    - [nginx](https://github.com/weiliang-ms/deploy/blob/master/nginx/README.md)
     
 ## 数据库
 
