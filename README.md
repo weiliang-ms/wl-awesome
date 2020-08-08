@@ -51,6 +51,10 @@
     - [mysql安装部署](/database/mysql/install.md)
     - [mysql常用命令](/database/mysql/cmd.md)
     - [binlog管理](/database/mysql/binlog.md)
+
+- oracle
+    - [ora11g安装](https://github.com/weiliang-ms/wl-awesome/blob/master/database/oracle/install.md)
+    
 - nosql
     - [redis cluster k8s解决方案](/database/redis-cluster-k8s.md)
 
