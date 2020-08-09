@@ -44,6 +44,7 @@
     - [redis](https://github.com/weiliang-ms/deploy/blob/master/redis/README.md)
     - [nginx](https://github.com/weiliang-ms/deploy/blob/master/nginx/README.md)
     - [trafodion](/deploy/trafodion.md)
+    - [powerdns](/deploy/pdns.md)
     
 ## 数据库
 
