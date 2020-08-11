@@ -1,8 +1,0 @@
-## 关闭图形化
-
-centos7
-
-```bash
-systemctl set-default multi-user.target
-init 3
-```

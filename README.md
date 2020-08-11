@@ -15,12 +15,7 @@
     - 监控
        - [磁盘使用率](/linux/monitor/disk.md)
 
-    - 配置调整
-        - [修改hostname](/linux/hostname.md)
-        - [关闭图形化]()
-
-    - 安全策略
-        - [防火墙](/linux/security/firewalld.md)
+    - [配置调整](/linux/settings/README.md)
 
     - [时区配置](/linux/timezone.md)
     

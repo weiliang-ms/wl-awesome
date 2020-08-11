@@ -1,6 +1,25 @@
+## 关闭图形化
+
+centos7
+
+```bash
+systemctl set-default multi-user.target
+init 3
+```
+
+## 防火墙
+
+> 允许某一IP访问本地端口
+
+```bash
+firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="192.168.239.133" port protocol="tcp" port="8099" accept"
+firewall-cmd --reload
+```
+
 ## ssh密钥登陆
 
 建立密钥对，密码可选
+
 ```bash
 ssh-keygen -t rsa
 ```
