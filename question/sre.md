@@ -86,3 +86,35 @@
     /var/log/maillog 邮件系统日志
     
     /var/log/secure 记录与访问限制相关日志
+    
+> 3.讲一下 Keepalived 的工作原理
+
+    在一个虚拟路由器中，只有作为 MASTER 的 VRRP 路由器会一直发送 VRRP 通告信息，
+    BACKUP 不会抢占 MASTER，除非它的优先级更高。
+    当 MASTER 不可用时(BACKUP收不到通告信息)多台 BACKUP 中优先级最高的这台会被抢占为
+     MASTER。这种抢占是非常快速的(<1s)，以保证服务的连续性由于安全性考虑，
+     VRRP 包使用了加密协议进行加密。BACKUP 不会发送通告信息，只会接收通告信息。
+     
+> 4.OSI协议
+
+    物理层：EIA/TIA-232, EIA/TIA-499, V.35, V.24, RJ45, Ethernet, 802.3, 802.5, FDDI, NRZI, NRZ, B8ZS
+    数据链路层：Frame Relay, HDLC, PPP, IEEE 802.3/802.2, FDDI, ATM, IEEE 802.5/802.2
+    网络层：IP，IPX，AppleTalk DDP
+    传输层：TCP，UDP，SPX
+    会话层：RPC,SQL,NFS,NetBIOS,names,AppleTalk,ASP,DECnet,SCP
+    表示层:TIFF,GIF,JPEG,PICT,ASCII,EBCDIC,encryption,MPEG,MIDI,HTML
+    应用层：FTP,WWW,Telnet,NFS,SMTP,Gateway,SNMP
+    
+> 5.文件系统只读及恢复
+
+    
+> 6.raid
+
+- 主要性能排序
+
+    冗余从好到坏：raid 1  raid 10  raid 5  raid 0
+　　性能从好到坏：raid 0  raid 10  raid 5  raid 1
+　　成本从低到高：raid 0  raid 5   raid 1  raid 10
+
+- 
+    

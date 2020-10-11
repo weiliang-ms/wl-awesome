@@ -30,6 +30,9 @@
     - 软件升级
         - [升级kernel](/linux/kernel.md)
         - [升级openssl](/linux/openssl.md)
+        
+- 常用命令
+    - [制作iso镜像](/linux/cmd/mkiso.md)
     
 ## 集成部署
 
