@@ -2,7 +2,7 @@
 
 [配置yum源](/linux/yum.md)
 
-[升级内核](/linux/kernel.md)
+[升级内核](/linux/update/kernel.md)
 
 [安装docker](/container/docker/docker-install.md)
 
@@ -121,7 +121,7 @@
 172.16.145.200为虚拟IP
     
     
-- [所有节点升级内核](/linux/kernel.md)
+- [所有节点升级内核](/linux/update/kernel.md)
 - [所有节点安装docker](/container/docker/docker-install.md)
 
 添加Host解析
@@ -405,7 +405,7 @@ node2 node3加入集群成为control-plane
 
 可选
 
-- [升级内核](/linux/kernel.md)
+- [升级内核](/linux/update/kernel.md)
 
 [安装docker](/container/docker/docker-install.md)
 

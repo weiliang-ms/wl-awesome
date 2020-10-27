@@ -5,7 +5,7 @@
 > 下载介质
 
 - [gcc-5.4.0.tar.gz](http://ftp.gnu.org/gnu/gcc/gcc-5.4.0/gcc-5.4.0.tar.gz)
-- [gmp-4.3.2.tar.gz](ftp://ftp.gnu.org/gnu/gmp/gmp-4.3.2.tar.gz)
+- [gmp-4.3.2.tar.gz](http://ftp.gnu.org/gnu/gmp/gmp-4.3.2.tar.gz)
 - [mpc-1.0.1.tar.gz](http://ftp.gnu.org/gnu/mpc/mpc-1.0.1.tar.gz)
 - [mpfr-2.4.2.tar.gz](http://ftp.gnu.org/gnu/mpfr/mpfr-2.4.2.tar.gz)
 
