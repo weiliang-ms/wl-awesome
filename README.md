@@ -28,8 +28,9 @@
 - 升级更新
 
     - 软件升级
-        - [升级kernel](/linux/kernel.md)
-        - [升级openssl](/linux/openssl.md)
+        - [升级kernel](/linux/update/kernel.md)
+        - [升级openssl](/linux/update/openssl.md)
+        - [升级gcc](/linux/update/gcc.md)
         
 - 常用命令
     - [制作iso镜像](/linux/cmd/mkiso.md)

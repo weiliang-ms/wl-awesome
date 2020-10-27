@@ -16,3 +16,4 @@
 全局更新至7.1
 
     yum --disablerepo='*' --enablerepo='C7.1*' upgrade
+
