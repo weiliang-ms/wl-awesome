@@ -5,12 +5,15 @@
 - 虚拟化
   - [iDRAC控制台安装操作系统](/linux/virtaul/iDRAC.md)
   - [vsphere磁盘扩容](http://blog.sina.com.cn/s/blog_56a70c0401018dlv.html)
+  
 - 系统配置
 
-    - 软件源更改
-        - [yum](/linux/yum.md)
-        - [apt-get配置管理](/linux/apt.md)
-        - [gem](/linux/gem.md) 
+    - 包管理软件
+        - [apt-get配置管理](/linux/package/apt.md)
+        - [gem](/linux/package/gem.md) 
+        - [pip](/linux/package/pip.md)
+        - [yum](/linux/package/yum.md)
+        - [rpm包构建](/linux/rpm/rpmbuild.md)
     
     - 监控
        - [磁盘使用率](/linux/monitor/disk.md)
@@ -28,8 +31,10 @@
 - 升级更新
 
     - 软件升级
+    
         - [升级kernel](/linux/update/kernel.md)
         - [升级openssl](/linux/update/openssl.md)
+        - [升级openssh](/linux/update/openssh.md)
         - [升级gcc](/linux/update/gcc.md)
         
 - 常用命令
@@ -44,6 +49,8 @@
     - [nginx](https://github.com/weiliang-ms/deploy/blob/master/nginx/README.md)
     - [trafodion](/deploy/trafodion.md)
     - [powerdns](/deploy/pdns.md)
+    - [python](/deploy/python.md)
+    - [gpu驱动](/linux/gpu/gpu.md)
     
 ## 数据库
 

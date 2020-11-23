@@ -76,12 +76,35 @@ CentOS 7
 	yum clean all && yum makecache
 	yum install -y telnet vim
 	
-### 导出依赖
+### 导出依赖与使用
+
+导出（yum源可用）
 
     yum install yum-plugin-downloadonly -y
-    yum install --downloadonly --downloaddir=<directory> <package-name>
+    yum install --downloadonly --downloaddir=./gcc gcc
+
+生成repo依赖关系
+
+    yum install -y createrepo
+    createrepo ./gcc
+
+压缩
+
+    tar zcvf gcc.tar.gz gcc
     
-### 升级为指定版本
+使用（yum源不可用）
+
+    tar zxvf gcc.tar.gz -C /
+    
+    cat > /etc/yum.repos.d/gcc.repo <<EOF
+    [gcc]
+    name=python-repo
+    baseurl=file:///gpc
+    gpgcheck=0
+    enabled=1
+    EOF
+    
+    yum install -y gcc
 
 ### 安装加速插件
 

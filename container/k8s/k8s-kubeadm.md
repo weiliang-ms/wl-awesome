@@ -1,6 +1,6 @@
 ### 单机
 
-[配置yum源](/linux/yum.md)
+[配置yum源](/linux/package/yum.md)
 
 [升级内核](/linux/update/kernel.md)
 
@@ -401,7 +401,7 @@ node2 node3加入集群成为control-plane
    
 #### 新worker节点加入集群
 
-[配置yum源](/linux/yum.md)
+[配置yum源](/linux/package/yum.md)
 
 可选
 
