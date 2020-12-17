@@ -121,13 +121,16 @@
 
 客户端创建目录
 
-    /etc/ceph
+    mkdir -p /etc/ceph
     
 从服务端`scp`以下文件至客户端/etc/ceph下
 
 - /etc/ceph/ceph.client.admin.keyring
 - /etc/ceph/ceph.conf
 
+    
+    scp /etc/ceph/{ceph.conf,ceph.client.admin.keyring} ip:/etc/ceph/
+    
 > 创建块设备(客户端执行)
 
     rbd create --pool ybpool --image yb-27 --image-format 2 --image-feature layering --size 100G
@@ -135,9 +138,6 @@
 > 映射块设备
 
     rbd map ybpool/yb-27
-    
-配置自动映射
-
     echo "ybpool/yb-27 id=admin,keyring=/etc/ceph/ceph.client.admin.keyring" >> /etc/ceph/rbdmap
     
 > 格式化块设备
@@ -156,4 +156,121 @@
 > 修改fstab，设置开机挂载
 
     echo "/dev/rbd0 /mnt/ceph-block-device ext4 defaults,noatime,_netdev 0 0" >> /etc/fstab
+    
+> 配置开机自启动
+
+    vim /etc/init.d/rbdmap
+    
+    #!/bin/bash
+    #chkconfig: 2345 80 60
+    #description: start/stop rbdmap
+    ### BEGIN INIT INFO
+    # Provides:          rbdmap
+    # Required-Start:    $network
+    # Required-Stop:     $network
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6
+    # Short-Description: Ceph RBD Mapping
+    # Description:       Ceph RBD Mapping
+    ### END INIT INFO
+    
+    DESC="RBD Mapping"
+    RBDMAPFILE="/etc/ceph/rbdmap"
+    
+    . /lib/lsb/init-functions
+    #. /etc/redhat-lsb/lsb_log_message，加入此行后不正长
+    do_map() {
+        if [ ! -f "$RBDMAPFILE" ]; then
+            echo "$DESC : No $RBDMAPFILE found."
+            exit 0
+        fi
+    
+        echo "Starting $DESC"
+        # Read /etc/rbdtab to create non-existant mapping
+        newrbd=
+        RET=0
+        while read DEV PARAMS; do
+            case "$DEV" in
+              ""|\#*)
+                continue
+                ;;
+              */*)
+                ;;
+              *)
+                DEV=rbd/$DEV
+                ;;
+            esac
+            OIFS=$IFS
+            IFS=','
+            for PARAM in ${PARAMS[@]}; do
+                CMDPARAMS="$CMDPARAMS --$(echo $PARAM | tr '=' ' ')"
+            done
+            IFS=$OIFS
+            if [ ! -b /dev/rbd/$DEV ]; then
+                echo $DEV
+                rbd map $DEV $CMDPARAMS
+                [ $? -ne "0" ] && RET=1
+                newrbd="yes"
+            fi
+        done < $RBDMAPFILE
+        echo $RET
+    
+        # Mount new rbd
+        if [ "$newrbd" ]; then
+                    echo "Mounting all filesystems"
+            mount -a
+            echo $?
+        fi
+    }
+    
+    do_unmap() {
+        echo "Stopping $DESC"
+        RET=0
+        # Unmap all rbd device
+        for DEV in /dev/rbd[0-9]*; do
+            echo $DEV
+            # Umount before unmap
+            MNTDEP=$(findmnt --mtab --source $DEV --output TARGET | sed 1,1d | sort -r)
+            for MNT in $MNTDEP; do
+                umount $MNT || sleep 1 && umount -l $DEV
+            done
+            rbd unmap $DEV
+            [ $? -ne "0" ] && RET=1
+        done
+        echo $RET
+    }
+    
+    
+    case "$1" in
+      start)
+        do_map
+        ;;
+    
+      stop)
+        do_unmap
+        ;;
+    
+      reload)
+        do_map
+        ;;
+    
+      status)
+        rbd showmapped
+        ;;
+    
+      *)
+        echo "Usage: rbdmap {start|stop|reload|status}"
+        exit 1
+        ;;
+    esac
+    
+    exit 0
+
+
+赋权
+    
+    yum install redhat-lsb -y
+    chmod +x /etc/init.d/rbdmap
+    service rbdmap start 
+    chkconfig rbdmap on
     

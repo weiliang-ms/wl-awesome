@@ -4,7 +4,7 @@
 
 [升级内核](/linux/update/kernel.md)
 
-[安装docker](/container/docker/docker-install.md)
+[安装docker](/container/docker/docker-install-online.md)
 
 关闭防火墙
 
@@ -122,7 +122,7 @@
     
     
 - [所有节点升级内核](/linux/update/kernel.md)
-- [所有节点安装docker](/container/docker/docker-install.md)
+- [所有节点安装docker](/container/docker/docker-install-online.md)
 
 添加Host解析
 
@@ -407,7 +407,7 @@ node2 node3加入集群成为control-plane
 
 - [升级内核](/linux/update/kernel.md)
 
-[安装docker](/container/docker/docker-install.md)
+[安装docker](/container/docker/docker-install-online.md)
 
 关闭防火墙
 

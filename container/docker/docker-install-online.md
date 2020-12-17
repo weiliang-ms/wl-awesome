@@ -1,8 +1,25 @@
 ### docker安装
 
+> 1、配置yum源
+
 [配置阿里云yum](https://www.cnblogs.com/operationhome/p/11094493.html)
 
-删除旧版本docker
+> 2、配置yum代理
+
+内网机器通过http proxy上网时使用
+
+    vi /etc/yum.conf
+    
+文件最后添加以下内容
+
+    proxy=http://username:password@host:port
+    
+- username: http代理账号
+- password: http代理密码
+- host: http代理主机（ip或域名）
+- port: http代理端口
+
+> 3、删除旧版本docker
 
     yum remove docker -y \
       docker-client \
@@ -20,26 +37,34 @@
     rm -rf /usr/local/docker
     rm -rf /etc/docker
     
-    #安装一些必要的系统工具
+> 4、安装docker
+
+安装一些必要的系统工具
+
     yum -y install yum-utils device-mapper-persistent-data lvm2
     
-    #添加软件源信息
+添加软件源信息
+
     yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
     
-    #更新 yum 缓存
+更新 yum 缓存
+
     yum makecache fast
     
-    #安装docker-ce
+安装docker-ce
+
     yum -y install docker-ce
     
-    #关闭selinux
+> 5、关闭selinux
+
     setenforce 0
     sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
     
-    #启动
+> 6、启动
+
     systemctl enable docker --now
     
-阿里云加速
+> 7、配置阿里云加速
 
 [加速配置地址](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
 
