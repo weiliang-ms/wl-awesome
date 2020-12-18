@@ -6,6 +6,9 @@
   - [iDRAC控制台安装操作系统](/linux/virtaul/iDRAC.md)
   - [vsphere磁盘扩容](/linux/virtaul/vsphere.md)
   
+- 安全
+    - [系统安全加固](/linux/security/system.md)
+  
 - 系统配置
 
     - 包管理软件
