@@ -4,7 +4,7 @@
 
 - 虚拟化
   - [iDRAC控制台安装操作系统](/linux/virtaul/iDRAC.md)
-  - [vsphere磁盘扩容](http://blog.sina.com.cn/s/blog_56a70c0401018dlv.html)
+  - [vsphere磁盘扩容](/linux/virtaul/vsphere.md)
   
 - 系统配置
 
