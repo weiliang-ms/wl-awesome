@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [helm](#helm)
+- [离线安装tiller](#%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85tiller)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### helm
 
 安装

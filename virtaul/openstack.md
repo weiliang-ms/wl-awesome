@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [控制节点](#%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9)
+- [计算节点](#%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 [参考文章](https://www.cnblogs.com/heruiguo/p/openstack.html)
 
 节点信息

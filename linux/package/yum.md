@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [阿里yum源](#%E9%98%BF%E9%87%8Cyum%E6%BA%90)
+- [本地yumy源](#%E6%9C%AC%E5%9C%B0yumy%E6%BA%90)
+- [导出依赖与使用](#%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96%E4%B8%8E%E4%BD%BF%E7%94%A8)
+- [安装加速插件](#%E5%AE%89%E8%A3%85%E5%8A%A0%E9%80%9F%E6%8F%92%E4%BB%B6)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### 阿里yum源
 
 > 1、配置DNS解析

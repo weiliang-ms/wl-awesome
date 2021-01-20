@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [单机](#%E5%8D%95%E6%9C%BA)
+- [HA](#ha)
+  - [所有节点安装kubeadm和kubelet](#%E6%89%80%E6%9C%89%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85kubeadm%E5%92%8Ckubelet)
+  - [配置负载均衡](#%E9%85%8D%E7%BD%AE%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1)
+  - [创建集群](#%E5%88%9B%E5%BB%BA%E9%9B%86%E7%BE%A4)
+  - [新worker节点加入集群](#%E6%96%B0worker%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### 单机
 
 [配置yum源](/linux/package/yum.md)

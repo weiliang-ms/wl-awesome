@@ -1,4 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [添加slave节点](#%E6%B7%BB%E5%8A%A0slave%E8%8A%82%E7%82%B9)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 添加slave节点
+
+https://www.cnblogs.com/ygqygq2/p/6045279.html
 
 1、确认主节点版本
 

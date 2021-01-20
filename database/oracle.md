@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [oracle单机集成部署](#oracle%E5%8D%95%E6%9C%BA%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
+- [安装条件检测](#%E5%AE%89%E8%A3%85%E6%9D%A1%E4%BB%B6%E6%A3%80%E6%B5%8B)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### oracle单机集成部署 ###
 
 > 配置yum源

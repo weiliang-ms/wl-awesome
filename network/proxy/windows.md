@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [shadowsocks](#shadowsocks)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### shadowsocks ###
 
 [项目地址](https://www.cnblogs.com/milton/p/6366916.html)

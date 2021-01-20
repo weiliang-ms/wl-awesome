@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [升级gcc](#%E5%8D%87%E7%BA%A7gcc)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### 升级gcc
 
 升级至5.4

@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [常用命令](#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4)
+  - [系统信息](#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF)
+- [yum配置](#yum%E9%85%8D%E7%BD%AE)
+  - [阿里yum源](#%E9%98%BF%E9%87%8Cyum%E6%BA%90)
+  - [本地yumy源](#%E6%9C%AC%E5%9C%B0yumy%E6%BA%90)
+- [防火墙配置](#%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE)
+  - [linux6](#linux6)
+  - [linux7](#linux7)
+- [系统调优](#%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98)
+- [查看系统信息](#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF)
+  - [查看tcp连接数](#%E6%9F%A5%E7%9C%8Btcp%E8%BF%9E%E6%8E%A5%E6%95%B0)
+  - [查看80服务连接数](#%E6%9F%A5%E7%9C%8B80%E6%9C%8D%E5%8A%A1%E8%BF%9E%E6%8E%A5%E6%95%B0)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 常用命令 ##
 
 ### 系统信息 ###

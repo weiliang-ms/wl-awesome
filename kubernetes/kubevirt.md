@@ -122,7 +122,7 @@
 
 - [v0.35.0版本下载链接](https://github.com/kubevirt/kubevirt/releases/download/v0.35.0/kubevirt-operator.yaml)
 
-> 下载`kubevirt-operator.yaml`引用镜像
+> 下载`kubevirt operator`所需镜像
 
 镜像列表
 

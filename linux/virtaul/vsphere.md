@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [磁盘扩容](#%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9)
+  - [逻辑卷组删除物理设备](#%E9%80%BB%E8%BE%91%E5%8D%B7%E7%BB%84%E5%88%A0%E9%99%A4%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 磁盘扩容
 
 > 编辑虚拟机调整硬盘空间，重启虚拟机
@@ -14,7 +23,7 @@
 
 > 新建分区并设置分区为LVM格式
 
-    fdisk /dev/sba
+    fdisk /dev/sda
     
 ![](./images/fdisk_new_part.png)
 
@@ -70,6 +79,8 @@
 ![](images/extended_disk.jpg)
     
 
+### 逻辑卷组删除物理设备
 
+https://www.linuxprobe.com/delete-physical-volume.html
 
     

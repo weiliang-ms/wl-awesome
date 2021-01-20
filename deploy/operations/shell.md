@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [操作用户](#%E6%93%8D%E4%BD%9C%E7%94%A8%E6%88%B7)
+- [操作目录](#%E6%93%8D%E4%BD%9C%E7%9B%AE%E5%BD%95)
+- [操作文件](#%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6)
+- [操作进程　　　　](#%E6%93%8D%E4%BD%9C%E8%BF%9B%E7%A8%8B)
+- [操作网络](#%E6%93%8D%E4%BD%9C%E7%BD%91%E7%BB%9C)
+- [高阶用法](#%E9%AB%98%E9%98%B6%E7%94%A8%E6%B3%95)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### 操作用户 ###
 
 > 1.root下创建用户neusoft

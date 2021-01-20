@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [利用shell + crontab + mailx实现简单告警](#%E5%88%A9%E7%94%A8shell--crontab--mailx%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E5%91%8A%E8%AD%A6)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 利用shell + crontab + mailx实现简单告警
 
 系统版本：CentOS7

@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [k8s](#k8s)
+  - [rke安装k8s集群](#rke%E5%AE%89%E8%A3%85k8s%E9%9B%86%E7%BE%A4)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## k8s
 
 ### rke安装k8s集群

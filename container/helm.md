@@ -2,26 +2,25 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [升级系统](#%E5%8D%87%E7%BA%A7%E7%B3%BB%E7%BB%9F)
+- [helm](#helm)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### 升级系统
+## helm
 
-本机centos7.0
+> 安装helm3.x
 
-    yum install centos-release -y
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
     
-列出当前版本
+> 添加仓库
 
-    yum repolist all
-
-清空缓存
-
-    yum clean all
-    rm -rf /var/cache/yum
+    helm repo add stable https://charts.helm.sh/stable
     
-全局更新至7.1
+> 查询下载
 
-    yum --disablerepo='*' --enablerepo='C7.1*' upgrade
-
+    helm search repo mysql
+    helm pull stable/mysql
+    
+> 

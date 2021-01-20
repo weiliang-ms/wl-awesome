@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [配置代理](#%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86)
+- [配置加速](#%E9%85%8D%E7%BD%AE%E5%8A%A0%E9%80%9F)
+- [下载镜像](#%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F)
+- [查看镜像](#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F)
+- [持久化镜像](#%E6%8C%81%E4%B9%85%E5%8C%96%E9%95%9C%E5%83%8F)
+- [容器VS虚机](#%E5%AE%B9%E5%99%A8vs%E8%99%9A%E6%9C%BA)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 配置代理 ##
 
 	#适用场景：内网访问互联网docker镜像仓库

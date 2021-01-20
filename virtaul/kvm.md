@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [安装kvm](#%E5%AE%89%E8%A3%85kvm)
+- [KVM的web管理界面](#kvm%E7%9A%84web%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2)
+- [安装vnc](#%E5%AE%89%E8%A3%85vnc)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## 安装kvm ##
 

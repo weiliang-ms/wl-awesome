@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [RAID 0](#raid-0)
+- [RAID 1](#raid-1)
+- [实现raid1](#%E5%AE%9E%E7%8E%B0raid1)
+- [RAID0+1](#raid01)
+- [raid5](#raid5)
+- [raid10](#raid10)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 [信息来源](https://baike.baidu.com/item/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97/1149823?fr=aladdin)
 
 > 简介

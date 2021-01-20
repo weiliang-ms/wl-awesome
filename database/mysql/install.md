@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [集成部署](#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
+  - [单机集成部署](#%E5%8D%95%E6%9C%BA%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
+- [配置优化](#%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96)
+  - [连接数](#%E8%BF%9E%E6%8E%A5%E6%95%B0)
+  - [暂存连接数](#%E6%9A%82%E5%AD%98%E8%BF%9E%E6%8E%A5%E6%95%B0)
+  - [缓冲区变量](#%E7%BC%93%E5%86%B2%E5%8C%BA%E5%8F%98%E9%87%8F)
+  - [防止暴力破解](#%E9%98%B2%E6%AD%A2%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3)
+  - [限制数据包大小](#%E9%99%90%E5%88%B6%E6%95%B0%E6%8D%AE%E5%8C%85%E5%A4%A7%E5%B0%8F)
+- [使用教程](#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B)
+  - [慢查询](#%E6%85%A2%E6%9F%A5%E8%AF%A2)
+  - [查看变量](#%E6%9F%A5%E7%9C%8B%E5%8F%98%E9%87%8F)
+  - [查看锁性能](#%E6%9F%A5%E7%9C%8B%E9%94%81%E6%80%A7%E8%83%BD)
+  - [查看连接数](#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E6%95%B0)
+  - [查看回滚数量](#%E6%9F%A5%E7%9C%8B%E5%9B%9E%E6%BB%9A%E6%95%B0%E9%87%8F)
+  - [查询运行时间](#%E6%9F%A5%E8%AF%A2%E8%BF%90%E8%A1%8C%E6%97%B6%E9%97%B4)
+  - [查询缓存状态](#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%E7%8A%B6%E6%80%81)
+  - [查看连接信息](#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)
+  - [查询表使用状态](#%E6%9F%A5%E8%AF%A2%E8%A1%A8%E4%BD%BF%E7%94%A8%E7%8A%B6%E6%80%81)
+  - [查看增删改数量](#%E6%9F%A5%E7%9C%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%95%B0%E9%87%8F)
+  - [修改密码](#%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 集成部署
 
 [较全的教程](https://github.com/judasn/Linux-Tutorial/blob/master/markdown-file/Mysql-Install-And-Settings.md)

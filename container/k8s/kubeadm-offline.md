@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [离线安装](#%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 配置k8s源
 
     cat <<EOF > /etc/yum.repos.d/kubernetes.repo

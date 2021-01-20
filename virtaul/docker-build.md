@@ -1,3 +1,33 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [定义转义符](#%E5%AE%9A%E4%B9%89%E8%BD%AC%E4%B9%89%E7%AC%A6)
+- [环境变量](#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)
+- [忽略文件](#%E5%BF%BD%E7%95%A5%E6%96%87%E4%BB%B6)
+- [FROM](#from)
+- [RUN](#run)
+- [CMD](#cmd)
+- [RUN vs CMD](#run-vs-cmd)
+- [LABEL](#label)
+- [MAINTAINER](#maintainer)
+- [EXPOSE](#expose)
+- [ENV](#env)
+- [ADD](#add)
+- [COPY](#copy)
+- [COPY VS ADD](#copy-vs-add)
+- [ENTRYPOINT](#entrypoint)
+- [`shell form` vs `exec form`](#shell-form-vs-exec-form)
+- [USER](#user)
+- [WORKDIR](#workdir)
+- [VOLUME](#volume)
+- [SHELL](#shell)
+- [HEALTHCHECK](#healthcheck)
+- [STOPSIGNAL](#stopsignal)
+- [ONBUILD](#onbuild)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 定义转义符 ##
 
 适用于`windows平台`

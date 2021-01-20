@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [磁盘阵列](#%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97)
+- [oVirt安装](#ovirt%E5%AE%89%E8%A3%85)
+- [添加存储](#%E6%B7%BB%E5%8A%A0%E5%AD%98%E5%82%A8)
+- [添加主机](#%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA)
+- [添加存储域](#%E6%B7%BB%E5%8A%A0%E5%AD%98%E5%82%A8%E5%9F%9F)
+- [创建iso域](#%E5%88%9B%E5%BB%BAiso%E5%9F%9F)
+- [上传镜像](#%E4%B8%8A%E4%BC%A0%E9%95%9C%E5%83%8F)
+- [新增虚机](#%E6%96%B0%E5%A2%9E%E8%99%9A%E6%9C%BA)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 磁盘阵列
 
 先安装配置raid10,挂载路径/data
