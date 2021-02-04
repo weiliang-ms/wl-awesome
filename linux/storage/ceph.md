@@ -882,3 +882,18 @@ xx.配置访问前缀
     service rbdmap start 
     chkconfig rbdmap on
     
+### k8s对接cephfs
+
+> 下载所需镜像
+
+    quay.io/external_storage/cephfs-provisioner:latest
+    
+> 安装
+
+    git clone https://github.com/kubernetes-retired/external-storage.git
+    external-storage/ceph/cephfs/deploy/
+    NAMESPACE=kube-system
+    sed -r -i "s/namespace: [^ ]+/namespace: $NAMESPACE/g" ./rbac/*.yaml
+    sed -i "/PROVISIONER_SECRET_NAMESPACE/{n;s/value:.*/value: $NAMESPACE/;}" rbac/deployment.yaml
+    kubectl -n $NAMESPACE apply -f ./rbac
+    

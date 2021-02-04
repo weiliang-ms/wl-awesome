@@ -47,20 +47,16 @@
     
 > 4、安装docker
 
-安装一些必要的系统工具
-
+    #安装一些必要的系统工具
     yum -y install yum-utils device-mapper-persistent-data lvm2
     
-添加软件源信息
-
+    #添加软件源信息
     yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
     
-更新 yum 缓存
-
+    #更新 yum 缓存
     yum makecache fast
     
-安装docker-ce
-
+    #安装docker-ce
     yum -y install docker-ce
     
 > 5、关闭selinux

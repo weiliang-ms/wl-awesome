@@ -46,7 +46,7 @@
 ### [vsphere磁盘扩容](/linux/virtaul/vsphere.md)
 ## 安全
 
-### [系统安全加固](/linux/security/system.md)
+### [系统安全加固](/os/security/README.md)
   
 
 ## 包管理软件
