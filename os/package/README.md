@@ -5,7 +5,7 @@
     - [本地yum源](#%E6%9C%AC%E5%9C%B0yum%E6%BA%90)
     - [导出依赖与使用](#%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96%E4%B8%8E%E4%BD%BF%E7%94%A8)
     - [安装加速插件](#%E5%AE%89%E8%A3%85%E5%8A%A0%E9%80%9F%E6%8F%92%E4%BB%B6)
-  - [apt-get](#apt-get)
+  - [apt](#apt)
     - [配置清华源](#%E9%85%8D%E7%BD%AE%E6%B8%85%E5%8D%8E%E6%BA%90)
   - [pip](#pip)
     - [配置pip](#%E9%85%8D%E7%BD%AEpip)
@@ -129,7 +129,7 @@ CentOS 7
 
     yum install yum-plugin-fastestmirror -y
     
-## apt-get
+## apt
 ### 配置清华源
 
 > 清理已有源
