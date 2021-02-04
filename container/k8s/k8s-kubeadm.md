@@ -17,7 +17,7 @@
 
 [升级内核](/linux/update/kernel.md)
 
-[安装docker](/container/docker/docker-install-online.md)
+[安装docker](/infrastructure/virtaul/containerontainer/docker/docker-install-online.md)
 
 关闭防火墙
 
@@ -120,7 +120,7 @@
 
 - 架构图
 
-![](./images/kubeadm-ha-topology-stacked-etcd.svg)
+![](images/kubeadm-ha-topology-stacked-etcd.svg)
 
 - 节点说明
 
@@ -135,7 +135,7 @@
     
     
 - [所有节点升级内核](/linux/update/kernel.md)
-- [所有节点安装docker](/container/docker/docker-install-online.md)
+- [所有节点安装docker](/infrastructure/virtaul/containerontainer/docker/docker-install-online.md)
 
 添加Host解析
 
@@ -420,7 +420,7 @@ node2 node3加入集群成为control-plane
 
 - [升级内核](/linux/update/kernel.md)
 
-[安装docker](/container/docker/docker-install-online.md)
+[安装docker](/infrastructure/virtaul/containerontainer/docker/docker-install-online.md)
 
 关闭防火墙
 
@@ -511,7 +511,7 @@ node2 node3加入集群成为control-plane
 
     kubectl get node
     
-![](./images/work-node.png)
+![](images/work-node.png)
 
 重复添加解决
 

@@ -53,7 +53,7 @@
     
 ### 离线安装
 
-[离线安装docker](/container/docker/docker-install-offline.md)
+[离线安装docker](/infrastructure/virtaul/containerontainer/docker/docker-install-offline.md)
 
 上传k8s资源包，解压
 
