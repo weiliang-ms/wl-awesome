@@ -6,6 +6,7 @@
   - [包管理器](#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8)
     - [apt](#apt)
     - [gem](#gem)
+    - [helm](#helm)
     - [pip](#pip)
     - [yum](#yum)
   - [安全加固](#%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA)
