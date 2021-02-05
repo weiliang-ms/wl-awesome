@@ -50,6 +50,7 @@
 ## [包管理器](/os/package/README.md)
 ### [apt](/os/package/README.md#apt)
 ### [gem](/os/package/README.md#gem)
+### [helm](/os/package/README.md#helm)
 ### [pip](/os/package/README.md#pip)
 ### [yum](/os/package/README.md#yum)
 ## [安全加固](/os/security/README.md)
