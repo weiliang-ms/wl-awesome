@@ -9,9 +9,90 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 竞品对比
+
+### 对比raid
+
+`RAID`(Redundant Array of Independent Disks)即独立冗余磁盘阵列，是一种把多块独立的硬盘（物理硬盘）按不同的方式组合起来形成一个硬盘组（逻辑硬盘），让用户认为只有一个单个超大硬盘，从而提供比单个硬盘更高的存储性能和提供数据备份技术
+
+- [RAID]()
+    - 漫长的重建过程，而且在重建过程中，不能有第二块盘损坏，否则会引发更大的问题；
+    
+    - 备用盘增加[TCO](https://baike.baidu.com/item/tco/5979397?fr=aladdin) ，作为备用盘，当没有硬盘故障时，就会一直闲置的
+
+    - 不能保证两块盘同时故障后，数据的可靠性
+
+    - 在重建结束前，客户端无法获取到足够的`IO`资源
+
+    - 无法避免网络、服务器硬件、操作系统、电源等故障
+
+- [Ceph]()
+    - 为了保证可靠性，采用了数据复制的方式，这意味着不再需要`RAID`，也就克服了`RAID`存在的诸多问题
+    
+    - `Ceph` 数据存储原则：一个`Pool` 有若干`PG`，每个`PG` 包含若干对象，一个对象只能存储在一个`PG`中，而`Ceph` 默认一个`PG` 包含三个`OSD`，每个`OSD`都可看做一块硬盘。
+    因此，一个对象存储在`Ceph`中时，就被保存了三份。当一个磁盘故障时，还剩下2个`PG`，系统就会从另外两个`PG`中复制数据到其他磁盘上。这个是由`crush`算法决定
+
+    - 磁盘复制属性值可以通过管理员进行调整
+
+    - 磁盘存储上使用了加权机制，所以磁盘大小不一致也不会出现问题
+
+### 对比SAN、NAS、DAS
+
+- DAS
+
+    `Direct Attached Storage`，即直连附加存储，第一代存储系统，通过`SCSI`总线扩展至一个外部的存储，磁带整列，作为服务器扩展的一部分
+
+- NAS
+
+    `Network Attached Storage`，即网络附加存储，通过网络协议如`NFS`远程获取后端文件服务器共享的存储空间，将文件存储单独分离出来
+    
+- SAN
+
+    `Storage Area Network`，即存储区域网络，分为`IP-SAN`和`FC-SAN`，即通过`TCP/IP`协议和`FC`(Fiber Channel)光纤协议连接到存储服务器
+    
+- Ceph
+
+    `Ceph`在一个统一的存储系统中同时提供了对象存储、块存储和文件存储，即`Ceph`是一个统一存储，能够将企业企业中的三种存储需求统一汇总到一个存储系统中，并提供分布式、横向扩展，高度可靠性的存储系统
+    
+**主要区别如下：**
+
+- `DAS`直连存储服务器使用`SCSI`或`FC`协议连接到存储阵列、通过`SCSI`总线和`FC`光纤协议类型进行数据传输；
+例如一块有空间大小的裸磁盘：`/dev/sdb`。`DAS`存储虽然组网简单、成本低廉但是可扩展性有限、无法多主机实现共享、目前已经很少使用
+
+- `NAS`网络存储服务器使用`TCP`网络协议连接至文件共享存储、常见的有`NFS`、`CIFS`协议等；通过网络的方式映射存储中的一个目录到目标主机，如`/data`。
+`NAS`网络存储使用简单，通过`IP`协议实现互相访问，多台主机可以同时共享同一个存储。但是`NAS`网络存储的性能有限，可靠性不是很高。
+
+- `SAN`存储区域网络服务器使用一个存储区域网络`IP`或`FC`连接到存储阵列、常见的`SAN`协议类型有`IP-SAN`和`FC-SAN`。`SAN`存储区域网络的性能非常好、可扩展性强；但是成本特别高、尤其是`FC`存储网络：因为需要用到`HBA`卡、`FC`交换机和支持`FC`接口的存储
+
+
+    | 存储结构/性能对比 | DAS | NAS | FC-SAN | IP-SAN | Ceph |
+    | :----:| :----: | :----: |
+    | 成本 | 低 | 较低 | 高 | 较高 | 高 |
+    | 数据传输速度 | 快 | 慢 | 极快 | 较快 | 快 |
+    | 扩展性 | 无扩展性 | 较低 | 易于扩展 | 最易扩展 | 易于扩展 |
+    | 服务器访问存储方式 | 块 | 文件 | 块 | 块 | 对象、文件、块 |
+    | 服务器系统性能开销 | 低 | 较低 | 低 | 较高 | 低 |
+    | 安全性 | 高 | 低 | 高 | 低 | 高 |
+    | 是否集中管理存储 | 否 | 是 | 是 | 是 | 否 |
+    | 备份效率 | 低 | 较低 | 高 | 较高 | 高 |
+    | 网络传输协议 | 无 | TCP/IP | FC | TCP/IP | 私有协议(TCP) |
+
 ### ceph-deploy部署N版
 
-> 配置阿里云仓储
+> 节点信息
+
+    | 节点名称 | 节点IP | 节点属性 |
+    | :----:| :----: | :----: |
+    | ceph01 | 192.168.1.69 | admin,deploy,mon |
+    | ceph02 | 192.168.1.70 | 单元格 |
+    | ceph03 | 192.168.1.70 | 单元格 |
+    
+> 前置要求
+
+- `yum`联网(可通过配置代理实现)
+- `ceph`节点配置时钟同步
+
+> 配置阿里云仓储（所有节点）
 
     cat > /etc/yum.repos.d/ceph.repo <<EOF
     [Ceph]
@@ -36,52 +117,53 @@
     gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
     EOF
 
-> 创建ceph目录
+> 创建ceph目录(deploy节点)
 
-    mkdir -p /etc/ceph/cluster
+    mkdir -p /etc/ceph
     
-> 初始化mon节点
+> 配置主机互信(deploy节点)
 
-    cd /etc/ceph/cluster
-    cephadm bootstrap --mon-ip 192.168.1.3 --skip-pull
+    ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/id_rsa
+    ssh-copy-id ceph01
+    ssh-copy-id ceph02
+    ssh-copy-id ceph03
     
-> 进入ceph指令
+> 安装`ceph`(所有节点)
 
-    cephadm shell
-    ceph -v 
+    yum install -y ceph
     
-![](images/cephadm-shell.png)
+> 初始化mon节点(deploy节点)
 
-推出shell
-
-    exit
+    ceph-deploy new ceph01 ceph02 ceph03
     
-> 安装ceph-cli
+> 初始化`mon`(deploy节点)
 
-    cephadm add-repo --release octopus
-    sed -i "s#download.ceph.com#mirrors.aliyun.com/ceph#g" /etc/yum.repos.d/ceph.repo
-    cephadm install ceph-common
+     ceph-deploy mon create-initial
+     
+> 修改集群文件(deploy节点)
+
+    cd /etc/ceph/
+    echo "public_network=192.168.1.0/24" >> /etc/ceph/ceph.conf
+    ceph-deploy --overwrite-conf config push ceph01 ceph02 ceph03
     
-> 分发公钥至其他节点
+> 查看集群状态
 
-    ceph cephadm get-pub-key > ~/ceph.pub
-    ssh-copy-id -f -i ~/ceph.pub root@node4
-    ssh-copy-id -f -i ~/ceph.pub root@node5
- 
+    [root@ceph01 ~]# ceph -s
+      cluster:
+        id:     b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+        health: HEALTH_WARN
+                mon ceph03 is low on available space
     
-> 添加新节点至集群
-
-    ceph orch host add node4
-    ceph orch host add node5
+      services:
+        mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 31m)
+        mgr: no daemons active
+        osd: 0 osds: 0 up, 0 in
     
-> 设置public_work
-
-    ceph config set mon public_network 192.168.1.0/24
-    
-> 设置三个节点Mon
-
-    ceph orch apply mon 3
-    ceph orch apply mon 192.168.174.108,192.168.174.109,192.168.174.110
+      data:
+        pools:   0 pools, 0 pgs
+        objects: 0 objects, 0 B
+        usage:   0 B used, 0 B / 0 B avail
+        pgs:
     
 > 安装命令补全
 
@@ -896,4 +978,19 @@ xx.配置访问前缀
     sed -r -i "s/namespace: [^ ]+/namespace: $NAMESPACE/g" ./rbac/*.yaml
     sed -i "/PROVISIONER_SECRET_NAMESPACE/{n;s/value:.*/value: $NAMESPACE/;}" rbac/deployment.yaml
     kubectl -n $NAMESPACE apply -f ./rbac
+    
+### 卸载
+
+    ceph-deploy purge ceph01 ceph02 ceph03
+    
+    ceph-deploy purgedata ceph01 ceph02 ceph03
+    
+    ceph-deploy forgetkeys
+    
+    rm -rf /var/lib/ceph
+    
+    
+## 参考文献
+
+- [SAN和NAS之间的基本区别](https://www.cnblogs.com/cainiao-chuanqi/p/12204944.html)
     
