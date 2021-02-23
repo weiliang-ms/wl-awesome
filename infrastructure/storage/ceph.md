@@ -2,12 +2,279 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [ceph-deploy部署N版](#ceph-deploy%E9%83%A8%E7%BD%B2n%E7%89%88)
-- [ceph添加磁盘](#ceph%E6%B7%BB%E5%8A%A0%E7%A3%81%E7%9B%98)
-- [crush pool](#crush-pool)
-- [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
+- [Ceph存储](#ceph%E5%AD%98%E5%82%A8)
+  - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
+    - [对比raid](#%E5%AF%B9%E6%AF%94raid)
+    - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
+    - [对比其他分布式存储](#%E5%AF%B9%E6%AF%94%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8)
+  - [集成部署](#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
+    - [ceph-deploy部署N版](#ceph-deploy%E9%83%A8%E7%BD%B2n%E7%89%88)
+  - [运维管理](#%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
+    - [ceph添加磁盘](#ceph%E6%B7%BB%E5%8A%A0%E7%A3%81%E7%9B%98)
+    - [crush pool](#crush-pool)
+    - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
+    - [k8s对接cephfs](#k8s%E5%AF%B9%E6%8E%A5cephfs)
+    - [卸载](#%E5%8D%B8%E8%BD%BD)
+  - [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Ceph存储
+
+## 硬件需求
+
+`Ceph`被设计成在普通硬件上运行，这使得构建和维护`pb`级数据集群在经济上可行,在规划集群硬件时，需要平衡许多考虑因素，包括故障域和潜在的性能问题。
+硬件规划应该包括在多个主机上分布`Ceph`守护进程和其他使用`Ceph`的进程。官方建议在为特定类型的守护进程配置的主机上运行特定类型的`Ceph`守护进程。
+
+即`ceph`集群与客户端应为不同宿主机，具体硬件需求参考如下：
+
+### CPU
+
+`Ceph`元数据服务器动态地重新分配它们的负载，这是`CPU`密集型的。因此，元数据服务器应该具有强大的处理能力(例如，四核或更好的cpu)。`Ceph OSDs`运行`RADOS`服务，使用`CRUSH`计算数据位置，复制数据，并维护它们自己的集群映射副本。
+因此，`osd`应该具有合理的处理能力(例如，双核处理器)。监视器只是维护集群映射的主副本，因此它们不是`CPU`密集型的。
+您还必须考虑主机除了运行`Ceph`守护进程外，是否还将运行`cpu`密集型进程。
+例如，如果您的主机将运行计算虚拟机(例如`OpenStack Nova`)，您将需要确保这些其他进程为`Ceph`守护进程留出足够的处理能力。
+建议在不同的主机上运行额外的`cpu`密集型进程
+
+**样例集群CPU配置：**
+
+    Architecture:          x86_64
+    CPU op-mode(s):        32-bit, 64-bit
+    Byte Order:            Little Endian
+    CPU(s):                72
+    On-line CPU(s) list:   0-71
+    Thread(s) per core:    2
+    Core(s) per socket:    18
+    Socket(s):             2
+    NUMA node(s):          2
+    Vendor ID:             GenuineIntel
+    CPU family:            6
+    Model:                 85
+    Model name:            Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz
+    Stepping:              7
+    CPU MHz:               999.914
+    CPU max MHz:           3900.0000
+    CPU min MHz:           1000.0000
+    BogoMIPS:              5200.00
+    Virtualization:        VT-x
+    L1d cache:             32K
+    L1i cache:             32K
+    L2 cache:              1024K
+    L3 cache:              25344K
+    NUMA node0 CPU(s):     0-17,36-53
+    NUMA node1 CPU(s):     18-35,54-71
+    Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb cat_l3 cdp_l3 invpcid_single intel_ppin intel_pt ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req pku ospke avx512_vnni md_clear spec_ctrl intel_stibp flush_l1d arch_capabilities
+
+### 内存
+
+内存越多越好
+
+- `CEPH-MON`&`CEPH-MGR`（监控、管理节点）
+
+    监视器和管理器守护进程的内存使用情况通常随集群的大小而变化。对于小型集群，一般1-2`GB`就足够了。对于大型集群，您应该提供更多(5-10`GB`)。您可能还需要考虑调整`mon_osd_cache_size`或`rocksdb_cache_size`等设置
+ 
+- `CEPH-MDS`元数据节点
+
+    元数据守护进程的内存利用率取决于它的缓存被配置为消耗多少内存。对于大多数系统，官方建议至少使用1`GB`。具体大小可调整`mds_cache_memory`
+    
+- `OSDS`(`CEPH-OSD`)存储节点
+
+    默认情况下，使用`BlueStore`后端的`osd`需要3-5`GB` `RAM`。当使用`BlueStore`时，
+    可以通过配置选项`osd_memory_target`来调整`OSD`的内存消耗。当使用遗留的`FileStore`后端时，
+    操作系统页面缓存用于缓存数据，所以通常不需要进行调优，并且`OSD`的内存消耗通常与系统中每个守护进程的`PGs`数量有关。
+
+**样例集群内存配置：**
+
+                  total        used        free      shared  buff/cache   available
+    Mem:           187G        8.8G        164G        4.0G         13G        173G
+    Swap:            0B          0B          0B
+
+### 存储
+
+请仔细规划您的数据存储配置。在规划数据存储时，需要考虑大量的成本和性能折衷。
+同时进行`OS`操作，以及多个守护进程对单个驱动器同时进行读和写操作的请求会显著降低性能。
+
+**注意：**
+
+因为`Ceph`在发送`ACK`之前必须把所有的数据都写到日志中(至少对于`XFS`来说是这样)，让日志和`OSD`的性能平衡是非常重要的!
+
+- 硬盘驱动器
+  
+    `osd`应该有足够的硬盘驱动器空间来存放对象数据。官方建议硬盘驱动器的最小大小为1`TB`。
+    考虑较大磁盘的每`GB`成本优势。官方建议将硬盘驱动器的价格除以千兆字节数，得出每千兆字节的成本，因为较大的驱动器可能对每千兆字节的成本有很大的影响。
+    例如，价格为$75.00的1`TB`硬盘的成本为每`GB`$0.07(即$75 / 1024 = 0.0732)。
+    相比之下，价格为150美元的3`TB`硬盘的成本为每`GB` 0.05美元(即150美元/ 3072 = 0.0488)。
+    在前面的示例中，使用1`TB`的磁盘通常会使每`GB`的成本增加40%——从而大大降低集群的成本效率。
+    此外，存储驱动器容量越大，每个`Ceph OSD`守护进程需要的内存就越多，尤其是在重新平衡、回填和恢复期间。
+    一般的经验法则是1`TB`的存储空间需要`1GB`的`RAM`
+    
+    存储驱动器受到寻道时间、访问时间、读和写时间以及总吞吐量的限制。
+    这些物理限制会影响整个系统的性能——尤其是在恢复过程中。
+    官方建议为操作系统和软件使用专用的驱动器，为主机上运行的每个`Ceph OSD`守护进程使用一个驱动器(物理硬盘)。
+    大多数`慢OSD`问题是由于在同一个驱动器上运行一个操作系统、多个`OSD`和/或多个日志引起的。
+    由于在小型集群上故障排除性能问题的成本可能会超过额外磁盘驱动器的成本，因此可以通过避免过度使用`OSD`存储驱动器来加速集群设计规划
+    
+    您可以在每个硬盘驱动器上运行多个`Ceph OSD`进程，但这可能会导致资源争用，并降低总体吞吐量。
+    您可以将日志和对象数据存储在同一个驱动器上，但这可能会增加向客户端记录写操作和`ACK`所需的时间。
+    `Ceph`必须先向日志写入数据，然后才能对写入数据进行验证
+    
+**总结为：`Ceph`最佳实践规定，您应该在不同的驱动器上运行操作系统、`OSD`数据和`OSD`日志**
+
+- 固态硬盘
+  
+    提高性能的一个机会是使用固态驱动器(SSD)来减少随机访问时间和读取延迟，同时加速吞吐量。
+    与硬盘驱动器相比，`SSD`每`GB`的成本通常超过10倍，但`SSD`的访问时间通常至少比硬盘驱动器快100倍
+    
+    `SSD`没有可移动的机械部件，因此它们不必受到与硬盘驱动器相同类型的限制。不过`SSD`确实有很大的局限性。
+    在评估`SSD`时，考虑顺序读写的性能是很重要的。
+    当存储多个`osd`的多个日志时，顺序写吞吐量为400MB/s的`SSD`可能比顺序写吞吐量为120MB/s的`SSD`性能更好
+    
+    由于`SSD`没有可移动的机械部件，所以在`Ceph`中不需要大量存储空间的区域使用`SSD`是有意义的。
+    相对便宜的固态硬盘可能会吸引你的经济意识。谨慎使用。
+    当选择与`Ceph`一起使用的`SSD`时，可接受的`IOPS`是不够的。对于日志和`SSD`有几个重要的性能考虑因素:
+    - 写密集型语义:日志记录涉及写密集型语义，因此您应该确保选择部署的`SSD`在写入数据时的性能等于或优于硬盘驱动器。
+    廉价的`SSD`可能会在加速访问时间的同时引入写延迟，因为有时高性能硬盘驱动器的写速度可以与市场上一些更经济的`SSD`一样快甚至更快!
+    - 顺序写:当您在一个`SSD`上存储多个日志时，您还必须考虑`SSD`的顺序写限制，因为它们可能会同时处理多个`OSD`日志的写请求。
+    - 分区对齐:`SSD`性能的一个常见问题是，人们喜欢将驱动器分区作为最佳实践，但他们常常忽略了使用`SSD`进行正确的分区对齐，这可能导致`SSD`传输数据的速度慢得多。确保`SSD`分区对齐
+
+    虽然`SSD`存储对象的成本非常高，但是通过将`OSD`的日志存储在`SSD`上，将`OSD`的对象数据存储在单独的硬盘驱动器上，可以显著提高`OSD`的性能。
+    `osd`日志配置默认为`/var/lib/ceph/osd/$cluster-$id/journal`。您可以将此路径挂载到`SSD`或`SSD`分区上，使其与对象数据不只是同一个磁盘上的文件
+
+    `Ceph`加速`CephFS`文件系统性能的一种方法是将`CephFS`元数据的存储与`CephFS`文件内容的存储隔离。
+    `Ceph`为`cepfs`元数据提供了一个默认的元数据池。您永远不必为`CephFS`元数据创建一个池，但是您可以为仅指向主机的`SSD`存储介质的`CephFS`元数据池创建一个`CRUSH map`层次结构。
+
+**重要提示: 官方建议探索`SSD`的使用以提高性能。但是，在对`SSD`进行重大投资之前，官方强烈建议检查`SSD`的性能指标，并在测试配置中测试`SSD`，以评估性能**
+
+- 控制器
+
+    磁盘控制器对写吞吐量也有很大的影响。仔细考虑磁盘控制器的选择，以确保它们不会造成性能瓶颈。
+    
+- 注意事项
+
+    你可以在每个主机上运行多个`OSD`，但是你应该确保`OSD`硬盘的总吞吐量不超过客户端读写数据所需的网络带宽。
+    您还应该考虑集群在每个主机上存储的总体数据的百分比。如果某个主机上的百分比很大，并且该主机发生故障，那么它可能会导致一些问题，比如超过了完整的比例，这将导致`Ceph`停止操作，作为防止数据丢失的安全预防措施。
+
+    当您在每个主机上运行多个`osd`时，还需要确保内核是最新的。请参阅`OS`推荐，了解`glibc`和`syncfs(2)`方面的注意事项，以确保在每个主机上运行多个`osd`时，您的硬件能够像预期的那样执行    
+
+    拥有大量`osd`的主机(例如> 20)可能会产生大量线程，特别是在恢复和平衡过程中。许多`Linux`内核默认的最大线程数相对较小(例如，32k)。如果在拥有大量`osd`的主机上启动`osd`时遇到问题，请考虑设置`kernel`。将`pid_max`设置为更高的线程数。理论最大值是4,194,303线程。
+    例如，您可以将以下内容添加到`/etc/sysctl.conf`文件中: 
+    
+    
+    kernel.pid_max = 4194303
+    
+- 网络
+
+官方说明如下:
+
+   - 每个主机至少有两个`1Gbps`的网络接口控制器(`nic`)。由于大多数普通硬盘驱动器的吞吐量大约为100MB/秒，您的网卡应该能够处理主机上`OSD`磁盘的流量
+   - 建议至少使用两个网卡来考虑公共(前端)网络和集群(后端)网络。集群网络(最好不连接到外部网络)处理数据复制的额外负载
+   - 通过`1Gbps`的网络复制`1TB`的数据需要3个小时，`3TB`(典型的驱动器配置)需要9个小时。相比之下，在`10Gbps`的网络中，复制时间将分别为20分钟和1小时。
+   - 在`pb`级集群中，`OSD`磁盘故障应该是一种预期，而不是异常。系统管理员希望`PGs`尽可能快地从降级状态恢复到`active + clean`状态，同时考虑到价格/性能权衡。
+   此外，一些部署工具(如戴尔的Crowbar)可以部署5个不同的网络，但使用`vlan`使硬件和网络电缆更易于管理。使用`802.1q`协议的`vlan`需要支持`vlan`的网卡和交换机。增加的硬件费用可能会被网络设置和维护的操作成本节省所抵消
+   - 当使用`vlan`处理集群与计算栈(如OpenStack、CloudStack等)之间的虚拟机流量时，也值得考虑使用`10G`以太网。
+   每个网络的机架顶部路由器也需要能够与具有更快吞吐量的脊柱路由器进行通信。`40Gbps`到`100Gbps`
+   - 您的服务器硬件应该有一个底板管理控制器(BMC)。管理和部署工具也可能广泛地使用`bmc`，
+   因此考虑使用带外网络进行管理的成本/收益权衡。管理程序`SSH`访问、`VM`镜像上传、操作系统镜像安装、管理套接字等都可能给网络带来巨大的负载。
+   运行三个网络可能看起来有点小题大做，但每个流量路径都代表一个潜在的容量、吞吐量和/或性能瓶颈，在部署大规模数据集群之前，您应该仔细考虑这些问题
+    
+**简言之：**
+    建议三个网络接口：
+- ceph集群网络接口
+- 对外网络接口
+- 管理接口    
+    
+**样例集群存储配置：**
+
+    Disk /dev/nvme0n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    
+    
+    Disk /dev/nvme1n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    
+    
+    Disk /dev/nvme2n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    
+    
+    Disk /dev/nvme3n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    
+    
+    Disk /dev/sdb: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+    
+    Disk /dev/sda: 480.1 GB, 480103981056 bytes, 937703088 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    Disk label type: gpt
+    Disk identifier: EDC26861-DACE-4831-848D-4FA0C5F642D7
+    
+    
+    #         Start          End    Size  Type            Name
+     1         2048      2099199      1G  EFI System      EFI System Partition
+     2      2099200      4196351      1G  Microsoft basic
+     3      4196352    937701375  445.1G  Linux LVM
+    
+    Disk /dev/sde: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    
+    Disk /dev/sdd: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    
+    Disk /dev/sdg: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    
+    Disk /dev/sdf: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+    
+    Disk /dev/sdh: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    Disk label type: gpt
+    Disk identifier: 5F151167-14E6-4826-BBEB-55280AC27EEC
+    
+    
+    #         Start          End    Size  Type            Name
+     1     10487808   1875384974  889.3G  Ceph OSD        ceph data
+     2         2048     10487807      5G  Ceph Journal    ceph journal
+    
+    Disk /dev/sdc: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+    Disk /dev/mapper/centos-root: 478.0 GB, 477953523712 bytes, 933502976 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 4096 bytes
+    I/O size (minimum/optimal): 4096 bytes / 4096 bytes
 
 ## 竞品对比
 
@@ -77,7 +344,10 @@
     | 是否集中管理存储 | 否 | 是 | 是 | 是 | 否 |
     | 备份效率 | 低 | 较低 | 高 | 较高 | 高 |
     | 网络传输协议 | 无 | TCP/IP | FC | TCP/IP | 私有协议(TCP) |
+    
+### 对比其他分布式存储
 
+## 集成部署
 ### ceph-deploy部署N版
 
 - 节点信息
@@ -209,6 +479,7 @@ xx.配置访问前缀
    
     ceph config set mgr mgr/dashboard/url_prefix /ceph-ui
 
+## 运维管理
 ### ceph添加磁盘
 
 > 列出节点`node3`磁盘信息
@@ -286,12 +557,12 @@ xx.配置访问前缀
     
 磁盘类型说明
 
-    sda-sdk 为ssd类型，sda先不加入集群
+    sda-sdk 为SSD类型，sda先不加入集群
     nvme0n1、nvme1n1、nvme2n1、nvme3n1为nvme类型
     系统盘：nvme0n1
    
     
-> 擦净节点ssd类型磁盘
+> 擦净节点SSD类型磁盘
 
     cd /etc/ceph/cluster
     for i in {b..k};do
@@ -308,7 +579,7 @@ xx.配置访问前缀
     ceph-deploy disk zap node5 /dev/sd$i
     done
     
-> 创建ssd类型OSD节点
+> 创建SSD类型OSD节点
  
     cd /etc/ceph/cluster
     for i in {b..k};do
@@ -367,92 +638,92 @@ xx.配置访问前缀
 回显如下
 
     ID CLASS WEIGHT   TYPE NAME
-    -2   ssd 41.26323 root default~ssd
-    -4   ssd 13.75441     host node3~ssd
-     0   ssd  0.87329         osd.0
-     1   ssd  0.87329         osd.1
-     2   ssd  0.87329         osd.2
-     3   ssd  0.87329         osd.3
-     4   ssd  0.87329         osd.4
-     5   ssd  0.87329         osd.5
-     6   ssd  0.87329         osd.6
-     7   ssd  0.43660         osd.7
-     8   ssd  0.87329         osd.8
-     9   ssd  0.87329         osd.9
-    30   ssd  1.81940         osd.30
-    31   ssd  1.81940         osd.31
-    32   ssd  1.81940         osd.32
-    -6   ssd 13.75441     host node4~ssd
-    10   ssd  0.43660         osd.10
-    11   ssd  0.87329         osd.11
-    12   ssd  0.87329         osd.12
-    13   ssd  0.87329         osd.13
-    14   ssd  0.87329         osd.14
-    15   ssd  0.87329         osd.15
-    16   ssd  0.87329         osd.16
-    17   ssd  0.87329         osd.17
-    18   ssd  0.87329         osd.18
-    19   ssd  0.87329         osd.19
-    33   ssd  1.81940         osd.33
-    34   ssd  1.81940         osd.34
-    35   ssd  1.81940         osd.35
-    -8   ssd 13.75441     host node5~ssd
-    20   ssd  0.43660         osd.20
-    21   ssd  0.87329         osd.21
-    22   ssd  0.87329         osd.22
-    23   ssd  0.87329         osd.23
-    24   ssd  0.87329         osd.24
-    25   ssd  0.87329         osd.25
-    26   ssd  0.87329         osd.26
-    27   ssd  0.87329         osd.27
-    28   ssd  0.87329         osd.28
-    29   ssd  0.87329         osd.29
-    36   ssd  1.81940         osd.36
-    37   ssd  1.81940         osd.37
-    38   ssd  1.81940         osd.38
+    -2   SSD 41.26323 root default~SSD
+    -4   SSD 13.75441     host node3~SSD
+     0   SSD  0.87329         osd.0
+     1   SSD  0.87329         osd.1
+     2   SSD  0.87329         osd.2
+     3   SSD  0.87329         osd.3
+     4   SSD  0.87329         osd.4
+     5   SSD  0.87329         osd.5
+     6   SSD  0.87329         osd.6
+     7   SSD  0.43660         osd.7
+     8   SSD  0.87329         osd.8
+     9   SSD  0.87329         osd.9
+    30   SSD  1.81940         osd.30
+    31   SSD  1.81940         osd.31
+    32   SSD  1.81940         osd.32
+    -6   SSD 13.75441     host node4~SSD
+    10   SSD  0.43660         osd.10
+    11   SSD  0.87329         osd.11
+    12   SSD  0.87329         osd.12
+    13   SSD  0.87329         osd.13
+    14   SSD  0.87329         osd.14
+    15   SSD  0.87329         osd.15
+    16   SSD  0.87329         osd.16
+    17   SSD  0.87329         osd.17
+    18   SSD  0.87329         osd.18
+    19   SSD  0.87329         osd.19
+    33   SSD  1.81940         osd.33
+    34   SSD  1.81940         osd.34
+    35   SSD  1.81940         osd.35
+    -8   SSD 13.75441     host node5~SSD
+    20   SSD  0.43660         osd.20
+    21   SSD  0.87329         osd.21
+    22   SSD  0.87329         osd.22
+    23   SSD  0.87329         osd.23
+    24   SSD  0.87329         osd.24
+    25   SSD  0.87329         osd.25
+    26   SSD  0.87329         osd.26
+    27   SSD  0.87329         osd.27
+    28   SSD  0.87329         osd.28
+    29   SSD  0.87329         osd.29
+    36   SSD  1.81940         osd.36
+    37   SSD  1.81940         osd.37
+    38   SSD  1.81940         osd.38
     -1       41.26323 root default
     -3       13.75441     host node3
-     0   ssd  0.87329         osd.0
-     1   ssd  0.87329         osd.1
-     2   ssd  0.87329         osd.2
-     3   ssd  0.87329         osd.3
-     4   ssd  0.87329         osd.4
-     5   ssd  0.87329         osd.5
-     6   ssd  0.87329         osd.6
-     7   ssd  0.43660         osd.7
-     8   ssd  0.87329         osd.8
-     9   ssd  0.87329         osd.9
-    30   ssd  1.81940         osd.30
-    31   ssd  1.81940         osd.31
-    32   ssd  1.81940         osd.32
+     0   SSD  0.87329         osd.0
+     1   SSD  0.87329         osd.1
+     2   SSD  0.87329         osd.2
+     3   SSD  0.87329         osd.3
+     4   SSD  0.87329         osd.4
+     5   SSD  0.87329         osd.5
+     6   SSD  0.87329         osd.6
+     7   SSD  0.43660         osd.7
+     8   SSD  0.87329         osd.8
+     9   SSD  0.87329         osd.9
+    30   SSD  1.81940         osd.30
+    31   SSD  1.81940         osd.31
+    32   SSD  1.81940         osd.32
     -5       13.75441     host node4
-    10   ssd  0.43660         osd.10
-    11   ssd  0.87329         osd.11
-    12   ssd  0.87329         osd.12
-    13   ssd  0.87329         osd.13
-    14   ssd  0.87329         osd.14
-    15   ssd  0.87329         osd.15
-    16   ssd  0.87329         osd.16
-    17   ssd  0.87329         osd.17
-    18   ssd  0.87329         osd.18
-    19   ssd  0.87329         osd.19
-    33   ssd  1.81940         osd.33
-    34   ssd  1.81940         osd.34
-    35   ssd  1.81940         osd.35
+    10   SSD  0.43660         osd.10
+    11   SSD  0.87329         osd.11
+    12   SSD  0.87329         osd.12
+    13   SSD  0.87329         osd.13
+    14   SSD  0.87329         osd.14
+    15   SSD  0.87329         osd.15
+    16   SSD  0.87329         osd.16
+    17   SSD  0.87329         osd.17
+    18   SSD  0.87329         osd.18
+    19   SSD  0.87329         osd.19
+    33   SSD  1.81940         osd.33
+    34   SSD  1.81940         osd.34
+    35   SSD  1.81940         osd.35
     -7       13.75441     host node5
-    20   ssd  0.43660         osd.20
-    21   ssd  0.87329         osd.21
-    22   ssd  0.87329         osd.22
-    23   ssd  0.87329         osd.23
-    24   ssd  0.87329         osd.24
-    25   ssd  0.87329         osd.25
-    26   ssd  0.87329         osd.26
-    27   ssd  0.87329         osd.27
-    28   ssd  0.87329         osd.28
-    29   ssd  0.87329         osd.29
-    36   ssd  1.81940         osd.36
-    37   ssd  1.81940         osd.37
-    38   ssd  1.81940         osd.38
+    20   SSD  0.43660         osd.20
+    21   SSD  0.87329         osd.21
+    22   SSD  0.87329         osd.22
+    23   SSD  0.87329         osd.23
+    24   SSD  0.87329         osd.24
+    25   SSD  0.87329         osd.25
+    26   SSD  0.87329         osd.26
+    27   SSD  0.87329         osd.27
+    28   SSD  0.87329         osd.28
+    29   SSD  0.87329         osd.29
+    36   SSD  1.81940         osd.36
+    37   SSD  1.81940         osd.37
+    38   SSD  1.81940         osd.38
 
 > 修改nvme类型class
 
@@ -498,83 +769,83 @@ xx.配置访问前缀
      36  nvme  1.81940         osd.36
      37  nvme  1.81940         osd.37
      38  nvme  1.81940         osd.38
-     -2   ssd 24.88866 root default~ssd
-     -4   ssd  8.29622     host node3~ssd
-      0   ssd  0.87329         osd.0
-      1   ssd  0.87329         osd.1
-      2   ssd  0.87329         osd.2
-      3   ssd  0.87329         osd.3
-      4   ssd  0.87329         osd.4
-      5   ssd  0.87329         osd.5
-      6   ssd  0.87329         osd.6
-      7   ssd  0.43660         osd.7
-      8   ssd  0.87329         osd.8
-      9   ssd  0.87329         osd.9
-     -6   ssd  8.29622     host node4~ssd
-     10   ssd  0.43660         osd.10
-     11   ssd  0.87329         osd.11
-     12   ssd  0.87329         osd.12
-     13   ssd  0.87329         osd.13
-     14   ssd  0.87329         osd.14
-     15   ssd  0.87329         osd.15
-     16   ssd  0.87329         osd.16
-     17   ssd  0.87329         osd.17
-     18   ssd  0.87329         osd.18
-     19   ssd  0.87329         osd.19
-     -8   ssd  8.29622     host node5~ssd
-     20   ssd  0.43660         osd.20
-     21   ssd  0.87329         osd.21
-     22   ssd  0.87329         osd.22
-     23   ssd  0.87329         osd.23
-     24   ssd  0.87329         osd.24
-     25   ssd  0.87329         osd.25
-     26   ssd  0.87329         osd.26
-     27   ssd  0.87329         osd.27
-     28   ssd  0.87329         osd.28
-     29   ssd  0.87329         osd.29
+     -2   SSD 24.88866 root default~SSD
+     -4   SSD  8.29622     host node3~SSD
+      0   SSD  0.87329         osd.0
+      1   SSD  0.87329         osd.1
+      2   SSD  0.87329         osd.2
+      3   SSD  0.87329         osd.3
+      4   SSD  0.87329         osd.4
+      5   SSD  0.87329         osd.5
+      6   SSD  0.87329         osd.6
+      7   SSD  0.43660         osd.7
+      8   SSD  0.87329         osd.8
+      9   SSD  0.87329         osd.9
+     -6   SSD  8.29622     host node4~SSD
+     10   SSD  0.43660         osd.10
+     11   SSD  0.87329         osd.11
+     12   SSD  0.87329         osd.12
+     13   SSD  0.87329         osd.13
+     14   SSD  0.87329         osd.14
+     15   SSD  0.87329         osd.15
+     16   SSD  0.87329         osd.16
+     17   SSD  0.87329         osd.17
+     18   SSD  0.87329         osd.18
+     19   SSD  0.87329         osd.19
+     -8   SSD  8.29622     host node5~SSD
+     20   SSD  0.43660         osd.20
+     21   SSD  0.87329         osd.21
+     22   SSD  0.87329         osd.22
+     23   SSD  0.87329         osd.23
+     24   SSD  0.87329         osd.24
+     25   SSD  0.87329         osd.25
+     26   SSD  0.87329         osd.26
+     27   SSD  0.87329         osd.27
+     28   SSD  0.87329         osd.28
+     29   SSD  0.87329         osd.29
      -1       41.26323 root default
      -3       13.75441     host node3
      30  nvme  1.81940         osd.30
      31  nvme  1.81940         osd.31
      32  nvme  1.81940         osd.32
-      0   ssd  0.87329         osd.0
-      1   ssd  0.87329         osd.1
-      2   ssd  0.87329         osd.2
-      3   ssd  0.87329         osd.3
-      4   ssd  0.87329         osd.4
-      5   ssd  0.87329         osd.5
-      6   ssd  0.87329         osd.6
-      7   ssd  0.43660         osd.7
-      8   ssd  0.87329         osd.8
-      9   ssd  0.87329         osd.9
+      0   SSD  0.87329         osd.0
+      1   SSD  0.87329         osd.1
+      2   SSD  0.87329         osd.2
+      3   SSD  0.87329         osd.3
+      4   SSD  0.87329         osd.4
+      5   SSD  0.87329         osd.5
+      6   SSD  0.87329         osd.6
+      7   SSD  0.43660         osd.7
+      8   SSD  0.87329         osd.8
+      9   SSD  0.87329         osd.9
      -5       13.75441     host node4
      33  nvme  1.81940         osd.33
      34  nvme  1.81940         osd.34
      35  nvme  1.81940         osd.35
-     10   ssd  0.43660         osd.10
-     11   ssd  0.87329         osd.11
-     12   ssd  0.87329         osd.12
-     13   ssd  0.87329         osd.13
-     14   ssd  0.87329         osd.14
-     15   ssd  0.87329         osd.15
-     16   ssd  0.87329         osd.16
-     17   ssd  0.87329         osd.17
-     18   ssd  0.87329         osd.18
-     19   ssd  0.87329         osd.19
+     10   SSD  0.43660         osd.10
+     11   SSD  0.87329         osd.11
+     12   SSD  0.87329         osd.12
+     13   SSD  0.87329         osd.13
+     14   SSD  0.87329         osd.14
+     15   SSD  0.87329         osd.15
+     16   SSD  0.87329         osd.16
+     17   SSD  0.87329         osd.17
+     18   SSD  0.87329         osd.18
+     19   SSD  0.87329         osd.19
      -7       13.75441     host node5
      36  nvme  1.81940         osd.36
      37  nvme  1.81940         osd.37
      38  nvme  1.81940         osd.38
-     20   ssd  0.43660         osd.20
-     21   ssd  0.87329         osd.21
-     22   ssd  0.87329         osd.22
-     23   ssd  0.87329         osd.23
-     24   ssd  0.87329         osd.24
-     25   ssd  0.87329         osd.25
-     26   ssd  0.87329         osd.26
-     27   ssd  0.87329         osd.27
-     28   ssd  0.87329         osd.28
-     29   ssd  0.87329         osd.29
+     20   SSD  0.43660         osd.20
+     21   SSD  0.87329         osd.21
+     22   SSD  0.87329         osd.22
+     23   SSD  0.87329         osd.23
+     24   SSD  0.87329         osd.24
+     25   SSD  0.87329         osd.25
+     26   SSD  0.87329         osd.26
+     27   SSD  0.87329         osd.27
+     28   SSD  0.87329         osd.28
+     29   SSD  0.87329         osd.29
 
 
 > 添加节点`/dev/sda`磁盘
@@ -619,89 +890,89 @@ xx.配置访问前缀
      36  nvme  1.81940         osd.36
      37  nvme  1.81940         osd.37
      38  nvme  1.81940         osd.38
-     -2   ssd 27.50853 root default~ssd
-     -4   ssd  9.16951     host node3~ssd
-      0   ssd  0.87329         osd.0
-      1   ssd  0.87329         osd.1
-      2   ssd  0.87329         osd.2
-      3   ssd  0.87329         osd.3
-      4   ssd  0.87329         osd.4
-      5   ssd  0.87329         osd.5
-      6   ssd  0.87329         osd.6
-      7   ssd  0.43660         osd.7
-      8   ssd  0.87329         osd.8
-      9   ssd  0.87329         osd.9
-     39   ssd  0.87329         osd.39
-     -6   ssd  9.16951     host node4~ssd
-     10   ssd  0.43660         osd.10
-     11   ssd  0.87329         osd.11
-     12   ssd  0.87329         osd.12
-     13   ssd  0.87329         osd.13
-     14   ssd  0.87329         osd.14
-     15   ssd  0.87329         osd.15
-     16   ssd  0.87329         osd.16
-     17   ssd  0.87329         osd.17
-     18   ssd  0.87329         osd.18
-     19   ssd  0.87329         osd.19
-     40   ssd  0.87329         osd.40
-     -8   ssd  9.16951     host node5~ssd
-     20   ssd  0.43660         osd.20
-     21   ssd  0.87329         osd.21
-     22   ssd  0.87329         osd.22
-     23   ssd  0.87329         osd.23
-     24   ssd  0.87329         osd.24
-     25   ssd  0.87329         osd.25
-     26   ssd  0.87329         osd.26
-     27   ssd  0.87329         osd.27
-     28   ssd  0.87329         osd.28
-     29   ssd  0.87329         osd.29
-     41   ssd  0.87329         osd.41
+     -2   SSD 27.50853 root default~SSD
+     -4   SSD  9.16951     host node3~SSD
+      0   SSD  0.87329         osd.0
+      1   SSD  0.87329         osd.1
+      2   SSD  0.87329         osd.2
+      3   SSD  0.87329         osd.3
+      4   SSD  0.87329         osd.4
+      5   SSD  0.87329         osd.5
+      6   SSD  0.87329         osd.6
+      7   SSD  0.43660         osd.7
+      8   SSD  0.87329         osd.8
+      9   SSD  0.87329         osd.9
+     39   SSD  0.87329         osd.39
+     -6   SSD  9.16951     host node4~SSD
+     10   SSD  0.43660         osd.10
+     11   SSD  0.87329         osd.11
+     12   SSD  0.87329         osd.12
+     13   SSD  0.87329         osd.13
+     14   SSD  0.87329         osd.14
+     15   SSD  0.87329         osd.15
+     16   SSD  0.87329         osd.16
+     17   SSD  0.87329         osd.17
+     18   SSD  0.87329         osd.18
+     19   SSD  0.87329         osd.19
+     40   SSD  0.87329         osd.40
+     -8   SSD  9.16951     host node5~SSD
+     20   SSD  0.43660         osd.20
+     21   SSD  0.87329         osd.21
+     22   SSD  0.87329         osd.22
+     23   SSD  0.87329         osd.23
+     24   SSD  0.87329         osd.24
+     25   SSD  0.87329         osd.25
+     26   SSD  0.87329         osd.26
+     27   SSD  0.87329         osd.27
+     28   SSD  0.87329         osd.28
+     29   SSD  0.87329         osd.29
+     41   SSD  0.87329         osd.41
      -1       43.88310 root default
      -3       14.62770     host node3
      30  nvme  1.81940         osd.30
      31  nvme  1.81940         osd.31
      32  nvme  1.81940         osd.32
-      0   ssd  0.87329         osd.0
-      1   ssd  0.87329         osd.1
-      2   ssd  0.87329         osd.2
-      3   ssd  0.87329         osd.3
-      4   ssd  0.87329         osd.4
-      5   ssd  0.87329         osd.5
-      6   ssd  0.87329         osd.6
-      7   ssd  0.43660         osd.7
-      8   ssd  0.87329         osd.8
-      9   ssd  0.87329         osd.9
-     39   ssd  0.87329         osd.39
+      0   SSD  0.87329         osd.0
+      1   SSD  0.87329         osd.1
+      2   SSD  0.87329         osd.2
+      3   SSD  0.87329         osd.3
+      4   SSD  0.87329         osd.4
+      5   SSD  0.87329         osd.5
+      6   SSD  0.87329         osd.6
+      7   SSD  0.43660         osd.7
+      8   SSD  0.87329         osd.8
+      9   SSD  0.87329         osd.9
+     39   SSD  0.87329         osd.39
      -5       14.62770     host node4
      33  nvme  1.81940         osd.33
      34  nvme  1.81940         osd.34
      35  nvme  1.81940         osd.35
-     10   ssd  0.43660         osd.10
-     11   ssd  0.87329         osd.11
-     12   ssd  0.87329         osd.12
-     13   ssd  0.87329         osd.13
-     14   ssd  0.87329         osd.14
-     15   ssd  0.87329         osd.15
-     16   ssd  0.87329         osd.16
-     17   ssd  0.87329         osd.17
-     18   ssd  0.87329         osd.18
-     19   ssd  0.87329         osd.19
-     40   ssd  0.87329         osd.40
+     10   SSD  0.43660         osd.10
+     11   SSD  0.87329         osd.11
+     12   SSD  0.87329         osd.12
+     13   SSD  0.87329         osd.13
+     14   SSD  0.87329         osd.14
+     15   SSD  0.87329         osd.15
+     16   SSD  0.87329         osd.16
+     17   SSD  0.87329         osd.17
+     18   SSD  0.87329         osd.18
+     19   SSD  0.87329         osd.19
+     40   SSD  0.87329         osd.40
      -7       14.62770     host node5
      36  nvme  1.81940         osd.36
      37  nvme  1.81940         osd.37
      38  nvme  1.81940         osd.38
-     20   ssd  0.43660         osd.20
-     21   ssd  0.87329         osd.21
-     22   ssd  0.87329         osd.22
-     23   ssd  0.87329         osd.23
-     24   ssd  0.87329         osd.24
-     25   ssd  0.87329         osd.25
-     26   ssd  0.87329         osd.26
-     27   ssd  0.87329         osd.27
-     28   ssd  0.87329         osd.28
-     29   ssd  0.87329         osd.29
-     41   ssd  0.87329         osd.41
+     20   SSD  0.43660         osd.20
+     21   SSD  0.87329         osd.21
+     22   SSD  0.87329         osd.22
+     23   SSD  0.87329         osd.23
+     24   SSD  0.87329         osd.24
+     25   SSD  0.87329         osd.25
+     26   SSD  0.87329         osd.26
+     27   SSD  0.87329         osd.27
+     28   SSD  0.87329         osd.28
+     29   SSD  0.87329         osd.29
+     41   SSD  0.87329         osd.41
      
 ### crush pool
 
@@ -709,9 +980,9 @@ xx.配置访问前缀
 
     #ceph osd crush rule create-replicated <rule-name> <root> <failure-domain> <class>
 
-创建`class` 为`ssd`的rule
+创建`class` 为`SSD`的rule
 
-    ceph osd crush rule create-replicated ssd_rule default host ssd
+    ceph osd crush rule create-replicated SSD_rule default host SSD
     
 创建`class` 为`nvme`的rule
 
@@ -730,10 +1001,10 @@ xx.配置访问前缀
 
     crush_rule: replicated_rule
 
-> 设置`container-pool`crush rule为`ssd_rule`
+> 设置`container-pool`crush rule为`SSD_rule`
 
     #ceph osd pool set <pool-name> crush_rule <rule-name>
-    ceph osd pool set container-pool crush_rule ssd_rule
+    ceph osd pool set container-pool crush_rule SSD_rule
 
 查看`container-pool`crush rule
 
@@ -741,7 +1012,7 @@ xx.配置访问前缀
     
 回显
  
-    crush_rule: ssd_rule
+    crush_rule: SSD_rule
     
 > 设置`container-pool`配额
 
