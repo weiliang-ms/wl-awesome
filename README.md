@@ -25,7 +25,7 @@
   - [jenkins](/cicd/jenkins.md)
 - [基础设施](#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD)
   - [存储](#%E5%AD%98%E5%82%A8)
-    - [ceph](#ceph)
+    - [ceph](/infrastructure/storage/ceph.md)
   - [虚拟化]()
     - [Ovirt](/infrastructure/virtaul/Ovirt.md)
 - [容器](#%E5%AE%B9%E5%99%A8)
