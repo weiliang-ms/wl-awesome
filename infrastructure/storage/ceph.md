@@ -162,27 +162,6 @@
     
     kernel.pid_max = 4194303
     
-- 网络
-
-官方说明如下:
-
-   - 每个主机至少有两个`1Gbps`的网络接口控制器(`nic`)。由于大多数普通硬盘驱动器的吞吐量大约为100MB/秒，您的网卡应该能够处理主机上`OSD`磁盘的流量
-   - 建议至少使用两个网卡来考虑公共(前端)网络和集群(后端)网络。集群网络(最好不连接到外部网络)处理数据复制的额外负载
-   - 通过`1Gbps`的网络复制`1TB`的数据需要3个小时，`3TB`(典型的驱动器配置)需要9个小时。相比之下，在`10Gbps`的网络中，复制时间将分别为20分钟和1小时。
-   - 在`pb`级集群中，`OSD`磁盘故障应该是一种预期，而不是异常。系统管理员希望`PGs`尽可能快地从降级状态恢复到`active + clean`状态，同时考虑到价格/性能权衡。
-   此外，一些部署工具(如戴尔的Crowbar)可以部署5个不同的网络，但使用`vlan`使硬件和网络电缆更易于管理。使用`802.1q`协议的`vlan`需要支持`vlan`的网卡和交换机。增加的硬件费用可能会被网络设置和维护的操作成本节省所抵消
-   - 当使用`vlan`处理集群与计算栈(如OpenStack、CloudStack等)之间的虚拟机流量时，也值得考虑使用`10G`以太网。
-   每个网络的机架顶部路由器也需要能够与具有更快吞吐量的脊柱路由器进行通信。`40Gbps`到`100Gbps`
-   - 您的服务器硬件应该有一个底板管理控制器(BMC)。管理和部署工具也可能广泛地使用`bmc`，
-   因此考虑使用带外网络进行管理的成本/收益权衡。管理程序`SSH`访问、`VM`镜像上传、操作系统镜像安装、管理套接字等都可能给网络带来巨大的负载。
-   运行三个网络可能看起来有点小题大做，但每个流量路径都代表一个潜在的容量、吞吐量和/或性能瓶颈，在部署大规模数据集群之前，您应该仔细考虑这些问题
-    
-**简言之：**
-    建议三个网络接口：
-- ceph集群网络接口
-- 对外网络接口
-- 管理接口    
-    
 **样例集群存储配置：**
 
     Disk /dev/nvme0n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
@@ -275,6 +254,53 @@
     Units = sectors of 1 * 512 = 512 bytes
     Sector size (logical/physical): 512 bytes / 4096 bytes
     I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+    
+### 网络
+
+官方说明如下:
+
+   - 每个主机至少有两个`1Gbps`的网络接口控制器(`nic`)。由于大多数普通硬盘驱动器的吞吐量大约为100MB/秒，您的网卡应该能够处理主机上`OSD`磁盘的流量
+   - 建议至少使用两个网卡来考虑公共(前端)网络和集群(后端)网络。集群网络(最好不连接到外部网络)处理数据复制的额外负载
+   - 通过`1Gbps`的网络复制`1TB`的数据需要3个小时，`3TB`(典型的驱动器配置)需要9个小时。相比之下，在`10Gbps`的网络中，复制时间将分别为20分钟和1小时。
+   - 在`pb`级集群中，`OSD`磁盘故障应该是一种预期，而不是异常。系统管理员希望`PGs`尽可能快地从降级状态恢复到`active + clean`状态，同时考虑到价格/性能权衡。
+   此外，一些部署工具(如戴尔的Crowbar)可以部署5个不同的网络，但使用`vlan`使硬件和网络电缆更易于管理。使用`802.1q`协议的`vlan`需要支持`vlan`的网卡和交换机。增加的硬件费用可能会被网络设置和维护的操作成本节省所抵消
+   - 当使用`vlan`处理集群与计算栈(如OpenStack、CloudStack等)之间的虚拟机流量时，也值得考虑使用`10G`以太网。
+   每个网络的机架顶部路由器也需要能够与具有更快吞吐量的脊柱路由器进行通信。`40Gbps`到`100Gbps`
+   - 您的服务器硬件应该有一个底板管理控制器(BMC)。管理和部署工具也可能广泛地使用`bmc`，
+   因此考虑使用带外网络进行管理的成本/收益权衡。管理程序`SSH`访问、`VM`镜像上传、操作系统镜像安装、管理套接字等都可能给网络带来巨大的负载。
+   运行三个网络可能看起来有点小题大做，但每个流量路径都代表一个潜在的容量、吞吐量和/或性能瓶颈，在部署大规模数据集群之前，您应该仔细考虑这些问题
+    
+**简言之：**
+    建议三个网络接口：
+- ceph集群网络接口
+- 对外网络接口
+- 管理接口
+
+
+**样例集群网口配置：**
+
+    [root@ceph01 ~]#  ethtool ens4f0
+    Settings for ens4f0:
+            Supported ports: [ FIBRE ]
+            Supported link modes:   10000baseT/Full
+            Supported pause frame use: Symmetric
+            Supports auto-negotiation: No
+            Supported FEC modes: Not reported
+            Advertised link modes:  10000baseT/Full
+            Advertised pause frame use: Symmetric
+            Advertised auto-negotiation: No
+            Advertised FEC modes: Not reported
+            Speed: 10000Mb/s
+            Duplex: Full
+            Port: FIBRE
+            PHYAD: 0
+            Transceiver: internal
+            Auto-negotiation: off
+            Supports Wake-on: d
+            Wake-on: d
+            Current message level: 0x00000007 (7)
+                                   drv probe link
+            Link detected: yes
 
 ## 竞品对比
 
