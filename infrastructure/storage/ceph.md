@@ -1,8 +1,16 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
 - [Ceph存储](#ceph%E5%AD%98%E5%82%A8)
+  - [架构解析](#%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90)
+    - [Ceph存储集群](#ceph%E5%AD%98%E5%82%A8%E9%9B%86%E7%BE%A4)
+  - [硬件需求](#%E7%A1%AC%E4%BB%B6%E9%9C%80%E6%B1%82)
+    - [CPU](#cpu)
+    - [内存](#%E5%86%85%E5%AD%98)
+    - [存储](#%E5%AD%98%E5%82%A8)
+    - [网络](#%E7%BD%91%E7%BB%9C)
+    - [故障域](#%E6%95%85%E9%9A%9C%E5%9F%9F)
+    - [硬件配置建议](#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE)
+  - [操作系统建议](#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%AE)
+    - [内核](#%E5%86%85%E6%A0%B8)
+    - [平台](#%E5%B9%B3%E5%8F%B0)
   - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
     - [对比raid](#%E5%AF%B9%E6%AF%94raid)
     - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
@@ -17,9 +25,119 @@
     - [卸载](#%E5%8D%B8%E8%BD%BD)
   - [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Ceph存储
+
+## 架构解析
+
+`Ceph`是一个提供对象存储、块存储和文件存储的统一存储系统。
+`Ceph`是高度可靠、易于管理和免费的。`Ceph`的强大功能可以改变企业`IT`基础设施和管理大量数据的能力。
+`Ceph`提供了超强的可伸缩性--数以千计的客户端访问`pb`到`eb`的数据.
+
+![](images/stack.png)
+
+### Ceph存储集群
+    
+`Ceph`提供了一个基于`RADOS`(一种可扩展的、可靠的pb级存储集群存储服务)的无限可扩展的`Ceph`存储集群.
+
+`Ceph`存储集群由两种类型的守护进程组成:
+
+- `Ceph Monitor`（mon）
+-  `Ceph OSD Daemon`（osd）
+
+![](images/osdmonitor.png)
+
+其中`Ceph Monitor`维护集群映射的主副本。多节点`Ceph Monitor`确保了`Ceph Monitor`守护进程失败时的高可用性。
+`Ceph`客户端从`Ceph Monitor`获取集群信息
+
+`Ceph OSD`守护进程检查自己的状态和其他`OSD`的状态，并向`Ceph Monitor`上报。
+
+`Ceph`客户端和每个`Ceph OSD`守护进程使用`CRUSH`算法高效地计算数据位置信息，而不必依赖于中央查找表。
+`Ceph`的高级特性包括通过`librados`提供到`Ceph`存储集群的本地接口，以及建立在`librados`之上的许多服务接口。
+
+> `Ceph`数据存储流程
+
+`Ceph`存储集群从`Ceph`客户端接收数据——无论是通过一个`Ceph`块设备、`Ceph`对象存储、`Ceph`文件系统还是使用`librados`创建的自定义实现——它将数据作为对象存储。
+每个对象都对应于文件系统中的一个文件，文件系统存储在对象存储设备上。`Ceph OSD`守护进程处理存储磁盘的读写操作。
+
+![](images/storagedata.png)
+
+`Ceph OSD`守护进程将所有数据作为对象存储在一个平面命名空间中(没有目录层次结构)。
+对象具有标识符、二进制数据和由一组名称/值对组成的元数据。语义完全由`Ceph`客户端决定。
+例如，`CephFS`使用元数据存储文件属性，如文件所有者、创建日期、最后修改日期等。其中，对象ID全局唯一。
+
+![](images/dataforfat.png)
+
+> `Ceph`的可伸缩性和高可用性
+
+在传统的架构中，客户端与一个集中的组件(例如，网关、代理、API、facade等)通信，该组件充当一个进入复杂子系统的单一入口点。
+这对性能和可伸缩性都施加了限制，同时引入了单点故障(例如，如果集中式组件宕机，整个系统也宕机）
+
+`Ceph`消除了集中式网关，使客户端可以直接与`Ceph OSD`守护进程交互。`Ceph OSD`守护进程在其他`Ceph`节点上创建对象副本，以确保数据的安全性和高可用性。
+`Ceph`还使用一组`mon`来确保高可用性。为了消除集中化，`Ceph`使用了一种称为`CRUSH`的算法
+
+> `CRUSH`算法介绍
+
+`Ceph`客户端和`Ceph OSD`守护进程都使用`CRUSH`算法来有效地计算对象的位置信息，而不是依赖于一个中心查找表。
+与以前的方法相比，`CRUSH`提供了更好的数据管理机制，可以实现大规模的数据管理。
+`CRUSH`使用智能数据复制来确保弹性，这更适合于超大规模存储。
+
+> 集群映射
+
+`Ceph`依赖于`Ceph`客户端和`Ceph OSD`守护进程了解集群拓扑，其中包括5个映射，统称为“集群映射”：
+
+- `Monitor`映射: 包含集群`fsid`、每个监视器的位置、名称、地址和端口、映射创建的时间，以及它最后一次修改时间。
+要查看监视器映射，执行`ceph mon dump`。
+
+    
+    [root@ceph01 ~]# ceph mon dump
+    dumped monmap epoch 2
+    epoch 2
+    fsid b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+    last_changed 2021-02-22 14:36:08.199609
+    created 2021-02-22 14:27:26.357269
+    min_mon_release 14 (nautilus)
+    0: [v2:192.168.1.69:3300/0,v1:192.168.1.69:6789/0] mon.ceph01
+    1: [v2:192.168.1.70:3300/0,v1:192.168.1.70:6789/0] mon.ceph02
+    2: [v2:192.168.1.71:3300/0,v1:192.168.1.71:6789/0] mon.ceph03
+
+- `OSD映射`:包含集群的`fsid`，映射创建和最后修改的时间，池的列表，副本大小，`PG`号，`OSD`的列表和状态(如up, in)。
+执行`ceph OSD dump`命令，查看`OSD`映射
+
+    
+    [root@ceph01 ~]# ceph osd dump
+    epoch 1
+    fsid b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+    created 2021-02-22 14:27:48.482130
+    modified 2021-02-22 14:27:48.482130
+    flags sortbitwise,recovery_deletes,purged_snapdirs,pglog_hardlimit
+    crush_version 1
+    full_ratio 0.95
+    backfillfull_ratio 0.9
+    nearfull_ratio 0.85
+    require_min_compat_client jewel
+    min_compat_client jewel
+    require_osd_release nautilus
+    max_osd 0
+    
+- `PG Map`：包含`PG`版本、它的时间戳、最后一个`OSD Map epoch`、完整比率，以及每个放置组的详细信息，例如`PG ID`、`Up Set`、`Acting Set`、`PG`的状态（例如active+clean），以及每个池的数据使用统计信息
+  
+- `CRUSH Map`:包含一个存储设备列表，故障域层次结构(例如，设备、主机、机架、行、房间等)，以及存储数据时遍历层次结构的规则。执行`ceph osd getcrushmap -o {filename}`;然后，通过执行`crushtool -d {comp-crushmap-filename} -o {decomp-crushmap-filename}`来反编译它。
+使用cat查看反编译后的映射。
+
+- `MDS Map`:包含当前`MDS Map`的`epoch`、`Map`创建的时间和最后一次修改的时间。它还包含存储元数据的池、元数据服务器的列表，以及哪些元数据服务器已经启动和运行.
+
+每个映射维护其操作状态更改的迭代历史。`Ceph`监视器维护集群映射的主副本，包括集群成员、状态、变更和`Ceph`存储集群的总体运行状况
+
+
+
+
+ 
+
+
+
+
+
+
 
 ## 硬件需求
 
@@ -344,6 +462,26 @@
 |                | Client Network | 2x 1GB Ethernet NICs              |
 |                | OSD Network    | 2x 1GB Ethernet NICs              |
 |                | Mgmt. Network  | 2x 1GB Ethernet NICs              |
+
+## 操作系统建议
+
+### 内核
+
+- `Ceph`客户内核
+    - 4.14.z
+    - 4.9.z
+    
+### 平台
+
+| Distro | Release | Code Name    | Kernel       | Notes | Testing |
+|--------|---------|--------------|--------------|-------|---------|
+| CentOS | 7       | N/A          | linux-3.10.0 | 3     | B, I, C |
+| Debian | 8.0     | Jessie       | linux-3.16.0 | 1, 2  | B, I    |
+| Debian | 9.0     | Stretch      | linux-4.9    | 1, 2  | B, I    |
+| Fedora | 22      | N/A          | linux-3.14.0 |       | B, I    |
+| RHEL   | 7       | Maipo        | linux-3.10.0 |       | B, I    |
+| Ubuntu | 14.04   | Trusty Tahr  | linux-3.13.0 |       | B, I, C |
+| Ubuntu | 16.04   | Xenial Xerus | linux-4.4.0  | 3     | B, I, C |
 
 ## 竞品对比
 
