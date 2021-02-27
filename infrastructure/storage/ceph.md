@@ -184,8 +184,91 @@
 这种身份验证提供的保护在`Ceph`客户端和`Ceph`服务器主机之间。身份验证没有扩展到`Ceph`客户端之外。
 如果用户从远程主机访问`Ceph`客户端，`Ceph`身份验证不应用于用户的主机和客户端主机之间的连接
 
+#### 动态集群管理
+
+每个池（pool）都有许多放置组（PG），`CRUSH`动态地将`PGs`映射到`OSDs`。当`Ceph`客户端存储对象时，`CRUSH`将每个对象映射到放置组
+
+将对象映射到放置组将在`Ceph OSD`守护进程和`Ceph`客户端之间创建一个间接层。
+`Ceph`存储集群必须能够增长(或收缩)，并重新平衡动态存储对象的位置。
+如果`Ceph`客户端“知道”哪个`Ceph OSD`守护进程有哪个对象，那么`Ceph`客户端和`Ceph OSD`守护进程之间就会产生一个紧密耦合。
+相反，`CRUSH`算法将每个对象映射到一个放置组，然后将每个放置组映射到一个或多个`Ceph OSD`守护进程。
+这一间接层允许`Ceph`在新的`Ceph OSD`守护进程和底层`OSD`设备上线时动态重新平衡。下图描述了`CRUSH`如何将对象映射到放置组，以及将放置组映射到osd。
+
+![](images/obj-pg-osd-.png)
+
+有了集群映射的副本和`CRUSH`算法，客户端就可以准确地计算出在读写特定对象时应该使用哪个`OSD`。
+
+> 计算放置组ID
+
+当`Ceph`客户端绑定到`Ceph mon`时，它将检索集群映射的最新副本。通过集群映射，客户获取集群中的所有`mon`、`osd`和`mds`信息。但是，它对对象位置一无所知。
+
+**计算过程**
+
+。这很简单:`Ceph`将数据存储在命名池中(例如，“liverpool”)。
+当客户端想要存储一个命名对象(例如，“john”、“paul”、“george”、“ringo”等)时，它使用对象名、哈希码、池中的`PGs`数量和池名计算放置组。`Ceph`客户端使用以下步骤计算`PG id`。
+   
+- 1、客户端输入对象`ID`和`pool`
+
+- 2、`Ceph`获取对象`ID`并对其进行哈希运算
+
+- 3、`Ceph`计算`pg`数的哈希模,（例如，58）获取`PG ID`
+
+- 4、`Ceph`获取给定池名的池`ID`（例如，“liverpool”=4）
+
+- 5、`Ceph`将池`ID`前置到`PG ID`(例如，4.58)。
+
+> 重新平衡
+
+当你将`Ceph OSD`守护进程添加到`Ceph`存储集群时，集群映射会随着新的`OSD`更新。再次计算`PG id`，这将更改集群映射。
+下面的图描述了重新平衡的过程(虽然很粗略，因为在大型集群中影响更小)，
+其中一些(但不是所有)`pg`从现有`OSD` (OSD 1和OSD 2)迁移到新的OSD (OSD 3)。即使在重新平衡时，崩溃也是稳定的。
+许多放置组保持原来的配置，每个`OSD`增加了一些容量，因此在重新平衡完成后，新`OSD`上不会出现负载峰值。
+
+![](images/rebalancing.png)
+
+> 数据一致性
+
+作为维护数据一致性和清洁度的一部分，`Ceph osd`还可以清理放置组中的对象。
+也就是说，`Ceph osd`可以将一个放置组中的对象元数据与其存储在其他`osd`中的放置组中的副本进行比较。
+清理（通常每天执行）捕获`OSD`错误或文件系统错误。
+`OSD`还可以通过逐位比较对象中的数据来执行更深入的清理。深度清理（通常每周执行一次）会在磁盘上发现在轻度清理时不明显的坏扇区。
+
+#### 分级缓存
+
+缓存层为`Ceph`客户端提供了更好的`I/O`性能，用于存储在备份存储层中的数据子集。
+分级缓存包括创建一个作为缓存层的相对快速/昂贵的存储设备(例如，固态驱动器)池，以及一个配置为纠错码或相对较慢/便宜的设备作为经济存储层的后备池。
+`Ceph objecter`处理放置对象的位置，而分层代理确定何时将对象从缓存刷新到后备存储层。因此，缓存层和后备存储层对`Ceph`客户端是完全透明的
+
+![](images/cache-tiering.png)
+
 ### Ceph协议
 
+`Ceph`客户端使用原生协议与`Ceph`存储集群进行交互，`Ceph`将这个功能打包到`librados`库中。
+下图描述了基本架构：
+
+![](images/ceph-protocol.png)
+
+#### `Ceph`协议与`librados`
+
+现代应用程序需要一个具有异步通信功能的简单对象存储接口。
+`Ceph`存储集群提供了一个具有异步通信能力的简单对象存储接口。
+该接口提供了对整个集群中的对象的直接、并行访问。如：
+
+- 池操作
+- 快照和写时复制克隆
+- 读/写对象-创建或删除-整个对象或字节范围-追加或截断
+- 创建/设置/获取/删除`XATTRs`
+- 创建/设置/获取/删除键值对
+- 复合运算与双ack语义
+- 对象类
+
+#### 对象观测通知
+
+客户端可以持久性观测一个对象，并保持与主`OSD`的会话处于打开状态。
+客户端可以向所有观察者发送通知消息和有效负载，并在观察者收到通知时接收通知。
+这使客户端能够将任何对象用作同步/通信通道
+
+![](images/object-watch.png)
 
 
 ### 数据分段
@@ -277,6 +360,42 @@
 `Ceph`对象存储对象映射到`Ceph`存储集群对象。
 `S3`和`Swift`对象不一定与存储集群中存储的对象以1:1的方式对应。
 `S3`或`Swift`对象有可能映射到多个`Ceph`对象。
+
+
+# Ceph存储类型
+## cephfs
+`Ceph`文件系统（CephFS）是一个兼容`POSIX`的文件系统，它使用`Ceph`存储集群来存储数据。使用`Ceph`文件系统需要`Ceph`存储集群中至少有一个`Ceph`元数据服务器。
+### 部署元数据服务器
+#### MDS宿主机配置需求
+- `MDS`的当前版本是单线程和`cpu`绑定的，用于大多数活动，包括响应客户机请求。
+即使如此，一个`MDS`在最活跃的客户端负载下仍然使用大约2到3个`CPU`核。这是由于其他杂项维护线程协同工作造成的。
+
+- 内存：用于`MDS`管理所有客户端和其他活动`MDS`之间的分布式协作元数据缓存，1000个客户端节点的`MDS`将使用至少64`GB`的缓存。
+
+在裸金属集群中，最佳实践是为`MDS`服务器过度供应硬件。即使单个`MDS`守护进程不能充分利用硬件，以后也可以在同一节点上启动更多的活动`MDS`守护进程，以充分利用可用的内核和内存。
+此外，通过集群上的工作负载，可以清楚地看到，在同一个节点上使用多个主`MDS`.
+
+从系统高可用性考虑，集群中至少部署两个以上`MDS`守护进程
+
+官方建议将`MDS`与其他`Ceph`守护进程部署在同一宿主机，但需进行配额限制
+
+### cephfs使用
+
+#### 创建cephfs存储池
+
+一个`Ceph`文件系统需要至少两个`RADOS`池，一个用于数据，一个用于元数据。参考以下几点配置存储池：
+
+- 对元数据池使用更高的复制级别，因为该池中的任何数据丢失都可能导致整个文件系统不可访问
+- 在元数据池中使用较低延迟的存储(如ssd)
+
+> 创建池
+
+    $ ceph osd pool create cephfs_data <pg_num>
+    $ ceph osd pool create cephfs_metadata <pg_num>
+    
+通常，元数据池最多有几`GB`的数据。因此，通常推荐较小的`PG`计数。64或128通常用于大型集群。
+
+> 
 
 
 
@@ -695,24 +814,42 @@
     
 ### 对比其他分布式存储
 
-## 集成部署
-### ceph-deploy部署N版
+# 集成部署
+## 环境说明
 
 - 节点信息
 
+| 节点名称 | 节点IP | 节点属性 |
+| :----:| :----: | :----: |
+| ceph01 | 192.168.1.69 | admin,deploy,mon |
+| ceph02 | 192.168.1.70 | 单元格 |
+| ceph03 | 192.168.1.70 | 单元格 |
 
-    | 节点名称 | 节点IP | 节点属性 |
-    | :----:| :----: | :----: |
-    | ceph01 | 192.168.1.69 | admin,deploy,mon |
-    | ceph02 | 192.168.1.70 | 单元格 |
-    | ceph03 | 192.168.1.70 | 单元格 |
+## 环境初始化
+
+### 配置yum
+
+**所有ceph节点，包含客户端节点**
+
+> 1、删除原有yum源repo文件
+
+	rm -f /etc/yum.repos.d/*.repo
+	
+> 2、创建yum源文件
+
+**online**
+
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+**offline**
     
-> 前置要求
+下载以下文件上传至`/etc/yum.repos.d/`
 
-- `yum`联网(可通过配置代理实现)
-- `ceph`节点配置时钟同步
+- [Centos-7.repo](http://mirrors.aliyun.com/repo/Centos-7.repo)
+- [epel-7.repo](http://mirrors.aliyun.com/repo/epel-7.repo)
 
-> 配置阿里云仓储（所有节点）
+> 3、配置`ceph`镜像源仓库
 
     cat > /etc/yum.repos.d/ceph.repo <<EOF
     [Ceph]
@@ -736,6 +873,131 @@
     gpgcheck=1
     gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
     EOF
+
+> 4、配置`yum`代理
+
+**适用于主机通过代理访问互联网场景**
+
+以下变量注意替换
+
+- username: 代理用户名
+- password: 代理用户密码
+- proxy_host: 代理IP地址
+- proxy_port: 代理端口
+
+
+    echo "proxy=http://username:password@proxy_host:proxy_port" >> /etc/yum.conf
+
+### yum依赖导出
+
+**适用无法直连或通过代理连接互联网镜像源**
+
+- 联网主机：用于导出`ceph`依赖,操作系统为`CentOS7`
+- 离线主机：实际部署`ceph`应用的主机(多节点实例)
+
+依赖导出（联网主机）
+
+	rm -f /etc/yum.repos.d/*.repo
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+    yum update -y
+    yum install yum-plugin-downloadonly -y
+    yum install --downloadonly --downloaddir=./ceph ceph ceph-common ceph-deploy
+    
+生成repo依赖关系（联网主机）
+
+    yum install -y createrepo
+    createrepo ./ceph
+
+压缩（联网主机）
+
+    tar zcvf ceph.tar.gz ceph
+    
+配置使用（离线主机）
+
+    tar zxvf ceph.tar.gz -C /
+    
+    cat > /etc/yum.repos.d/ceph.repo <<EOF
+    [ceph]
+    name=python-repo
+    baseurl=file:///ceph
+    gpgcheck=0
+    enabled=1
+    EOF
+    
+    yum install -y ceph ceph-deploy ceph-common
+
+### 配置时钟同步
+
+> 配置dns
+
+该`dns`用以解析时钟服务地址，互联网下应为`114.114.114.114`
+
+    echo "nameserver x.x.x.x" >> /etc/resolv.conf
+
+> 安装ntp
+
+    yum install -y ntp
+
+> 同步
+
+时钟服务地址据实际情况调整
+
+    ntpdate time.wl.com
+    echo "*/5 * * * * root ntpdate time.wl.com" >> /etc/crontab
+
+> 调整时区
+
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+### 升级内核
+
+导入`kernel`源
+
+[elrepo-release-7.0-4.el7.elrepo.noarch.rpm](https://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm)
+
+    rpm -ivh elrepo-release-7.0-4.el7.elrepo.noarch.rpm -y
+    
+安装最新主线版
+
+    yum -y --enablerepo=elrepo-kernel install kernel-ml.x86_64 kernel-ml-devel.x86_64
+    
+删除旧版本工具包
+
+     rpm -qa|grep kernel-3|xargs -n1 yum remove -y
+     
+安装新版本工具包
+
+    yum --disablerepo=\* --enablerepo=elrepo-kernel install -y kernel-ml-tools.x86_64
+   
+查看内核列表
+
+    awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+    
+重建内核
+
+    grub2-mkconfig -o /boot/grub2/grub.cfg
+
+配置新版内核
+
+    grub2-set-default 0
+
+重启
+
+    reboot
+    
+### raid卡
+
+适用于已安装`raid`卡主机
+
+- 系统盘：建议raid1
+- 数据盘：配置为直通模式（JBOD）
+    
+
+## 安装ceph
+
+`ceph`版本为`14.2.16 nautilus`
 
 > 创建ceph目录(deploy节点)
 
@@ -766,6 +1028,11 @@
     echo "public_network=192.168.1.0/24" >> /etc/ceph/ceph.conf
     ceph-deploy --overwrite-conf config push ceph01 ceph02 ceph03
     
+> 配置admin节点
+
+    cd /etc/ceph/
+    ceph-deploy admin ceph01 ceph02 ceph03
+
 > 查看集群状态
 
     [root@ceph01 ~]# ceph -s
@@ -788,92 +1055,35 @@
 > 安装命令补全
 
     yum -y install bash-completion
-    
-> 安装dashboard
 
-1.安装
+## 配置ceph
 
-    yum install -y ceph-mgr-dashboard
-    
-2.禁用 SSL
+### 添加osd
+#### ceph01节点添加`osd
 
-    ceph config set mgr mgr/dashboard/ssl false
+> 列出节点`ceph01`磁盘信息
 
-3.配置 host 和 port
-
-    ceph config set mgr mgr/dashboard/server_addr $IP
-    ceph config set mgr mgr/dashboard/server_port $PORT
-    
-4.启用 Dashboard
-
-    ceph mgr module enable dashboard
-    
-5.用户、密码、权限
-
-    # 创建用户
-    #ceph dashboard ac-user-create <username> <password> administrator
-    ceph dashboard ac-user-create admin Ceph-12345 administrator
-    
-6.查看 Dashboard 地址
-  
-    ceph mgr services
-    
-x.使变更的配置生效
-    
-    ceph mgr module disable dashboard
-    ceph mgr module enable dashboard
-    
-xx.配置访问前缀
-   
-    ceph config set mgr mgr/dashboard/url_prefix /ceph-ui
-
-## 运维管理
-### ceph添加磁盘
-
-> 列出节点`node3`磁盘信息
-
-    ceph-deploy disk list node3
+    ceph-deploy disk list ceph01
     
 输出如下
 
     ...
-    [ceph_deploy.conf][DEBUG ] found configuration file at: /root/.cephdeploy.conf
-    [ceph_deploy.cli][INFO  ] Invoked (2.0.1): /usr/bin/ceph-deploy disk list node3
-    [ceph_deploy.cli][INFO  ] ceph-deploy options:
-    [ceph_deploy.cli][INFO  ]  username                      : None
-    [ceph_deploy.cli][INFO  ]  verbose                       : False
-    [ceph_deploy.cli][INFO  ]  debug                         : False
-    [ceph_deploy.cli][INFO  ]  overwrite_conf                : False
-    [ceph_deploy.cli][INFO  ]  subcommand                    : list
-    [ceph_deploy.cli][INFO  ]  quiet                         : False
-    [ceph_deploy.cli][INFO  ]  cd_conf                       : <ceph_deploy.conf.cephdeploy.Conf instance at 0x7f747adb66c8>
-    [ceph_deploy.cli][INFO  ]  cluster                       : ceph
-    [ceph_deploy.cli][INFO  ]  host                          : ['node3']
-    [ceph_deploy.cli][INFO  ]  func                          : <function disk at 0x7f747b00a938>
-    [ceph_deploy.cli][INFO  ]  ceph_conf                     : None
-    [ceph_deploy.cli][INFO  ]  default_release               : False
-    [node3][DEBUG ] connected to host: node3
-    [node3][DEBUG ] detect platform information from remote host
-    [node3][DEBUG ] detect machine type
-    [node3][DEBUG ] find the location of an executable
-    [node3][INFO  ] Running command: fdisk -l
-    [node3][INFO  ] Disk /dev/nvme1n1: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-    [node3][INFO  ] Disk /dev/nvme0n1: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-    [node3][INFO  ] Disk /dev/nvme2n1: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-    [node3][INFO  ] Disk /dev/nvme3n1: 2000.4 GB, 2000398934016 bytes, 3907029168 sectors
-    [node3][INFO  ] Disk /dev/mapper/centos00-root: 1998.0 GB, 1998036402176 bytes, 3902414848 sectors
-    [node3][INFO  ] Disk /dev/sdf: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdg: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdb: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sde: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdk: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sda: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdd: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdh: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdj: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdc: 960.2 GB, 960197124096 bytes, 1875385008 sectors
-    [node3][INFO  ] Disk /dev/sdi: 480.1 GB, 480103981056 bytes, 937703088 sectors
+    [ceph01][INFO  ] Disk /dev/sda: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sdb: 480.1 GB, 480103981056 bytes, 937703088 sectors
+    [ceph01][INFO  ] Disk /dev/sdf: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sdd: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sde: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sdc: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sdg: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/sdh: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph01][INFO  ] Disk /dev/mapper/centos-root: 478.0 GB, 477953523712 bytes, 933502976 sectors
+    [ceph01][INFO  ] Disk /dev/nvme0n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph01][INFO  ] Disk /dev/nvme1n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph01][INFO  ] Disk /dev/nvme2n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph01][INFO  ] Disk /dev/nvme3n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
     ...
+ 
+其中`/dev/sda-h`为`SSD`类型磁盘，`/dev/nvme*`为`nvme`类型磁盘，且`/dev/sdb`为系统盘
  
 > 查看磁盘挂载
 
@@ -884,13 +1094,14 @@ xx.配置访问前缀
     NAME              MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
     sdf                 8:80   0 894.3G  0 disk
     nvme0n1           259:1    0   1.8T  0 disk
-    ├─nvme0n1p3       259:6    0   1.8T  0 part
-    │ └─centos00-root 253:0    0   1.8T  0 lvm  /
-    ├─nvme0n1p1       259:4    0   200M  0 part /boot/efi
-    └─nvme0n1p2       259:5    0     2G  0 part /boot
     sdd                 8:48   0 894.3G  0 disk
     nvme3n1           259:3    0   1.8T  0 disk
     sdb                 8:16   0 894.3G  0 disk
+    ├─sdb2            8:34   0     1G  0 part /boot
+    ├─sdb3            8:35   0 445.1G  0 part
+    │ ├─centos-swap 253:1    0    16G  0 lvm
+    │ └─centos-root 253:0    0 429.1G  0 lvm  /
+    └─sdb1            8:33   0     1G  0 part /boot/efi
     sdk                 8:160  0 894.3G  0 disk
     sdi                 8:128  0 447.1G  0 disk
     nvme2n1           259:2    0   1.8T  0 disk
@@ -905,196 +1116,341 @@ xx.配置访问前缀
     
 磁盘类型说明
 
-    sda-sdk 为SSD类型，sda先不加入集群
+    sda-sdh 为SSD类型
     nvme0n1、nvme1n1、nvme2n1、nvme3n1为nvme类型
     系统盘：nvme0n1
-   
     
-> 擦净节点SSD类型磁盘
+> 格式化磁盘
 
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy disk zap node3 /dev/sd$i
-    done
+    mkfs.ext4 /dev/sda
+    mkfs.ext4 /dev/sdc
+    mkfs.ext4 /dev/sdd
+    mkfs.ext4 /dev/sde
+    mkfs.ext4 /dev/sdf
+    mkfs.ext4 /dev/sdg
+    mkfs.ext4 /dev/sdh
+    mkfs.ext4 /dev/nvme0n1
+    mkfs.ext4 /dev/nvme1n1
+    mkfs.ext4 /dev/nvme2n1
+    mkfs.ext4 /dev/nvme3n1
     
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy disk zap node4 /dev/sd$i
-    done
+> 擦净节点`SSD`类型磁盘
+
+    ceph-deploy disk zap ceph01 /dev/sda
     
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy disk zap node5 /dev/sd$i
+    cd /etc/ceph/
+    for i in {c..h};do
+    ceph-deploy disk zap ceph01 /dev/sd$i
     done
-    
-> 创建SSD类型OSD节点
+
+> 创建`SSD`类型`OSD`节点
  
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy osd create --data /dev/sd$i node3
+    cd /etc/ceph
+    for i in {c..h};do
+    ceph-deploy osd create --data /dev/sd$i ceph01
     done
     
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy osd create --data /dev/sd$i node4
-    done
-        
-    cd /etc/ceph/cluster
-    for i in {b..k};do
-    ceph-deploy osd create --data /dev/sd$i node5
-    done
+    ceph-deploy osd create --data /dev/sda ceph01
     
-> 擦净节点nvme类型磁盘
+> 擦净节点`nvme`类型磁盘
 
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy disk zap node3 /dev/nvme${i}n1
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy disk zap ceph01 /dev/nvme${i}n1
     done
     
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy disk zap node4 /dev/nvme${i}n1
-    done
-    
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy disk zap node5 /dev/nvme${i}n1
-    done
-    
-> 创建nvme类型OSD节点
+> 创建`nvme`类型`OSD`节点
  
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy osd create --data /dev/nvme${i}n1 node3
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy osd create --data /dev/nvme${i}n1 ceph01
     done
     
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy osd create --data /dev/nvme${i}n1 node4
+#### ceph02节点添加`osd
+
+> 列出节点`ceph02`磁盘信息(ceph01节点执行)
+
+    ceph-deploy disk list ceph02
+    
+输出如下
+
+    ...
+    [root@ceph01 ceph]# ceph-deploy disk list ceph02
+    [ceph_deploy.conf][DEBUG ] found configuration file at: /root/.cephdeploy.conf
+    [ceph_deploy.cli][INFO  ] Invoked (2.0.1): /usr/bin/ceph-deploy disk list ceph02
+    [ceph_deploy.cli][INFO  ] ceph-deploy options:
+    [ceph_deploy.cli][INFO  ]  username                      : None
+    [ceph_deploy.cli][INFO  ]  verbose                       : False
+    [ceph_deploy.cli][INFO  ]  debug                         : False
+    [ceph_deploy.cli][INFO  ]  overwrite_conf                : False
+    [ceph_deploy.cli][INFO  ]  subcommand                    : list
+    [ceph_deploy.cli][INFO  ]  quiet                         : False
+    [ceph_deploy.cli][INFO  ]  cd_conf                       : <ceph_deploy.conf.cephdeploy.Conf instance at 0x7f8c21ecd518>
+    [ceph_deploy.cli][INFO  ]  cluster                       : ceph
+    [ceph_deploy.cli][INFO  ]  host                          : ['ceph02']
+    [ceph_deploy.cli][INFO  ]  func                          : <function disk at 0x7f8c22118938>
+    [ceph_deploy.cli][INFO  ]  ceph_conf                     : None
+    [ceph_deploy.cli][INFO  ]  default_release               : False
+    [ceph02][DEBUG ] connected to host: ceph02
+    [ceph02][DEBUG ] detect platform information from remote host
+    [ceph02][DEBUG ] detect machine type
+    [ceph02][DEBUG ] find the location of an executable
+    [ceph02][INFO  ] Running command: fdisk -l
+    [ceph02][INFO  ] Disk /dev/sdb: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph02][INFO  ] Disk /dev/sdd: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph02][INFO  ] Disk /dev/sda: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph02][INFO  ] Disk /dev/sdf: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph02][INFO  ] Disk /dev/sdc: 480.1 GB, 480103981056 bytes, 937703088 sectors
+    [ceph02][INFO  ] Disk /dev/sde: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph02][INFO  ] Disk /dev/mapper/centos-root: 460.8 GB, 460773654528 bytes, 899948544 sectors
+    [ceph02][INFO  ] Disk /dev/mapper/centos-swap: 17.2 GB, 17179869184 bytes, 33554432 sectors
+    [ceph02][INFO  ] Disk /dev/nvme0n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph02][INFO  ] Disk /dev/nvme3n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph02][INFO  ] Disk /dev/nvme1n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph02][INFO  ] Disk /dev/nvme2n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    ...
+ 
+其中`/dev/sda-f`为`SSD`类型磁盘，`/dev/nvme*`为`nvme`类型磁盘，且`/dev/sdc`为系统盘
+ 
+> 查看磁盘挂载（ceph02节点执行）
+
+    lsblk
+    
+输出如下
+
+    [root@ceph02 ~]# lsblk
+    NAME            MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sdf               8:80   0 894.3G  0 disk
+    nvme0n1         259:0    0 931.5G  0 disk
+    sdd               8:48   0 894.3G  0 disk
+    nvme3n1         259:1    0 931.5G  0 disk
+    sdb               8:16   0 894.3G  0 disk
+    nvme2n1         259:3    0 931.5G  0 disk
+    sde               8:64   0 894.3G  0 disk
+    sdc               8:32   0 447.1G  0 disk
+    ├─sdc2            8:34   0     1G  0 part /boot
+    ├─sdc3            8:35   0 445.1G  0 part
+    │ ├─centos-swap 253:1    0    16G  0 lvm
+    │ └─centos-root 253:0    0 429.1G  0 lvm  /
+    └─sdc1            8:33   0     1G  0 part /boot/efi
+    nvme1n1         259:2    0 931.5G  0 disk
+    sda               8:0    0 894.3G  0 disk
+    
+磁盘类型说明
+
+    sda-sdf 为SSD类型
+    nvme0n1、nvme1n1、nvme2n1、nvme3n1为nvme类型
+    系统盘：sdc
+    
+> 格式化磁盘（ceph02节点执行）
+
+    mkfs.ext4 /dev/sda
+    mkfs.ext4 /dev/sdb
+    mkfs.ext4 /dev/sdd
+    mkfs.ext4 /dev/sde
+    mkfs.ext4 /dev/sdf
+    mkfs.ext4 /dev/nvme0n1
+    mkfs.ext4 /dev/nvme1n1
+    mkfs.ext4 /dev/nvme2n1
+    mkfs.ext4 /dev/nvme3n1
+
+> 擦净节点`SSD`类型磁盘（ceph01节点执行）
+
+    cd /etc/ceph/
+    for i in {a..b};do
+    ceph-deploy disk zap ceph02 /dev/sd$i
     done
+    
+    cd /etc/ceph/
+    for i in {d..f};do
+    ceph-deploy disk zap ceph02 /dev/sd$i
+    done
+
+> 创建`SSD`类型`OSD`节点（ceph01节点执行）
+ 
+    cd /etc/ceph
+    for i in {a..b};do
+    ceph-deploy osd create --data /dev/sd$i ceph02
+    done
+    
+    cd /etc/ceph
+    for i in {d..f};do
+    ceph-deploy osd create --data /dev/sd$i ceph02
+    done
+    
+> 擦净节点`nvme`类型磁盘（ceph01节点执行）
+
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy disk zap ceph02 /dev/nvme${i}n1
+    done
+    
+> 创建`nvme`类型`OSD`节点（ceph01节点执行）
+ 
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy osd create --data /dev/nvme${i}n1 ceph02
+    done
+    
+#### ceph03节点添加`osd
+
+> 列出节点`ceph03`磁盘信息（ceph01节点执行）
+
+    ceph-deploy disk list ceph03
+    
+输出如下
+
+    ...
+    [ceph03][INFO  ] Disk /dev/nvme0n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph03][INFO  ] Disk /dev/nvme2n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph03][INFO  ] Disk /dev/nvme3n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph03][INFO  ] Disk /dev/nvme1n1: 1000.2 GB, 1000204886016 bytes, 1953525168 sectors
+    [ceph03][INFO  ] Disk /dev/sdc: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph03][INFO  ] Disk /dev/sda: 480.1 GB, 480103981056 bytes, 937703088 sectors
+    [ceph03][INFO  ] Disk /dev/sdb: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph03][INFO  ] Disk /dev/sde: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph03][INFO  ] Disk /dev/sdd: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph03][INFO  ] Disk /dev/sdf: 960.2 GB, 960197124096 bytes, 1875385008 sectors
+    [ceph03][INFO  ] Disk /dev/mapper/centos-root: 475.7 GB, 475667628032 bytes, 929038336 sectors
+    ...
+ 
+其中`/dev/sda-f`为`SSD`类型磁盘，`/dev/nvme*`为`nvme`类型磁盘，且`/dev/sda`为系统盘
+ 
+> 查看磁盘挂载（ceph03节点执行）
+
+    lsblk
+    
+输出如下
+
+    [root@ceph03 ~]# lsblk
+    NAME            MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sda               8:0    0 447.1G  0 disk
+    ├─sda1            8:1    0     2G  0 part /boot/efi
+    ├─sda2            8:2    0     2G  0 part /boot
+    └─sda3            8:3    0   443G  0 part
+      └─centos-root 253:0    0   443G  0 lvm  /
+    sdb               8:16   0 894.3G  0 disk
+    sdc               8:32   0 894.3G  0 disk
+    sdd               8:48   0 894.3G  0 disk
+    sde               8:64   0 894.3G  0 disk
+    sdf               8:80   0 894.3G  0 disk
+    nvme0n1         259:0    0 931.5G  0 disk
+    nvme1n1         259:3    0 931.5G  0 disk
+    nvme2n1         259:2    0 931.5G  0 disk
+    nvme3n1         259:1    0 931.5G  0 disk
+    
+磁盘类型说明
+
+    sda-sdf 为SSD类型
+    nvme0n1、nvme1n1、nvme2n1、nvme3n1为nvme类型
+    系统盘：nvme0n1
+
+> 擦净节点`SSD`类型磁盘
+
+    cd /etc/ceph/
+    for i in {b..f};do
+    ceph-deploy disk zap ceph03 /dev/sd$i
+    done
+
+> 创建`SSD`类型`OSD`节点
+ 
+    cd /etc/ceph
+    for i in {b..f};do
+    ceph-deploy osd create --data /dev/sd$i ceph03
+    done
+    
+> 擦净节点`nvme`类型磁盘
+
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy disk zap ceph03 /dev/nvme${i}n1
+    done
+    
+> 创建`nvme`类型`OSD`节点
+ 
+    cd /etc/ceph
+    for i in {0..3};do
+    ceph-deploy osd create --data /dev/nvme${i}n1 ceph03
+    done
+
+#### 常见问题解决
+
+- Unable to add physical volume '/dev/nvme1n1' to volume group 'ceph-e9ba73a1-f31a-4ce7-b0b9-ab16c35a2c49'
+
         
-    cd /etc/ceph/cluster
-    for i in {1..3};do
-    ceph-deploy osd create --data /dev/nvme${i}n1 node5
-    done
+        pvcreate -ff -y /dev/nvme1n1
     
-> 查看集群osd crush tree
 
-    cd /etc/ceph/cluster
-    ceph osd crush tree --show-shadow
+### 配置crush class
     
-回显如下
+> 查看集群osd crush tree(ceph01节点执行)
 
+    [root@ceph01 ~]# ceph osd crush tree --show-shadow
     ID CLASS WEIGHT   TYPE NAME
-    -2   SSD 41.26323 root default~SSD
-    -4   SSD 13.75441     host node3~SSD
-     0   SSD  0.87329         osd.0
-     1   SSD  0.87329         osd.1
-     2   SSD  0.87329         osd.2
-     3   SSD  0.87329         osd.3
-     4   SSD  0.87329         osd.4
-     5   SSD  0.87329         osd.5
-     6   SSD  0.87329         osd.6
-     7   SSD  0.43660         osd.7
-     8   SSD  0.87329         osd.8
-     9   SSD  0.87329         osd.9
-    30   SSD  1.81940         osd.30
-    31   SSD  1.81940         osd.31
-    32   SSD  1.81940         osd.32
-    -6   SSD 13.75441     host node4~SSD
-    10   SSD  0.43660         osd.10
-    11   SSD  0.87329         osd.11
-    12   SSD  0.87329         osd.12
-    13   SSD  0.87329         osd.13
-    14   SSD  0.87329         osd.14
-    15   SSD  0.87329         osd.15
-    16   SSD  0.87329         osd.16
-    17   SSD  0.87329         osd.17
-    18   SSD  0.87329         osd.18
-    19   SSD  0.87329         osd.19
-    33   SSD  1.81940         osd.33
-    34   SSD  1.81940         osd.34
-    35   SSD  1.81940         osd.35
-    -8   SSD 13.75441     host node5~SSD
-    20   SSD  0.43660         osd.20
-    21   SSD  0.87329         osd.21
-    22   SSD  0.87329         osd.22
-    23   SSD  0.87329         osd.23
-    24   SSD  0.87329         osd.24
-    25   SSD  0.87329         osd.25
-    26   SSD  0.87329         osd.26
-    27   SSD  0.87329         osd.27
-    28   SSD  0.87329         osd.28
-    29   SSD  0.87329         osd.29
-    36   SSD  1.81940         osd.36
-    37   SSD  1.81940         osd.37
-    38   SSD  1.81940         osd.38
-    -1       41.26323 root default
-    -3       13.75441     host node3
-     0   SSD  0.87329         osd.0
-     1   SSD  0.87329         osd.1
-     2   SSD  0.87329         osd.2
-     3   SSD  0.87329         osd.3
-     4   SSD  0.87329         osd.4
-     5   SSD  0.87329         osd.5
-     6   SSD  0.87329         osd.6
-     7   SSD  0.43660         osd.7
-     8   SSD  0.87329         osd.8
-     9   SSD  0.87329         osd.9
-    30   SSD  1.81940         osd.30
-    31   SSD  1.81940         osd.31
-    32   SSD  1.81940         osd.32
-    -5       13.75441     host node4
-    10   SSD  0.43660         osd.10
-    11   SSD  0.87329         osd.11
-    12   SSD  0.87329         osd.12
-    13   SSD  0.87329         osd.13
-    14   SSD  0.87329         osd.14
-    15   SSD  0.87329         osd.15
-    16   SSD  0.87329         osd.16
-    17   SSD  0.87329         osd.17
-    18   SSD  0.87329         osd.18
-    19   SSD  0.87329         osd.19
-    33   SSD  1.81940         osd.33
-    34   SSD  1.81940         osd.34
-    35   SSD  1.81940         osd.35
-    -7       13.75441     host node5
-    20   SSD  0.43660         osd.20
-    21   SSD  0.87329         osd.21
-    22   SSD  0.87329         osd.22
-    23   SSD  0.87329         osd.23
-    24   SSD  0.87329         osd.24
-    25   SSD  0.87329         osd.25
-    26   SSD  0.87329         osd.26
-    27   SSD  0.87329         osd.27
-    28   SSD  0.87329         osd.28
-    29   SSD  0.87329         osd.29
-    36   SSD  1.81940         osd.36
-    37   SSD  1.81940         osd.37
-    38   SSD  1.81940         osd.38
+    -2   ssd 25.76233 root default~ssd
+    -4   ssd  9.75183     host ceph01~ssd
+     0   ssd  0.87329         osd.0
+     1   ssd  0.87329         osd.1
+     2   ssd  0.87329         osd.2
+     3   ssd  0.87329         osd.3
+     4   ssd  0.87329         osd.4
+     5   ssd  0.87329         osd.5
+     6   ssd  0.87329         osd.6
+     7   ssd  0.90970         osd.7
+     8   ssd  0.90970         osd.8
+     9   ssd  0.90970         osd.9
+    10   ssd  0.90970         osd.10
+    -6   ssd  8.00525     host ceph02~ssd
+    11   ssd  0.87329         osd.11
+    12   ssd  0.87329         osd.12
+    13   ssd  0.87329         osd.13
+    14   ssd  0.87329         osd.14
+    15   ssd  0.87329         osd.15
+    16   ssd  0.90970         osd.16
+    17   ssd  0.90970         osd.17
+    18   ssd  0.90970         osd.18
+    19   ssd  0.90970         osd.19
+    -8   ssd  8.00525     host ceph03~ssd
+    20   ssd  0.87329         osd.20
+    21   ssd  0.87329         osd.21
+    22   ssd  0.87329         osd.22
+    23   ssd  0.87329         osd.23
+    24   ssd  0.87329         osd.24
+    25   ssd  0.90970         osd.25
+    26   ssd  0.90970         osd.26
+    27   ssd  0.90970         osd.27
+    28   ssd  0.90970         osd.28
 
 > 修改nvme类型class
 
-    ceph osd crush rm-device-class 30
-    ceph osd crush set-device-class nvme osd.30
-    ceph osd crush rm-device-class 31
-    ceph osd crush set-device-class nvme osd.31
-    ceph osd crush rm-device-class 32
-    ceph osd crush set-device-class nvme osd.32
+    ceph osd crush rm-device-class 7
+    ceph osd crush set-device-class nvme osd.7
+    ceph osd crush rm-device-class 8
+    ceph osd crush set-device-class nvme osd.8
+    ceph osd crush rm-device-class 9
+    ceph osd crush set-device-class nvme osd.9
+    ceph osd crush rm-device-class 10
+    ceph osd crush set-device-class nvme osd.10
     
-    ceph osd crush rm-device-class 33
-    ceph osd crush set-device-class nvme osd.33
-    ceph osd crush rm-device-class 34
-    ceph osd crush set-device-class nvme osd.34
-    ceph osd crush rm-device-class 35
-    ceph osd crush set-device-class nvme osd.35
+    ceph osd crush rm-device-class 16
+    ceph osd crush set-device-class nvme osd.16
+    ceph osd crush rm-device-class 17
+    ceph osd crush set-device-class nvme osd.17
+    ceph osd crush rm-device-class 18
+    ceph osd crush set-device-class nvme osd.18
+    ceph osd crush rm-device-class 19
+    ceph osd crush set-device-class nvme osd.19
     
-    ceph osd crush rm-device-class 36
-    ceph osd crush set-device-class nvme osd.36
-    ceph osd crush rm-device-class 37
-    ceph osd crush set-device-class nvme osd.37
-    ceph osd crush rm-device-class 38
-    ceph osd crush set-device-class nvme osd.38
+    ceph osd crush rm-device-class 25
+    ceph osd crush set-device-class nvme osd.25
+    ceph osd crush rm-device-class 26
+    ceph osd crush set-device-class nvme osd.26
+    ceph osd crush rm-device-class 27
+    ceph osd crush set-device-class nvme osd.27
+    ceph osd crush rm-device-class 28
+    ceph osd crush set-device-class nvme osd.28
+    
+    
     
 查看集群osd crush tree
 
@@ -1390,6 +1746,46 @@ xx.配置访问前缀
 
      ceph osd pool rename container-pool harbor-pool
      
+### 安装dashboard
+ 
+> 安装dashboard
+
+1.安装
+
+    yum install -y ceph-mgr-dashboard
+    
+2.禁用 SSL
+
+    ceph config set mgr mgr/dashboard/ssl false
+
+3.配置 host 和 port
+
+    ceph config set mgr mgr/dashboard/server_addr $IP
+    ceph config set mgr mgr/dashboard/server_port $PORT
+    
+4.启用 Dashboard
+
+    ceph mgr module enable dashboard
+    
+5.用户、密码、权限
+
+    # 创建用户
+    #ceph dashboard ac-user-create <username> <password> administrator
+    ceph dashboard ac-user-create admin Ceph-12345 administrator
+    
+6.查看 Dashboard 地址
+  
+    ceph mgr services
+    
+x.使变更的配置生效
+    
+    ceph mgr module disable dashboard
+    ceph mgr module enable dashboard
+    
+xx.配置访问前缀
+   
+    ceph config set mgr mgr/dashboard/url_prefix /ceph-ui
+    
 ### 块设备（rdb）使用
     
 **ceph客户端**
