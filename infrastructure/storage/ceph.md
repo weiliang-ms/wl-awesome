@@ -1,112 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Ceph存储](#ceph%E5%AD%98%E5%82%A8)
-- [Ceph架构解析](#ceph%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90)
-  - [Ceph存储集群](#ceph%E5%AD%98%E5%82%A8%E9%9B%86%E7%BE%A4)
-    - [`Ceph`数据存储流程](#ceph%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%B5%81%E7%A8%8B)
-    - [`Ceph`的可伸缩性和高可用性](#ceph%E7%9A%84%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-    - [`CRUSH`算法介绍](#crush%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D)
-    - [`mon`高可用](#mon%E9%AB%98%E5%8F%AF%E7%94%A8)
-    - [身份认证高可用性](#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-      - [动态集群管理](#%E5%8A%A8%E6%80%81%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86)
-      - [分级缓存](#%E5%88%86%E7%BA%A7%E7%BC%93%E5%AD%98)
-    - [Ceph协议](#ceph%E5%8D%8F%E8%AE%AE)
-      - [`Ceph`协议与`librados`](#ceph%E5%8D%8F%E8%AE%AE%E4%B8%8Elibrados)
-      - [对象观测通知](#%E5%AF%B9%E8%B1%A1%E8%A7%82%E6%B5%8B%E9%80%9A%E7%9F%A5)
-    - [数据分段](#%E6%95%B0%E6%8D%AE%E5%88%86%E6%AE%B5)
-    - [Ceph客户端](#ceph%E5%AE%A2%E6%88%B7%E7%AB%AF)
-      - [Ceph 块存储](#ceph-%E5%9D%97%E5%AD%98%E5%82%A8)
-      - [Ceph 文件系统](#ceph-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
-      - [Ceph 对象存储](#ceph-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8)
-- [Ceph存储类型](#ceph%E5%AD%98%E5%82%A8%E7%B1%BB%E5%9E%8B)
-  - [cephfs](#cephfs)
-    - [部署元数据服务器](#%E9%83%A8%E7%BD%B2%E5%85%83%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
-      - [MDS宿主机配置需求](#mds%E5%AE%BF%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
-    - [cephfs使用](#cephfs%E4%BD%BF%E7%94%A8)
-      - [创建cephfs存储池](#%E5%88%9B%E5%BB%BAcephfs%E5%AD%98%E5%82%A8%E6%B1%A0)
-  - [硬件需求](#%E7%A1%AC%E4%BB%B6%E9%9C%80%E6%B1%82)
-    - [CPU](#cpu)
-    - [内存](#%E5%86%85%E5%AD%98)
-    - [存储](#%E5%AD%98%E5%82%A8)
-    - [网络](#%E7%BD%91%E7%BB%9C)
-    - [故障域](#%E6%95%85%E9%9A%9C%E5%9F%9F)
-    - [硬件配置建议](#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE)
-  - [操作系统建议](#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%AE)
-    - [内核](#%E5%86%85%E6%A0%B8)
-    - [平台](#%E5%B9%B3%E5%8F%B0)
-  - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
-    - [对比raid](#%E5%AF%B9%E6%AF%94raid)
-    - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
-    - [对比其他分布式存储](#%E5%AF%B9%E6%AF%94%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8)
-- [集成部署](#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
-  - [环境说明](#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E)
-  - [环境初始化](#%E7%8E%AF%E5%A2%83%E5%88%9D%E5%A7%8B%E5%8C%96)
-    - [配置yum](#%E9%85%8D%E7%BD%AEyum)
-    - [yum依赖导出](#yum%E4%BE%9D%E8%B5%96%E5%AF%BC%E5%87%BA)
-    - [配置时钟同步](#%E9%85%8D%E7%BD%AE%E6%97%B6%E9%92%9F%E5%90%8C%E6%AD%A5)
-    - [升级内核](#%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8)
-    - [raid卡](#raid%E5%8D%A1)
-  - [安装ceph](#%E5%AE%89%E8%A3%85ceph)
-  - [配置ceph](#%E9%85%8D%E7%BD%AEceph)
-    - [添加OSD](#%E6%B7%BB%E5%8A%A0osd)
-      - [ceph01节点添加`OSD](#ceph01%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph02节点添加`OSD](#ceph02%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph03节点添加`OSD](#ceph03%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [常见问题解决](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3)
-    - [crush class](#crush-class)
-      - [说明](#%E8%AF%B4%E6%98%8E)
-      - [配置](#%E9%85%8D%E7%BD%AE)
-    - [crush pool](#crush-pool)
-      - [ssd crush rule](#ssd-crush-rule)
-      - [nvme crush rule](#nvme-crush-rule)
-      - [测试crush rule](#%E6%B5%8B%E8%AF%95crush-rule)
-    - [安装dashboard](#%E5%AE%89%E8%A3%85dashboard)
-- [ceph运维管理](#ceph%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
-  - [服务启停](#%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%81%9C)
-    - [按节点启动所有ceph服务](#%E6%8C%89%E8%8A%82%E7%82%B9%E5%90%AF%E5%8A%A8%E6%89%80%E6%9C%89ceph%E6%9C%8D%E5%8A%A1)
-    - [按节点停止所有ceph服务](#%E6%8C%89%E8%8A%82%E7%82%B9%E5%81%9C%E6%AD%A2%E6%89%80%E6%9C%89ceph%E6%9C%8D%E5%8A%A1)
-    - [控制节点管理集群所有服务](#%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86%E9%9B%86%E7%BE%A4%E6%89%80%E6%9C%89%E6%9C%8D%E5%8A%A1)
-  - [pool管理](#pool%E7%AE%A1%E7%90%86)
-    - [查看`pool`](#%E6%9F%A5%E7%9C%8Bpool)
-    - [创建一个pool](#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AApool)
-    - [设置池的放置组数](#%E8%AE%BE%E7%BD%AE%E6%B1%A0%E7%9A%84%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0)
-    - [获取池的放置组数](#%E8%8E%B7%E5%8F%96%E6%B1%A0%E7%9A%84%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0)
-    - [获取集群的PG统计信息](#%E8%8E%B7%E5%8F%96%E9%9B%86%E7%BE%A4%E7%9A%84pg%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
-    - [将池与应用程序关联](#%E5%B0%86%E6%B1%A0%E4%B8%8E%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%85%B3%E8%81%94)
-    - [池配额](#%E6%B1%A0%E9%85%8D%E9%A2%9D)
-    - [删除池](#%E5%88%A0%E9%99%A4%E6%B1%A0)
-    - [池重命名](#%E6%B1%A0%E9%87%8D%E5%91%BD%E5%90%8D)
-    - [显示池统计信息](#%E6%98%BE%E7%A4%BA%E6%B1%A0%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
-    - [创建池快照](#%E5%88%9B%E5%BB%BA%E6%B1%A0%E5%BF%AB%E7%85%A7)
-    - [删除池快照](#%E5%88%A0%E9%99%A4%E6%B1%A0%E5%BF%AB%E7%85%A7)
-    - [池其他配置](#%E6%B1%A0%E5%85%B6%E4%BB%96%E9%85%8D%E7%BD%AE)
-    - [设置对象副本数](#%E8%AE%BE%E7%BD%AE%E5%AF%B9%E8%B1%A1%E5%89%AF%E6%9C%AC%E6%95%B0)
-    - [pg_autoscale_mode](#pg_autoscale_mode)
-    - [指定池的期望大小](#%E6%8C%87%E5%AE%9A%E6%B1%A0%E7%9A%84%E6%9C%9F%E6%9C%9B%E5%A4%A7%E5%B0%8F)
-    - [放置组数配置](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0%E9%85%8D%E7%BD%AE)
-    - [放置组解析](#%E6%94%BE%E7%BD%AE%E7%BB%84%E8%A7%A3%E6%9E%90)
-    - [放置组权衡](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%9D%83%E8%A1%A1)
-  - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
-    - [ceph块存储介绍](#ceph%E5%9D%97%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D)
-    - [运维管理](#%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
-      - [创建rbd](#%E5%88%9B%E5%BB%BArbd)
-      - [创建rbd用户](#%E5%88%9B%E5%BB%BArbd%E7%94%A8%E6%88%B7)
-      - [创建rbd](#%E5%88%9B%E5%BB%BArbd-1)
-      - [查看块设备映像](#%E6%9F%A5%E7%9C%8B%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
-      - [调整块设备映像的大小](#%E8%B0%83%E6%95%B4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F%E7%9A%84%E5%A4%A7%E5%B0%8F)
-      - [删除块设备映像](#%E5%88%A0%E9%99%A4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
-    - [客户端使用ceph块存储](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8ceph%E5%9D%97%E5%AD%98%E5%82%A8)
-      - [服务端操作](#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%93%8D%E4%BD%9C)
-      - [客户端操作](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C)
-      - [管理说明](#%E7%AE%A1%E7%90%86%E8%AF%B4%E6%98%8E)
-    - [k8s对接cephfs](#k8s%E5%AF%B9%E6%8E%A5cephfs)
-    - [卸载](#%E5%8D%B8%E8%BD%BD)
-  - [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Ceph存储
 
 # Ceph架构解析
@@ -2335,7 +2226,7 @@
 
 `rbd`命令允许您创建、列出和删除块设备映像。您还可以使用它来克隆映像、创建快照、将映像回滚到快照、查看快照等
 
-#### 创建rbd
+#### rbd管理
 
 **管理节点**
 
@@ -2372,7 +2263,7 @@
     [client.qemu]
             key = AQAfmTxgw/KpJhAAgkDLwXhJuUh5FUkU2K7cgw==
     
-#### 创建rbd
+#### 创建rbd映像
         
 在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
 
