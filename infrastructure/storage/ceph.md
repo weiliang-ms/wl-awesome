@@ -1,98 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Ceph存储](#ceph%E5%AD%98%E5%82%A8)
-- [Ceph架构解析](#ceph%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90)
-  - [Ceph存储集群](#ceph%E5%AD%98%E5%82%A8%E9%9B%86%E7%BE%A4)
-    - [`Ceph`数据存储流程](#ceph%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%B5%81%E7%A8%8B)
-    - [`Ceph`的可伸缩性和高可用性](#ceph%E7%9A%84%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-    - [`CRUSH`算法介绍](#crush%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D)
-    - [`mon`高可用](#mon%E9%AB%98%E5%8F%AF%E7%94%A8)
-    - [身份认证高可用性](#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-      - [动态集群管理](#%E5%8A%A8%E6%80%81%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86)
-      - [分级缓存](#%E5%88%86%E7%BA%A7%E7%BC%93%E5%AD%98)
-    - [Ceph协议](#ceph%E5%8D%8F%E8%AE%AE)
-      - [`Ceph`协议与`librados`](#ceph%E5%8D%8F%E8%AE%AE%E4%B8%8Elibrados)
-      - [对象观测通知](#%E5%AF%B9%E8%B1%A1%E8%A7%82%E6%B5%8B%E9%80%9A%E7%9F%A5)
-    - [数据分段](#%E6%95%B0%E6%8D%AE%E5%88%86%E6%AE%B5)
-    - [Ceph客户端](#ceph%E5%AE%A2%E6%88%B7%E7%AB%AF)
-      - [Ceph 块存储](#ceph-%E5%9D%97%E5%AD%98%E5%82%A8)
-      - [Ceph 文件系统](#ceph-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
-      - [Ceph 对象存储](#ceph-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8)
-- [Ceph存储类型](#ceph%E5%AD%98%E5%82%A8%E7%B1%BB%E5%9E%8B)
-  - [cephfs](#cephfs)
-    - [部署元数据服务器](#%E9%83%A8%E7%BD%B2%E5%85%83%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
-      - [MDS宿主机配置需求](#mds%E5%AE%BF%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
-    - [cephfs使用](#cephfs%E4%BD%BF%E7%94%A8)
-      - [创建cephfs存储池](#%E5%88%9B%E5%BB%BAcephfs%E5%AD%98%E5%82%A8%E6%B1%A0)
-  - [硬件需求](#%E7%A1%AC%E4%BB%B6%E9%9C%80%E6%B1%82)
-    - [CPU](#cpu)
-    - [内存](#%E5%86%85%E5%AD%98)
-    - [存储](#%E5%AD%98%E5%82%A8)
-    - [网络](#%E7%BD%91%E7%BB%9C)
-    - [故障域](#%E6%95%85%E9%9A%9C%E5%9F%9F)
-    - [硬件配置建议](#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE)
-  - [操作系统建议](#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%AE)
-    - [内核](#%E5%86%85%E6%A0%B8)
-    - [平台](#%E5%B9%B3%E5%8F%B0)
-  - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
-    - [对比raid](#%E5%AF%B9%E6%AF%94raid)
-    - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
-    - [对比其他分布式存储](#%E5%AF%B9%E6%AF%94%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8)
-- [集成部署](#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
-  - [环境说明](#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E)
-  - [环境初始化](#%E7%8E%AF%E5%A2%83%E5%88%9D%E5%A7%8B%E5%8C%96)
-    - [配置yum](#%E9%85%8D%E7%BD%AEyum)
-    - [yum依赖导出](#yum%E4%BE%9D%E8%B5%96%E5%AF%BC%E5%87%BA)
-    - [配置时钟同步](#%E9%85%8D%E7%BD%AE%E6%97%B6%E9%92%9F%E5%90%8C%E6%AD%A5)
-    - [升级内核](#%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8)
-    - [raid卡](#raid%E5%8D%A1)
-  - [安装ceph](#%E5%AE%89%E8%A3%85ceph)
-  - [配置ceph](#%E9%85%8D%E7%BD%AEceph)
-    - [添加OSD](#%E6%B7%BB%E5%8A%A0osd)
-      - [ceph01节点添加`OSD](#ceph01%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph02节点添加`OSD](#ceph02%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph03节点添加`OSD](#ceph03%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [常见问题解决](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3)
-    - [crush class](#crush-class)
-      - [说明](#%E8%AF%B4%E6%98%8E)
-      - [配置](#%E9%85%8D%E7%BD%AE)
-    - [crush pool](#crush-pool)
-      - [ssd crush rule](#ssd-crush-rule)
-      - [nvme crush rule](#nvme-crush-rule)
-      - [测试crush rule](#%E6%B5%8B%E8%AF%95crush-rule)
-    - [安装dashboard](#%E5%AE%89%E8%A3%85dashboard)
-- [ceph运维管理](#ceph%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
-  - [pool管理](#pool%E7%AE%A1%E7%90%86)
-    - [查看`pool`](#%E6%9F%A5%E7%9C%8Bpool)
-    - [创建一个pool](#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AApool)
-    - [设置池的放置组数](#%E8%AE%BE%E7%BD%AE%E6%B1%A0%E7%9A%84%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0)
-    - [获取池的放置组数](#%E8%8E%B7%E5%8F%96%E6%B1%A0%E7%9A%84%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0)
-    - [获取集群的PG统计信息](#%E8%8E%B7%E5%8F%96%E9%9B%86%E7%BE%A4%E7%9A%84pg%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
-    - [将池与应用程序关联](#%E5%B0%86%E6%B1%A0%E4%B8%8E%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%85%B3%E8%81%94)
-    - [池配额](#%E6%B1%A0%E9%85%8D%E9%A2%9D)
-    - [删除池](#%E5%88%A0%E9%99%A4%E6%B1%A0)
-    - [池重命名](#%E6%B1%A0%E9%87%8D%E5%91%BD%E5%90%8D)
-    - [显示池统计信息](#%E6%98%BE%E7%A4%BA%E6%B1%A0%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
-    - [创建池快照](#%E5%88%9B%E5%BB%BA%E6%B1%A0%E5%BF%AB%E7%85%A7)
-    - [删除池快照](#%E5%88%A0%E9%99%A4%E6%B1%A0%E5%BF%AB%E7%85%A7)
-    - [池其他配置](#%E6%B1%A0%E5%85%B6%E4%BB%96%E9%85%8D%E7%BD%AE)
-    - [设置对象副本数](#%E8%AE%BE%E7%BD%AE%E5%AF%B9%E8%B1%A1%E5%89%AF%E6%9C%AC%E6%95%B0)
-    - [pg_autoscale_mode](#pg_autoscale_mode)
-    - [指定池的期望大小](#%E6%8C%87%E5%AE%9A%E6%B1%A0%E7%9A%84%E6%9C%9F%E6%9C%9B%E5%A4%A7%E5%B0%8F)
-    - [放置组数配置](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0%E9%85%8D%E7%BD%AE)
-    - [放置组解析](#%E6%94%BE%E7%BD%AE%E7%BB%84%E8%A7%A3%E6%9E%90)
-    - [放置组权衡](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%9D%83%E8%A1%A1)
-  - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
-    - [ceph块存储介绍](#ceph%E5%9D%97%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D)
-    - [命令解析](#%E5%91%BD%E4%BB%A4%E8%A7%A3%E6%9E%90)
-    - [k8s对接cephfs](#k8s%E5%AF%B9%E6%8E%A5cephfs)
-    - [卸载](#%E5%8D%B8%E8%BD%BD)
-  - [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Ceph存储
 
 # Ceph架构解析
@@ -110,26 +15,26 @@
 `Ceph`存储集群由两种类型的守护进程组成:
 
 - `Ceph Monitor`（mon）
--  `Ceph OSD Daemon`（OSD）
+-  `ceph osd Daemon`（OSD）
 
 ![](images/OSDmonitor.png)
 
 其中`Ceph Monitor`维护集群映射的主副本。多节点`Ceph Monitor`确保了`Ceph Monitor`守护进程失败时的高可用性。
 `Ceph`客户端从`Ceph Monitor`获取集群信息
 
-`Ceph OSD`守护进程检查自己的状态和其他`OSD`的状态，并向`Ceph Monitor`上报。
+`ceph osd`守护进程检查自己的状态和其他`OSD`的状态，并向`Ceph Monitor`上报。
 
-`Ceph`客户端和每个`Ceph OSD`守护进程使用`CRUSH`算法高效地计算数据位置信息，而不必依赖于中央查找表。
+`Ceph`客户端和每个`ceph osd`守护进程使用`CRUSH`算法高效地计算数据位置信息，而不必依赖于中央查找表。
 `Ceph`的高级特性包括通过`librados`提供到`Ceph`存储集群的本地接口，以及建立在`librados`之上的许多服务接口。
 
 ### `Ceph`数据存储流程
 
 `Ceph`存储集群从`Ceph`客户端接收数据——无论是通过一个`Ceph`块设备、`Ceph`对象存储、`Ceph`文件系统还是使用`librados`创建的自定义实现——它将数据作为对象存储。
-每个对象都对应于文件系统中的一个文件，文件系统存储在对象存储设备上。`Ceph OSD`守护进程处理存储磁盘的读写操作。
+每个对象都对应于文件系统中的一个文件，文件系统存储在对象存储设备上。`ceph osd`守护进程处理存储磁盘的读写操作。
 
 ![](images/storagedata.png)
 
-`Ceph OSD`守护进程将所有数据作为对象存储在一个平面命名空间中(没有目录层次结构)。
+`ceph osd`守护进程将所有数据作为对象存储在一个平面命名空间中(没有目录层次结构)。
 对象具有标识符、二进制数据和由一组名称/值对组成的元数据。语义完全由`Ceph`客户端决定。
 例如，`CephFS`使用元数据存储文件属性，如文件所有者、创建日期、最后修改日期等。其中，对象ID全局唯一。
 
@@ -140,18 +45,18 @@
 在传统的架构中，客户端与一个集中的组件(例如，网关、代理、API、facade等)通信，该组件充当一个进入复杂子系统的单一入口点。
 这对性能和可伸缩性都施加了限制，同时引入了单点故障(例如，如果集中式组件宕机，整个系统也宕机）
 
-`Ceph`消除了集中式网关，使客户端可以直接与`Ceph OSD`守护进程交互。`Ceph OSD`守护进程在其他`Ceph`节点上创建对象副本，以确保数据的安全性和高可用性。
+`Ceph`消除了集中式网关，使客户端可以直接与`ceph osd`守护进程交互。`ceph osd`守护进程在其他`Ceph`节点上创建对象副本，以确保数据的安全性和高可用性。
 `Ceph`还使用一组`mon`来确保高可用性。为了消除集中化，`Ceph`使用了一种称为`CRUSH`的算法
 
 ### `CRUSH`算法介绍
 
-`Ceph`客户端和`Ceph OSD`守护进程都使用`CRUSH`算法来有效地计算对象的位置信息，而不是依赖于一个中心查找表。
+`Ceph`客户端和`ceph osd`守护进程都使用`CRUSH`算法来有效地计算对象的位置信息，而不是依赖于一个中心查找表。
 与以前的方法相比，`CRUSH`提供了更好的数据管理机制，可以实现大规模的数据管理。
 `CRUSH`使用智能数据复制来确保弹性，这更适合于超大规模存储。
 
  集群映射
 
-`Ceph`依赖于`Ceph`客户端和`Ceph OSD`守护进程了解集群拓扑，其中包括5个映射，统称为“集群映射”：
+`Ceph`依赖于`Ceph`客户端和`ceph osd`守护进程了解集群拓扑，其中包括5个映射，统称为“集群映射”：
 
 - `Monitor`映射: 包含集群`fsid`、每个监视器的位置、名称、地址和端口、映射创建的时间，以及它最后一次修改时间。
 要查看监视器映射，执行`ceph mon dump`。
@@ -169,10 +74,10 @@
     2: [v2:192.168.1.71:3300/0,v1:192.168.1.71:6789/0] mon.ceph03
 
 - `OSD映射`:包含集群的`fsid`，映射创建和最后修改的时间，池的列表，副本大小，`PG`号，`OSD`的列表和状态(如up, in)。
-执行`ceph OSD dump`命令，查看`OSD`映射
+执行`ceph osd dump`命令，查看`OSD`映射
 
     
-    [root@ceph01 ~]# ceph OSD dump
+    [root@ceph01 ~]# ceph osd dump
     epoch 1
     fsid b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
     created 2021-02-22 14:27:48.482130
@@ -189,7 +94,7 @@
     
 - `PG Map`：包含`PG`版本、它的时间戳、最后一个`OSD Map epoch`、完整比率，以及每个放置组的详细信息，例如`PG ID`、`Up Set`、`Acting Set`、`PG`的状态（例如active+clean），以及每个池的数据使用统计信息
   
-- `CRUSH Map`:包含一个存储设备列表，故障域层次结构(例如，设备、主机、机架、行、房间等)，以及存储数据时遍历层次结构的规则。执行`ceph OSD getcrushmap -o {filename}`;然后，通过执行`crushtool -d {comp-crushmap-filename} -o {decomp-crushmap-filename}`来反编译它。
+- `CRUSH Map`:包含一个存储设备列表，故障域层次结构(例如，设备、主机、机架、行、房间等)，以及存储数据时遍历层次结构的规则。执行`ceph osd getcrushmap -o {filename}`;然后，通过执行`crushtool -d {comp-crushmap-filename} -o {decomp-crushmap-filename}`来反编译它。
 使用cat查看反编译后的映射。
 
 - `MDS Map`:包含当前`MDS Map`的`epoch`、`Map`创建的时间和最后一次修改的时间。它还包含存储元数据的池、元数据服务器的列表，以及哪些元数据服务器已经启动和运行.
@@ -239,11 +144,11 @@
 
 每个池（pool）都有许多放置组（PG），`CRUSH`动态地将`PGs`映射到`OSDs`。当`Ceph`客户端存储对象时，`CRUSH`将每个对象映射到放置组
 
-将对象映射到放置组将在`Ceph OSD`守护进程和`Ceph`客户端之间创建一个间接层。
+将对象映射到放置组将在`ceph osd`守护进程和`Ceph`客户端之间创建一个间接层。
 `Ceph`存储集群必须能够增长(或收缩)，并重新平衡动态存储对象的位置。
-如果`Ceph`客户端“知道”哪个`Ceph OSD`守护进程有哪个对象，那么`Ceph`客户端和`Ceph OSD`守护进程之间就会产生一个紧密耦合。
-相反，`CRUSH`算法将每个对象映射到一个放置组，然后将每个放置组映射到一个或多个`Ceph OSD`守护进程。
-这一间接层允许`Ceph`在新的`Ceph OSD`守护进程和底层`OSD`设备上线时动态重新平衡。下图描述了`CRUSH`如何将对象映射到放置组，以及将放置组映射到OSD。
+如果`Ceph`客户端“知道”哪个`ceph osd`守护进程有哪个对象，那么`Ceph`客户端和`ceph osd`守护进程之间就会产生一个紧密耦合。
+相反，`CRUSH`算法将每个对象映射到一个放置组，然后将每个放置组映射到一个或多个`ceph osd`守护进程。
+这一间接层允许`Ceph`在新的`ceph osd`守护进程和底层`OSD`设备上线时动态重新平衡。下图描述了`CRUSH`如何将对象映射到放置组，以及将放置组映射到OSD。
 
 ![](images/obj-pg-OSD-.png)
 
@@ -270,7 +175,7 @@
 
 > 重新平衡
 
-当你将`Ceph OSD`守护进程添加到`Ceph`存储集群时，集群映射会随着新的`OSD`更新。再次计算`PG id`，这将更改集群映射。
+当你将`ceph osd`守护进程添加到`Ceph`存储集群时，集群映射会随着新的`OSD`更新。再次计算`PG id`，这将更改集群映射。
 下面的图描述了重新平衡的过程(虽然很粗略，因为在大型集群中影响更小)，
 其中一些(但不是所有)`pg`从现有`OSD` (OSD 1和OSD 2)迁移到新的OSD (OSD 3)。即使在重新平衡时，崩溃也是稳定的。
 许多放置组保持原来的配置，每个`OSD`增加了一些容量，因此在重新平衡完成后，新`OSD`上不会出现负载峰值。
@@ -279,8 +184,8 @@
 
 > 数据一致性
 
-作为维护数据一致性和清洁度的一部分，`Ceph OSD`还可以清理放置组中的对象。
-也就是说，`Ceph OSD`可以将一个放置组中的对象元数据与其存储在其他`OSD`中的放置组中的副本进行比较。
+作为维护数据一致性和清洁度的一部分，`ceph osd`还可以清理放置组中的对象。
+也就是说，`ceph osd`可以将一个放置组中的对象元数据与其存储在其他`OSD`中的放置组中的副本进行比较。
 清理（通常每天执行）捕获`OSD`错误或文件系统错误。
 `OSD`还可以通过逐位比较对象中的数据来执行更深入的清理。深度清理（通常每周执行一次）会在磁盘上发现在轻度清理时不明显的坏扇区。
 
@@ -356,7 +261,7 @@
 - 条带宽度：条带具有可配置的单元大小（例如64kb）。`Ceph`客户端将要写入对象的数据划分为大小相等的条带单元，但最后一个条带单元除外。条带宽度应该是对象大小的一小部分，这样一个对象可以包含许多条纹单位。
 - 条带计数：`Ceph`客户端在由条带计数确定的一系列对象上写入条带单元序列。这一系列对象被称为对象集。`Ceph`客户端写入对象集中的最后一个对象后，它返回到对象集中的第一个对象
 
-一旦`Ceph`客户端将数据分条到条带单元并将条带单元映射到对象，`Ceph`的`CRUSH`算法将对象映射到放置组，并将放置组映射到`Ceph OSD`守护进程，然后将对象作为文件存储在存储磁盘上
+一旦`Ceph`客户端将数据分条到条带单元并将条带单元映射到对象，`Ceph`的`CRUSH`算法将对象映射到放置组，并将放置组映射到`ceph osd`守护进程，然后将对象作为文件存储在存储磁盘上
 
 ### Ceph客户端
 
@@ -372,7 +277,7 @@
 
 #### Ceph 块存储
 
-`Ceph`块设备在`Ceph`存储集群中的多个对象上划分块设备映像，每个对象映射到一个放置组并分布，放置组分布在整个集群中不同的`Ceph OSD`守护进程上。
+`Ceph`块设备在`Ceph`存储集群中的多个对象上划分块设备映像，每个对象映射到一个放置组并分布，放置组分布在整个集群中不同的`ceph osd`守护进程上。
 
 精简配置的可快照`Ceph`块设备是虚拟化和云计算的一个有吸引力的选择。
 在虚拟机场景中，人们通常在`QEMU/KVM`中部署带有`rbd`网络存储驱动程序的`Ceph`块设备，其中服务端使用`librbd`向客户端提供块设备服务。
@@ -387,7 +292,7 @@
 
 `Ceph`文件系统服务包括部署在`Ceph`存储集群中的`Ceph`元数据服务器(MDS)。
 `MDS`的目的是将所有文件系统元数据(目录、文件所有权、访问模式等)存储在高可用性`Ceph`元数据服务器中，元数据驻留在内存中。
-`MDS`(称为Ceph - MDS的守护进程)存在的原因是，简单的文件系统操作，如列出目录或更改目录(ls、cd)，会给`Ceph OSD`守护进程带来不必要的负担。
+`MDS`(称为Ceph - MDS的守护进程)存在的原因是，简单的文件系统操作，如列出目录或更改目录(ls、cd)，会给`ceph osd`守护进程带来不必要的负担。
 因此，将元数据从数据中分离出来意味着`Ceph`文件系统可以提供高性能服务，而不会对`Ceph`存储集群造成负担。
 
 
@@ -441,8 +346,8 @@
 
 > 创建池
 
-    $ ceph OSD pool create cephfs_data <pg_num>
-    $ ceph OSD pool create cephfs_metadata <pg_num>
+    $ ceph osd pool create cephfs_data <pg_num>
+    $ ceph osd pool create cephfs_metadata <pg_num>
     
 通常，元数据池最多有几`GB`的数据。因此，通常推荐较小的`PG`计数。64或128通常用于大型集群。
 
@@ -459,7 +364,7 @@
 
 ### CPU
 
-`Ceph`元数据服务器动态地重新分配它们的负载，这是`CPU`密集型的。因此，元数据服务器应该具有强大的处理能力(例如，四核或更好的cpu)。`Ceph OSDs`运行`RADOS`服务，使用`CRUSH`计算数据位置，复制数据，并维护它们自己的集群映射副本。
+`Ceph`元数据服务器动态地重新分配它们的负载，这是`CPU`密集型的。因此，元数据服务器应该具有强大的处理能力(例如，四核或更好的cpu)。`ceph osds`运行`RADOS`服务，使用`CRUSH`计算数据位置，复制数据，并维护它们自己的集群映射副本。
 因此，`OSD`应该具有合理的处理能力(例如，双核处理器)。监视器只是维护集群映射的主副本，因此它们不是`CPU`密集型的。
 您还必须考虑主机除了运行`Ceph`守护进程外，是否还将运行`cpu`密集型进程。
 例如，如果您的主机将运行计算虚拟机(例如`OpenStack Nova`)，您将需要确保这些其他进程为`Ceph`守护进程留出足够的处理能力。
@@ -534,16 +439,16 @@
     例如，价格为$75.00的1`TB`硬盘的成本为每`GB`$0.07(即$75 / 1024 = 0.0732)。
     相比之下，价格为150美元的3`TB`硬盘的成本为每`GB` 0.05美元(即150美元/ 3072 = 0.0488)。
     在前面的示例中，使用1`TB`的磁盘通常会使每`GB`的成本增加40%——从而大大降低集群的成本效率。
-    此外，存储驱动器容量越大，每个`Ceph OSD`守护进程需要的内存就越多，尤其是在重新平衡、回填和恢复期间。
+    此外，存储驱动器容量越大，每个`ceph osd`守护进程需要的内存就越多，尤其是在重新平衡、回填和恢复期间。
     一般的经验法则是1`TB`的存储空间需要`1GB`的`RAM`
     
     存储驱动器受到寻道时间、访问时间、读和写时间以及总吞吐量的限制。
     这些物理限制会影响整个系统的性能——尤其是在恢复过程中。
-    官方建议为操作系统和软件使用专用的驱动器，为主机上运行的每个`Ceph OSD`守护进程使用一个驱动器(物理硬盘)。
+    官方建议为操作系统和软件使用专用的驱动器，为主机上运行的每个`ceph osd`守护进程使用一个驱动器(物理硬盘)。
     大多数`慢OSD`问题是由于在同一个驱动器上运行一个操作系统、多个`OSD`和/或多个日志引起的。
     由于在小型集群上故障排除性能问题的成本可能会超过额外磁盘驱动器的成本，因此可以通过避免过度使用`OSD`存储驱动器来加速集群设计规划
     
-    您可以在每个硬盘驱动器上运行多个`Ceph OSD`进程，但这可能会导致资源争用，并降低总体吞吐量。
+    您可以在每个硬盘驱动器上运行多个`ceph osd`进程，但这可能会导致资源争用，并降低总体吞吐量。
     您可以将日志和对象数据存储在同一个驱动器上，但这可能会增加向客户端记录写操作和`ACK`所需的时间。
     `Ceph`必须先向日志写入数据，然后才能对写入数据进行验证
     
@@ -671,7 +576,7 @@
     
     
     #         Start          End    Size  Type            Name
-     1     10487808   1875384974  889.3G  Ceph OSD        ceph data
+     1     10487808   1875384974  889.3G  ceph osd        ceph data
      2         2048     10487807      5G  Ceph Journal    ceph journal
     
     Disk /dev/sdc: 960.2 GB, 960197124096 bytes, 1875385008 sectors
@@ -1442,7 +1347,7 @@
     
 > 查看集群OSD crush tree(ceph01节点执行)
 
-    [root@ceph01 ~]# ceph OSD crush tree --show-shadow
+    [root@ceph01 ~]# ceph osd crush tree --show-shadow
     ID CLASS WEIGHT   TYPE NAME
     -2   ssd 25.76233 root default~ssd
     -4   ssd  9.75183     host ceph01~ssd
@@ -1482,37 +1387,37 @@
 
 > 修改nvme类型class
 
-    ceph OSD crush rm-device-class 7
-    ceph OSD crush set-device-class nvme OSD.7
-    ceph OSD crush rm-device-class 8
-    ceph OSD crush set-device-class nvme OSD.8
-    ceph OSD crush rm-device-class 9
-    ceph OSD crush set-device-class nvme OSD.9
-    ceph OSD crush rm-device-class 10
-    ceph OSD crush set-device-class nvme OSD.10
+    ceph osd crush rm-device-class 7
+    ceph osd crush set-device-class nvme OSD.7
+    ceph osd crush rm-device-class 8
+    ceph osd crush set-device-class nvme OSD.8
+    ceph osd crush rm-device-class 9
+    ceph osd crush set-device-class nvme OSD.9
+    ceph osd crush rm-device-class 10
+    ceph osd crush set-device-class nvme OSD.10
     
-    ceph OSD crush rm-device-class 16
-    ceph OSD crush set-device-class nvme OSD.16
-    ceph OSD crush rm-device-class 17
-    ceph OSD crush set-device-class nvme OSD.17
-    ceph OSD crush rm-device-class 18
-    ceph OSD crush set-device-class nvme OSD.18
-    ceph OSD crush rm-device-class 19
-    ceph OSD crush set-device-class nvme OSD.19
+    ceph osd crush rm-device-class 16
+    ceph osd crush set-device-class nvme OSD.16
+    ceph osd crush rm-device-class 17
+    ceph osd crush set-device-class nvme OSD.17
+    ceph osd crush rm-device-class 18
+    ceph osd crush set-device-class nvme OSD.18
+    ceph osd crush rm-device-class 19
+    ceph osd crush set-device-class nvme OSD.19
     
-    ceph OSD crush rm-device-class 25
-    ceph OSD crush set-device-class nvme OSD.25
-    ceph OSD crush rm-device-class 26
-    ceph OSD crush set-device-class nvme OSD.26
-    ceph OSD crush rm-device-class 27
-    ceph OSD crush set-device-class nvme OSD.27
-    ceph OSD crush rm-device-class 28
-    ceph OSD crush set-device-class nvme OSD.28
+    ceph osd crush rm-device-class 25
+    ceph osd crush set-device-class nvme OSD.25
+    ceph osd crush rm-device-class 26
+    ceph osd crush set-device-class nvme OSD.26
+    ceph osd crush rm-device-class 27
+    ceph osd crush set-device-class nvme OSD.27
+    ceph osd crush rm-device-class 28
+    ceph osd crush set-device-class nvme OSD.28
     
     
 > 查看集群OSD crush tree
 
-    [root@ceph01 ~]# ceph OSD crush tree --show-shadow
+    [root@ceph01 ~]# ceph osd crush tree --show-shadow
     ID  CLASS WEIGHT   TYPE NAME
     -12  nvme 10.91638 root default~nvme
      -9  nvme  3.63879     host ceph01~nvme
@@ -1556,123 +1461,123 @@
 #### ssd crush rule
 > 创建crush rule
 
-    #ceph OSD crush rule create-replicated <rule-name> <root> <failure-domain> <class>
+    #ceph osd crush rule create-replicated <rule-name> <root> <failure-domain> <class>
 
 创建`class` 为`SSD`的rule
 
-    ceph OSD crush rule create-replicated SSD_rule default host ssd
+    ceph osd crush rule create-replicated SSD_rule default host ssd
     
 > 创建资源池
 
-    #ceph OSD pool create {pool_name} {pg_num} [{pgp_num}]
-    ceph OSD pool create ssd-pool 256 256
+    #ceph osd pool create {pool_name} {pg_num} [{pgp_num}]
+    ceph osd pool create ssd-pool 256 256
     
 > 查看`ssd-pool`crush rule
 
-    [root@ceph01 ~]# ceph OSD pool get ssd-pool crush_rule
+    [root@ceph01 ~]# ceph osd pool get ssd-pool crush_rule
     crush_rule: replicated_rule
 
 > 设置`ssd-pool`crush rule为`SSD_rule`
 
-    #ceph OSD pool set <pool-name> crush_rule <rule-name>
-    ceph OSD pool set ssd-pool crush_rule SSD_rule
+    #ceph osd pool set <pool-name> crush_rule <rule-name>
+    ceph osd pool set ssd-pool crush_rule SSD_rule
 
 > 查看`ssd-pool`crush rule
 
-    [root@ceph01 ~]# ceph OSD pool get ssd-pool crush_rule
+    [root@ceph01 ~]# ceph osd pool get ssd-pool crush_rule
     crush_rule: SSD_rule
     
 > 设置`ssd-pool`配额
 
-    #OSD pool set-quota <poolname> max_objects|max_bytes <val>
+    #osd pool set-quota <poolname> max_objects|max_bytes <val>
 
 设置最大对象数10
 
-    ceph OSD pool set-quota ssd-pool max_objects 10
+    ceph osd pool set-quota ssd-pool max_objects 10
     
 设置存储大小为1G
 
-    ceph OSD pool set-quota ssd-pool max_bytes 1G
+    ceph osd pool set-quota ssd-pool max_bytes 1G
     
 > 扩容`ssd-pool`配额
 
-    #OSD pool set-quota <poolname> max_objects|max_bytes <val>
+    #osd pool set-quota <poolname> max_objects|max_bytes <val>
     
 设置最大对象数20
 
-    ceph OSD pool set-quota ssd-pool max_objects 20
+    ceph osd pool set-quota ssd-pool max_objects 20
     
 设置存储大小为2G
 
-    ceph OSD pool set-quota ssd-pool max_bytes 2G
+    ceph osd pool set-quota ssd-pool max_bytes 2G
     
 > 修改`ssd-pool`为`ssd-demo-pool`
 
-     ceph OSD pool rename ssd-pool ssd-demo-pool
+     ceph osd pool rename ssd-pool ssd-demo-pool
      
 #### nvme crush rule
 
 > 创建crush rule
 
-    #ceph OSD crush rule create-replicated <rule-name> <root> <failure-domain> <class>
+    #ceph osd crush rule create-replicated <rule-name> <root> <failure-domain> <class>
     
 创建`class` 为`nvme`的rule
 
-    ceph OSD crush rule create-replicated nvme_rule default host nvme
+    ceph osd crush rule create-replicated nvme_rule default host nvme
     
 > 创建资源池
 
-    #ceph OSD pool create {pool_name} {pg_num} [{pgp_num}]
-    ceph OSD pool create nvme-pool 256 256
+    #ceph osd pool create {pool_name} {pg_num} [{pgp_num}]
+    ceph osd pool create nvme-pool 256 256
     
 > 查看`nvme-pool`crush rule
 
-    [root@ceph01 ~]# ceph OSD pool get nvme-pool crush_rule
+    [root@ceph01 ~]# ceph osd pool get nvme-pool crush_rule
     crush_rule: replicated_rule
 
 > 设置`nvme-pool`crush rule为`nvme_rule`
 
-    #ceph OSD pool set <pool-name> crush_rule <rule-name>
-    ceph OSD pool set nvme-pool crush_rule nvme_rule
+    #ceph osd pool set <pool-name> crush_rule <rule-name>
+    ceph osd pool set nvme-pool crush_rule nvme_rule
 
 > 查看`nvme-pool`crush rule
 
-    [root@ceph01 ~]# ceph OSD pool get nvme-pool crush_rule
+    [root@ceph01 ~]# ceph osd pool get nvme-pool crush_rule
     crush_rule: nvme_rule
     
 > 设置`nvme-pool`配额
 
-    #OSD pool set-quota <poolname> max_objects|max_bytes <val>
+    #osd pool set-quota <poolname> max_objects|max_bytes <val>
 
 设置最大对象数10
 
-    ceph OSD pool set-quota nvme-pool max_objects 10
+    ceph osd pool set-quota nvme-pool max_objects 10
     
 设置存储大小为1G
 
-    ceph OSD pool set-quota nvme-pool max_bytes 1G
+    ceph osd pool set-quota nvme-pool max_bytes 1G
     
 > 扩容`ssd-pool`配额
 
-    #OSD pool set-quota <poolname> max_objects|max_bytes <val>
+    #osd pool set-quota <poolname> max_objects|max_bytes <val>
     
 设置最大对象数20
 
-    ceph OSD pool set-quota nvme-pool max_objects 20
+    ceph osd pool set-quota nvme-pool max_objects 20
     
 设置存储大小为2G
 
-    ceph OSD pool set-quota nvme-pool max_bytes 2G
+    ceph osd pool set-quota nvme-pool max_bytes 2G
     
 > 修改`nvme-pool`为`nvme-demo-pool`
 
-     ceph OSD pool rename nvme-pool nvme-demo-pool
+     ceph osd pool rename nvme-pool nvme-demo-pool
      
 #### 测试crush rule
 
 > 查看`crush class`
 
-    [root@ceph01 ~]# ceph OSD crush class ls
+    [root@ceph01 ~]# ceph osd crush class ls
     [
         "ssd",
         "nvme"
@@ -1680,14 +1585,14 @@
 
 > 查看`crush rule`
 
-    [root@ceph01 ~]# ceph OSD crush rule ls
+    [root@ceph01 ~]# ceph osd crush rule ls
     replicated_rule
     SSD_rule
     nvme_rule
     
 > 查看池`cursh rule`
 
-    [root@ceph01 ~]# ceph OSD pool ls detail
+    [root@ceph01 ~]# ceph osd pool ls detail
     pool 1 'ssd-demo-pool' replicated size 3 min_size 2 crush_rule 1 object_hash rjenkins pg_num 256 pgp_num 256 autoscale_mode warn last_change 256 flags hashpspool max_bytes 2147483648 max_objects 20 stripe_width 0
     pool 2 'nvme-demo-pool' replicated size 3 min_size 2 crush_rule 2 object_hash rjenkins pg_num 256 pgp_num 256 autoscale_mode warn last_change 266 flags hashpspool max_bytes 2147483648 max_objects 20 stripe_width 0
     
@@ -1709,17 +1614,17 @@
 
 > 查看`object-ssd`对象存储情况
 
-    [root@ceph01 ~]# ceph OSD map ssd-demo-pool object-ssd
+    [root@ceph01 ~]# ceph osd map ssd-demo-pool object-ssd
     OSDmap e267 pool 'ssd-demo-pool' (1) object 'object-ssd' -> pg 1.cffcc003 (1.3) -> up ([13,1,21], p13) acting ([13,1,21], p13)
     
 > 查看`object-nvme`对象存储情况
 
-    [root@ceph01 ~]# ceph OSD map nvme-demo-pool object-nvme
+    [root@ceph01 ~]# ceph osd map nvme-demo-pool object-nvme
     OSDmap e267 pool 'nvme-demo-pool' (2) object 'object-nvme' -> pg 2.2d6e9780 (2.80) -> up ([28,19,8], p28) acting ([28,19,8], p28)
     
 > 确认存储`OSD`
 
-    [root@ceph01 ~]# ceph OSD tree
+    [root@ceph01 ~]# ceph osd tree
     ID CLASS WEIGHT   TYPE NAME       STATUS REWEIGHT PRI-AFF
     -1       25.76233 root default
     -3        9.75183     host ceph01
@@ -1801,11 +1706,47 @@
     
 # ceph运维管理
 
+## 服务启停
+
+### 按节点启动所有ceph服务
+
+    systemctl start ceph.target
+    
+或
+
+    sudo systemctl start ceph-osd.target
+    sudo systemctl start ceph-mon.target
+    sudo systemctl start ceph-mds.target
+    
+### 按节点停止所有ceph服务
+
+    systemctl stop ceph\*.service ceph\*.target
+
+或
+
+    sudo systemctl stop ceph-mon\*.service ceph-mon.target
+    sudo systemctl stop ceph-osd\*.service ceph-osd.target
+    sudo systemctl stop ceph-mds\*.service ceph-mds.target
+    
+### 控制节点管理集群所有服务
+
+启
+
+    sudo systemctl start ceph-osd@{id}
+    sudo systemctl start ceph-mon@{hostname}
+    sudo systemctl start ceph-mds@{hostname}
+    
+停
+
+    sudo systemctl stop ceph-osd@{id}
+    sudo systemctl stop ceph-mon@{hostname}
+    sudo systemctl stop ceph-mds@{hostname}
+
 ## pool管理
 
 ### 查看`pool`
 
-    [root@ceph01 ~]# ceph OSD lspools
+    [root@ceph01 ~]# ceph osd lspools
     1 ssd-demo-pool
     2 nvme-demo-pool
 
@@ -1813,12 +1754,12 @@
 
 格式
 
-    ceph OSD pool create {pool-name} {pg-num} [{pgp-num}] [replicated] \
+    ceph osd pool create {pool-name} {pg-num} [{pgp-num}] [replicated] \
          [crush-rule-name] [expected-num-objects]
          
     或
          
-    ceph OSD pool create {pool-name} {pg-num}  {pgp-num}   erasure \
+    ceph osd pool create {pool-name} {pg-num}  {pgp-num}   erasure \
          [erasure-code-profile] [crush-rule-name] [expected_num_objects]
 
 参数解析
@@ -1835,11 +1776,11 @@
 
 ### 设置池的放置组数
 
-    ceph OSD pool set {pool-name} pgp_num {pgp_num}
+    ceph osd pool set {pool-name} pgp_num {pgp_num}
 
 ### 获取池的放置组数
 
-    ceph OSD pool get {pool-name} pg_num
+    ceph osd pool get {pool-name} pg_num
     
 ### 获取集群的PG统计信息
   
@@ -1851,7 +1792,11 @@
 池在使用之前需要与应用程序相关联。将与`cepfs`一起使用的池或由`RGW`自动创建的池将自动关联。
 用于与`RBD`一起使用的池应该使用`RBD`工具进行初始化。
 
-    ceph osd pool application enable {pool-name} {application-name}(cephfs, rbd, rgw)
+    # ceph osd pool application enable {pool-name} {application-name}(cephfs, rbd, rgw)
+    [root@ceph01 ~]# ceph osd pool application enable ssd-demo-pool rbd
+    enabled application 'rbd' on pool 'ssd-demo-pool'
+    [root@ceph01 ~]# ceph osd pool application enable nvme-demo-pool cephfs
+    enabled application 'cephfs' on pool 'nvme-demo-pool'
 
 ### 池配额
 
@@ -2080,9 +2025,9 @@
 
 > 为指定池设置放置组数自动伸缩
 
-    # ceph OSD pool set <pool-name> pg_autoscale_mode <mode>
+    # ceph osd pool set <pool-name> pg_autoscale_mode <mode>
     
-    [root@ceph01 ~]# ceph OSD pool set ssd-demo-pool pg_autoscale_mode on
+    [root@ceph01 ~]# ceph osd pool set ssd-demo-pool pg_autoscale_mode on
     set pool 1 pg_autoscale_mode to on
     
 > 设置集群内所有池放置组数自动伸缩
@@ -2093,16 +2038,16 @@
     
 查看集群内放置组数伸缩策略
 
-    [root@ceph01 ~]# ceph OSD pool autoscale-status
+    [root@ceph01 ~]# ceph osd pool autoscale-status
     POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
     nvme-demo-pool     7               3.0       11178G 0.0000                               1.0    256         32 warn
     ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
     
 创建`ddd-pool`，并查看集群内放置组数伸缩策略
 
-    [root@ceph01 ~]# ceph OSD pool create ddd-pool 1 1
+    [root@ceph01 ~]# ceph osd pool create ddd-pool 1 1
     pool 'ddd-pool' created
-    [root@ceph01 ~]# ceph OSD pool autoscale-status
+    [root@ceph01 ~]# ceph osd pool autoscale-status
     POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
     nvme-demo-pool     7               3.0       26380G 0.0000                               1.0    256         32 warn
     ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
@@ -2148,17 +2093,17 @@
 
 `ddd-pool`预计使用`1G`存储空间
 
-    ceph OSD pool set ddd-pool target_size_bytes 1G
+    ceph osd pool set ddd-pool target_size_bytes 1G
 
 相对于设置了`target_size_ratio`的其他池，`mpool`预计将消耗1.0。
 如果`mpool`是集群中唯一的池，这意味着预计将使用总容量的100%。
 如果有第二个带有`target_size_ratio`1.0的池，那么两个池都希望使用50%的集群容量。
 
-    ceph OSD pool set mypool target_size_ratio 1.0
+    ceph osd pool set mypool target_size_ratio 1.0
     
 ### 放置组数配置
 
-    # ceph OSD pool create {pool-name} pg_num
+    # ceph osd pool create {pool-name} pg_num
     
 必须选择`pg_num`的值，因为它（当前）无法自动计算。以下是一些常用值：
 
@@ -2220,7 +2165,7 @@
 所有这些`OSD`都连接到`10Gb/s`交换机，单个`OSD`的恢复在M分钟内完成。
 如果每台机器有两个`OSD`、没有`SSD`、`1Gb/s`交换机，它至少会慢一个数量级。
 
-在这种大小的集群中，放置组的数量对数据持久性几乎没有影响。它可能是128或8192，恢复不会慢或快。
+在这种大小的集群中，放置组的数量对数据持f久性几乎没有影响。它可能是128或8192，恢复不会慢或快。
 
 但是，将同一个`Ceph`集群增加到20个`OSD`而不是10个`OSD`可能会加快恢复速度，从而显著提高数据持久性。
 每个`OSD`现在只参与~75个放置组，而不是在只有10个`OSD`时参与~150个，而且仍然需要剩下的19个`OSD`执行相同数量的对象副本才能恢复。
@@ -2262,7 +2207,6 @@
 最小化放置组的数量可以节省大量资源。
 
 
-
 ## 块设备（rdb）使用
 ### ceph块存储介绍
 
@@ -2278,15 +2222,224 @@
 `Ceph`的`block`设备以无限的可扩展性向内核模块或`kvm`（如QEMU）以及为基于云的计算系统（如OpenStack和CloudStack）提供高性能存储，
 这些系统依赖`libvirt`和`QEMU`与`Ceph block`设备集成。您可以使用同一集群同时操作`Ceph-RADOS`网关、`CephFS`文件系统和`Ceph-block`设备。
 
-### 命令解析
+### 运维管理
 
 `rbd`命令允许您创建、列出和删除块设备映像。您还可以使用它来克隆映像、创建快照、将映像回滚到快照、查看快照等
 
-> 创建
+#### 创建rbd
 
-**ceph客户端**
+**管理节点**
 
-> 配置yum
+创建池（SSD_rule为crush规则）
+
+    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
+    pool 'rbd-demo-pool' created
+    
+设置配额
+
+    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 1G
+    set-quota max_bytes = 1073741824 for pool rbd-demo-pool
+    
+关联应用
+
+    [root@ceph01 ~]# ceph osd pool application enable rbd-demo-pool rbd
+    enabled application 'rbd' on pool 'rbd-demo-pool'
+    
+初始化
+
+    # rbd pool init <pool-name>
+    rbd pool init rbd-demo-pool
+    
+#### 创建rbd用户
+
+语法格式
+
+    ceph auth get-or-create client.{ID} mon 'profile rbd' osd 'profile {profile name} [pool={pool-name}][, profile ...]' mgr 'profile rbd [pool={pool-name}]'
+
+创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
+
+    [root@ceph01 ~]# ceph auth get-or-create client.qemu mon 'profile rbd' \
+    >     osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool'
+    [client.qemu]
+            key = AQAfmTxgw/KpJhAAgkDLwXhJuUh5FUkU2K7cgw==
+    
+#### 创建rbd
+        
+在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
+
+    # rbd create --size {megabytes} {pool-name}/{image-name}
+    rbd create --size 1G rbd-demo-pool/rbd-demo-image
+    
+#### 查看块设备映像
+       
+查看池内映像
+       
+    # rbd ls {poolname}
+    [root@ceph01 ~]# rbd ls rbd-demo-pool
+    rbd-demo-image
+    
+查看块设备映像信息
+    
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 1 GiB in 256 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+#### 调整块设备映像的大小
+
+收缩大小为`256M`
+
+    [root@ceph01 ~]# rbd resize --size 256M rbd-demo-pool/rbd-demo-image --allow-shrink
+    Resizing image: 100% complete...done.
+    
+查看块设备映像信息
+    
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 256 MiB in 64 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+扩容大小至`1G`
+
+    [root@ceph01 ~]# rbd resize --size 1G rbd-demo-pool/rbd-demo-image --allow-shrink
+    Resizing image: 100% complete...done.
+
+查看块设备映像信息
+
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 1 GiB in 256 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+#### 删除块设备映像
+
+    # rbd rm {pool-name}/{image-name}
+    [root@ceph01 ~]# rbd rm rbd-demo-pool/rbd-demo-image
+    Removing image: 100% complete...done.
+    
+
+### 客户端使用ceph块存储
+
+#### 服务端操作
+
+**管理节点**
+
+> 创建池（SSD_rule为crush规则）
+
+    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
+    pool 'rbd-demo-pool' created
+    
+> 设置配额
+
+    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 1G
+    set-quota max_bytes = 1073741824 for pool rbd-demo-pool
+    
+> 关联应用
+
+    [root@ceph01 ~]# ceph osd pool application enable rbd-demo-pool rbd
+    enabled application 'rbd' on pool 'rbd-demo-pool'
+    
+> 初始化
+
+    # rbd pool init <pool-name>
+    rbd pool init rbd-demo-pool
+    
+> 创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
+
+    ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
+  
+查看用户清单与权限
+
+    [root@ceph01 ~]# ceph auth ls|grep -C 5 qemu
+    installed auth entries:
+    
+            key: AQDkTjNg/YTFHBAAWtXC1va23txI7B3jmSu2cg==
+            caps: [mon] allow profile bootstrap-rbd-mirror
+    client.bootstrap-rgw
+            key: AQDkTjNgJaDFHBAApth03RUjcuUGEcy7IDUxEg==
+            caps: [mon] allow profile bootstrap-rgw
+    client.qemu
+            key: AQAfmTxgw/KpJhAAgkDLwXhJuUh5FUkU2K7cgw==
+            caps: [mgr] profile rbd pool=rbd-demo-pool
+            caps: [mon] profile rbd
+            caps: [osd] profile rbd pool=rbd-demo-pool
+    mgr.ceph01
+    
+测试权限
+
+    [root@ceph01 ~]# ceph -s --name client.qemu
+      cluster:
+        id:     b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+        health: HEALTH_WARN
+                1 pools have too many placement groups
+                mon ceph03 is low on available space
+    
+      services:
+        mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 2h)
+        mgr: ceph01(active, since 8h), standbys: ceph02, ceph03
+        osd: 29 osds: 29 up (since 2d), 29 in (since 2d)
+    
+      data:
+        pools:   3 pools, 320 pgs
+        objects: 8 objects, 147 B
+        usage:   30 GiB used, 26 TiB / 26 TiB avail
+        pgs:     320 active+clean
+    
+> 创建rbd映像
+        
+    rbd create --size 1G rbd-demo-pool/rbd-demo-image
+
+#### 客户端操作
+
+> 1、删除原有yum源repo文件
+
+	rm -f /etc/yum.repos.d/*.repo
+	
+> 2、创建yum源文件（客户端）
+
+**online**
+
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+**offline**
+    
+下载以下文件上传至`/etc/yum.repos.d/`
+
+- [Centos-7.repo](http://mirrors.aliyun.com/repo/Centos-7.repo)
+- [epel-7.repo](http://mirrors.aliyun.com/repo/epel-7.repo)
+
+> 3、配置`ceph`镜像源仓库
 
     cat > /etc/yum.repos.d/ceph.repo <<EOF
     [Ceph]
@@ -2311,14 +2464,25 @@
     gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
     EOF
 
-> 安装客户端
+> 4、配置`yum`代理
 
-    yum install -y epel-release
+**适用于主机通过代理访问互联网场景**
+
+以下变量注意替换
+
+- username: 代理用户名
+- password: 代理用户密码
+- proxy_host: 代理IP地址
+- proxy_port: 代理端口
+
+
+    echo "proxy=http://username:password@proxy_host:proxy_port" >> /etc/yum.conf
+
+> 安装`ceph-common`
+
     yum install -y ceph-common
     
 > 拷贝配置文件
-
-客户端创建配置目录
 
     mkdir -p /etc/ceph
     
@@ -2327,22 +2491,19 @@
     mkdir -p /ceph
     chmod 777 /ceph
     
-从服务端`scp`以下文件至客户端/etc/ceph下
+从服务端`scp`以下文件至客户端`/etc/ceph`下
 
-- /etc/ceph/ceph.client.admin.keyring
-- /etc/ceph/ceph.conf
+- `/etc/ceph/ceph.client.qemu.keyring`
+- `/etc/ceph/ceph.conf`
 
 
     scp /etc/ceph/{ceph.conf,ceph.client.admin.keyring} ip:/etc/ceph/
-    
-> 创建块设备(客户端执行)
-
-    rbd create --pool harbor-pool --image harbor-img --image-format 2 --image-feature layering --size 2048G
 
 > 映射块设备
 
-    rbd map harbor-pool/harbor-img
-    echo "harbor-pool/harbor-img id=admin,keyring=/etc/ceph/ceph.client.admin.keyring" >> /etc/ceph/rbdmap
+    [root@localhost ~]# rbd map rbd-demo-pool/rbd-demo-image --name client.qemu
+    /dev/rbd0
+    [root@localhost ~]# echo "rbd-demo-pool/rbd-demo-image id=qemu,keyring=/etc/ceph/ceph.client.qemu.keyring" >> /etc/ceph/rbdmap
     
 > 格式化块设备
 
@@ -2476,6 +2637,71 @@
     chmod +x /etc/init.d/rbdmap
     service rbdmap start 
     chkconfig rbdmap on
+    
+#### 管理说明
+
+> 查看客户端rbd存储可用大小
+
+    [root@localhost ceph]# df -h
+    Filesystem               Size  Used Avail Use% Mounted on
+    devtmpfs                 3.9G     0  3.9G   0% /dev
+    tmpfs                    3.9G     0  3.9G   0% /dev/shm
+    tmpfs                    3.9G  8.6M  3.9G   1% /run
+    tmpfs                    3.9G     0  3.9G   0% /sys/fs/cgroup
+    /dev/mapper/centos-root   99G  2.2G   97G   3% /
+    /dev/sda1               1014M  141M  874M  14% /boot
+    /dev/rbd0                976M  2.6M  907M   1% /ceph
+    
+> 尝试创建`1G`文件
+
+    [root@localhost ~]# cd /ceph
+    [root@localhost ceph]# fallocate -l 1G test
+    fallocate: fallocate failed: No space left on device
+    
+撤销
+
+    fallocate -d test
+    rm -f test
+  
+> 服务端扩容
+
+`rbd-demo-pool`扩容至10G`rbd-demo-image`扩容至`5G`
+
+    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 10G
+    set-quota max_bytes = 10737418240 for pool rbd-demo-pool
+    
+    [root@ceph01 ~]# rbd resize --size 5G rbd-demo-pool/rbd-demo-image
+    Resizing image: 100% complete...done.
+ 
+> 客户端扩容
+
+    [root@localhost ~]# resize2fs /dev/rbd0 5G
+    resize2fs 1.42.9 (28-Dec-2013)
+    Filesystem at /dev/rbd0 is mounted on /ceph; on-line resizing required
+    old_desc_blocks = 1, new_desc_blocks = 1
+    The filesystem on /dev/rbd0 is now 1310720 blocks long.
+    
+查看
+
+    [root@localhost ~]# df -h
+    Filesystem               Size  Used Avail Use% Mounted on
+    devtmpfs                 3.9G     0  3.9G   0% /dev
+    tmpfs                    3.9G     0  3.9G   0% /dev/shm
+    tmpfs                    3.9G  8.6M  3.9G   1% /run
+    tmpfs                    3.9G     0  3.9G   0% /sys/fs/cgroup
+    /dev/mapper/centos-root   99G  2.2G   97G   3% /
+    /dev/sda1               1014M  141M  874M  14% /boot
+    /dev/rbd0                4.9G  4.0M  4.7G   1% /ceph
+
+> 适用场景
+
+**可以当成本地盘来用：**
+
+- 虚机存储
+- 开发数据库存储
+- 存储日志
+
+    
     
 ### k8s对接cephfs
 
