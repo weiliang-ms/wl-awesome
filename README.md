@@ -28,6 +28,9 @@
     - [ceph](/infrastructure/storage/ceph.md)
   - [虚拟化]()
     - [Ovirt](/infrastructure/virtaul/Ovirt.md)
+- [云原生](https://github.com/CloudNativePartner/document)
+    - helm
+        - [redis chart实践](https://github.com/CloudNativePartner/document)
 - [容器](#%E5%AE%B9%E5%99%A8)
   - [docker]()
     - [安装](/container/docker/install.md)

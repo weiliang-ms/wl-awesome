@@ -2555,11 +2555,11 @@
 
 #### 客户端操作
 
-> 1、删除原有yum源repo文件
+> 删除原有yum源repo文件
 
 	rm -f /etc/yum.repos.d/*.repo
 	
-> 2、创建yum源文件（客户端）
+> 创建yum源文件（客户端）
 
 **online**
 
@@ -2573,7 +2573,7 @@
 - [Centos-7.repo](http://mirrors.aliyun.com/repo/Centos-7.repo)
 - [epel-7.repo](http://mirrors.aliyun.com/repo/epel-7.repo)
 
-> 3、配置`ceph`镜像源仓库
+> 配置`ceph`镜像源仓库
 
     cat > /etc/yum.repos.d/ceph.repo <<EOF
     [Ceph]
@@ -2598,7 +2598,7 @@
     gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
     EOF
 
-> 4、配置`yum`代理
+> 配置`yum`代理
 
 **适用于主机通过代理访问互联网场景**
 
@@ -2650,8 +2650,14 @@
 > 查看挂载
 
     lsblk
+    
+> 查看块设备映射
+
+    [root@localhost ~]# rbd device list
+    id pool          namespace image          snap device
+    0  rbd-demo-pool           rbd-demo-image -    /dev/rbd0
  
-> 修改fstab，设置开机挂载
+> 修改`fstab`，设置开机挂载
 
     echo "/dev/rbd0 /ceph ext4 defaults,noatime,_netdev 0 0" >> /etc/fstab
     
