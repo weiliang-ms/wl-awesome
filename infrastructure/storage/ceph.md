@@ -134,13 +134,52 @@
 
 - [ceph最佳实践](#ceph最佳实践])：`ceph`应用场景，包括与`k8s`集成
 
-# Ceph架构解析
+# Ceph解析
 
 `Ceph`是一个提供对象存储、块存储和文件存储的统一存储系统。
 `Ceph`是高度可靠、易于管理和免费的。`Ceph`的强大功能可以改变企业`IT`基础设施和管理大量数据的能力。
 `Ceph`提供了超强的可伸缩性--数以千计的客户端访问`pb`到`eb`的数据.
 
 ![](images/stack.png)
+
+## Ceph术语
+
+本术语表中的术语旨在解释说明`Ceph`现有的技术术语。
+
+- `cephx`：`Ceph`认证协议，操作类似`Kerberos`，但不存在单点故障情况
+- `Ceph`平台：所有`Ceph`软件
+- `Ceph`堆栈：`Ceph`的两种或多种组件的集合
+- 集群映射：包括`MON`映射、`OSD`映射、`PG`映射、`MDS`映射和`CRUSH`映射
+- `Ceph对象存储`：由`Ceph`存储集群和`Ceph`对象网关组成
+- `RGW`：`Ceph`的`S3/Swift`网关组件
+- `RBD`：`Ceph`块存储组件
+- `Ceph块存储`：用于与`librbd`、管理程序（如`QEMU`或`Xen`）和管理程序抽象层（如`libvirt`）结合使用
+- `Ceph文件系统`：`Ceph`的`POSIX`文件系统组件
+- `OSD`：物理或逻辑存储单元(如LUN)。有时，`Ceph`用户使用术语`OSD`来指代`Ceph OSD`守护进程，尽管正确的术语是`Ceph OSD`
+- `Ceph OSD`：`Ceph OSD`守护进程，与逻辑盘(`OSD`)交互。
+- `OSD id`：定义`OSD`的整数。它由监视器生成，作为创建新`OSD`的一部分         
+- `OSD fsid`：这是一个唯一标识符，用于进一步提高`OSD`的唯一性，它可以在`OSD`路径中的`osd_fsid`文件中找到。这个`fsid`术语可以与`uuid`互换使用
+- `OSD uuid`：与`OSD fsid`一样，这是`OSD`唯一标识符，可以与`OSD fsid`互换使用
+- `bluestore`：`OSD BlueStore`是`OSD`守护程序（kraken和更新版本）的新后端。与`filestore`不同，它直接将对象存储在`Ceph`块设备上，而不需要任何文件系统接口
+- `filestore`：`OSD`守护进程的后端，需要日志记录、将文件写入文件系统
+- `MON`：`Ceph`监控软件
+- `MGR`：`Ceph`管理器软件，收集集群所有状态   
+- `MDS`：`Ceph`元数据服务
+- `Ceph Client`：可以访问`Ceph`存储集群的`Ceph`组件的集合。组件包括`Ceph`对象网关、`Ceph`块设备、`Ceph`文件系统以及它们相应的库、内核模块、用户空间文件系统
+- `Ceph Kernel Modules`：内核模块的集合，可以用来与`Ceph`系统交互(例如，`Ceph.ko`, `rbd.ko`)。
+- `Ceph Client Libraries`：可用于与`Ceph`系统组件交互的库集合
+- `Ceph Release`：任何明显编号的`Ceph`版本
+- `Ceph Point Release`：任何只包含错误或安全修正的特别发行版
+- `Ceph Interim Release`：`Ceph`的版本尚未通过质量保证测试，但可能包含新特性
+- `Ceph Release Candidate`：`Ceph`的一个主要版本，已经经历了最初的质量保证测试，并且已经为`beta`测试做好了准备
+- `Ceph Stable Release`：`Ceph`的主要版本，其中所有来自前一个临时版本的特性都成功地通过了质量保证测试
+- `Teuthology`：在`Ceph`上执行脚本测试的软件集合
+- `CRUSH`：可伸缩散列下的受控复制(Controlled Replication Under Scalable Hashing)。这是`Ceph`用来计算对象存储位置的算法
+- `CRUSH rule`：适用于特定池的压缩数据放置规则
+- `Pools`：池是用于存储对象的逻辑分区
+- `systemd oneshot`：一种`systemd`类型，其中一个命令定义在`ExecStart`中，它将在完成时退出(它不打算后台化)
+- `LVM tags`：用于`LVM`卷和组的可扩展元数据。它用于存储关于设备及其与`osd`的关系的特定于`ceph`的信息
+
 
 ## Ceph存储集群
     
@@ -149,7 +188,7 @@
 `Ceph`存储集群由两种类型的守护进程组成:
 
 - `Ceph Monitor`（mon）
--  `ceph osd Daemon`（OSD）
+- `Ceph OSD Daemon`（OSD）
 
 ![](images/OSDmonitor.png)
 
@@ -1806,7 +1845,7 @@
  
 > 安装
 
-    ceph-deploy mgr create ceph01 ceph02 ceph03
+    yum install -y ceph-mgr-dashboard
     
 > 启用`Dashboard`
 
@@ -1833,11 +1872,43 @@
         "dashboard": "https://ceph01:8443/"
     }
     
-    
 > 登录访问
 
 ![](images/ceph-ui.png)
+
+> 修改端口
+
+确认配置
+
+    [root@ceph01 ~]# ceph config-key  ls
+    [
+        "config-history/1/",
+        "config-history/2/",
+        "config-history/2/+global/osd_pool_default_pg_autoscale_mode",
+        "config/global/osd_pool_default_pg_autoscale_mode",
+        "mgr/dashboard/accessdb_v1",
+        "mgr/dashboard/crt",
+        "mgr/dashboard/jwt_secret",
+        "mgr/dashboard/key"
+    ]
     
+修改端口
+
+    ceph config set mgr mgr/dashboard/ssl_server_port 7000
+
+使变更的配置生效
+    
+    ceph mgr module disable dashboard
+    ceph mgr module enable dashboard
+    
+> 配置访问前缀
+   
+    ceph config set mgr mgr/dashboard/url_prefix /ceph-ui
+    
+重启`mgr`
+
+    systemctl restart ceph-mgr@ceph01
+      
 # ceph运维管理
 
 ## 服务启停
@@ -1956,7 +2027,7 @@
 添加如下：
 
     [mon]
-    mon allow pool delete = true
+    mon_allow_pool_delete=true
 
 更新
 
@@ -2392,11 +2463,8 @@
 
 创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
 
-    [root@ceph01 ~]# ceph auth get-or-create client.qemu mon 'profile rbd' \
-    >     osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool'
-    [client.qemu]
-            key = AQAfmTxgw/KpJhAAgkDLwXhJuUh5FUkU2K7cgw==
-    
+    ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
+
 #### 创建rbd映像
         
 在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
@@ -2843,12 +2911,333 @@
 
     
     
-### k8s对接cephfs
+# k8s对接ceph
+
+## k8s使用ceph块存储
+
+使用[ceph-csi](https://github.com/ceph/ceph-csi) 实现
+
+### ceph服务端
+
+> 创建一个池，用以为`k8s`提供块存储服务
+
+    [root@ceph01 ~]# ceph osd pool create rbd-k8s-pool 256 256 SSD_rule
+    pool 'rbd-k8s-pool' created
+    
+> 设置配额
+
+    [root@ceph01 ~]# ceph osd pool set-quota rbd-k8s-pool max_bytes 100G
+    set-quota max_bytes = 107374182400 for pool rbd-k8s-pool
+    
+> 关联应用
+
+    [root@ceph01 ~]# ceph osd pool application enable rbd-k8s-pool rbd
+    enabled application 'rbd' on pool 'rbd-k8s-pool'
+    
+> 初始化
+
+    rbd pool init rbd-k8s-pool
+    
+> 创建用户
+
+    [root@ceph01 ~]# ceph auth get-or-create client.kubernetes mon 'profile rbd' osd 'profile rbd pool=rbd-k8s-pool' mgr 'profile rbd pool=rbd-k8s-pool'
+    [client.kubernetes]
+            key = AQCS6kFg0NRDIBAAorr8r5Oxiz1eYH61VvLVYA==     
+
+### k8s节点
+
+> 下载配置文件
+
+- [ceph-csi-3.2.0.zip](https://github.com/ceph/ceph-csi/archive/v3.2.0.zip)
+
+> 上传配置文件解压
+
+    unzip ceph-csi-3.2.0.zip
+    
+> 创建一个命名空间，用于管理`ceph-csi`
+    
+    kubectl create ns ceph-csi
+    
+> 更改`ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-config-map.yaml`
+
+获取集群信息(`ceph`管理节点执行)
+
+    [root@ceph01 ~]# ceph mon dump
+    dumped monmap epoch 2
+    epoch 2
+    fsid b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+    last_changed 2021-02-22 14:36:08.199609
+    created 2021-02-22 14:27:26.357269
+    min_mon_release 14 (nautilus)
+    0: [v2:192.168.1.69:3300/0,v1:192.168.1.69:6789/0] mon.ceph01
+    1: [v2:192.168.1.70:3300/0,v1:192.168.1.70:6789/0] mon.ceph02
+    2: [v2:192.168.1.71:3300/0,v1:192.168.1.71:6789/0] mon.ceph03
+    
+  
+- `b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294`为集群`ID`
+- 监控节点地址：`192.168.1.69:6789,192.168.1.70:6789,192.168.1.71:6789`
+
+更改后`csi-config-map.yaml`内容如下：
+
+    
+    vim ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-config-map.yaml
+    
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    data:
+      config.json: |-
+        [
+          {
+            "clusterID": "b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294",
+            "monitors": [
+              "192.168.1.69:6789",
+              "192.168.1.70:6789",
+              "192.168.1.71:6789"
+            ]
+          }
+        ]
+    metadata:
+      name: ceph-csi-config
+      
+> 创建`csi-config-map`
+
+    kubectl -n ceph-csi apply -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-config-map.yaml
+
+> 创建`csi-rbd-secret`
+
+创建
+
+    cat <<EOF > ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbd-secret.yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: csi-rbd-secret
+      namespace: ceph-csi
+    stringData:
+      userID: kubernetes
+      userKey: AQCS6kFg0NRDIBAAorr8r5Oxiz1eYH61VvLVYA==
+    EOF
+    
+`AQCS6kFg0NRDIBAAorr8r5Oxiz1eYH61VvLVYA==`可通过在`ceph`服务端执行`ceph auth get client.kubernetes`获取
+
+发布
+
+    kubectl apply -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbd-secret.yaml
+
+> 配置清单中的`namespace`改成`ceph-csi`
+
+    sed -i "s/namespace: default/namespace: ceph-csi/g" $(grep -rl "namespace: default" ./ceph-csi-3.2.0/deploy/rbd/kubernetes)
+    sed -i -e "/^kind: ServiceAccount/{N;N;a\  namespace: ceph-csi  # 输入到这里的时候需要按一下回车键，在下一行继续输入
+    }" $(egrep -rl "^kind: ServiceAccount" ./ceph-csi-3.2.0/deploy/rbd/kubernetes)
+
+> 创建`ServiceAccount`和`RBAC ClusterRole/ClusterRoleBinding`资源对象
+
+    kubectl create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-provisioner-rbac.yaml
+    kubectl create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-nodeplugin-rbac.yaml
+
+> 创建`PodSecurityPolicy`
+
+    kubectl create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-provisioner-psp.yaml
+    kubectl create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-nodeplugin-psp.yaml
+
+> 调整`csi-rbdplugin-provisioner.yaml`和`csi-rbdplugin.yaml`
+
+将`csi-rbdplugin.yaml`中的`kms`部分配置注释掉
+
+    # vim ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbdplugin.yaml
+    ...
+    - name: ceph-csi-encryption-kms-config
+      mountPath: /etc/ceph-csi-encryption-kms-config/
+    ...
+    ...
+    - name: ceph-csi-encryption-kms-config
+      configMap:
+        name: ceph-csi-encryption-kms-config
+    ...
+
+将`csi-rbdplugin-provisioner.yaml`中的`kms`部分配置注释掉
+    
+    # vim ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbdplugin-provisioner.yaml
+    ...
+    - name: ceph-csi-encryption-kms-config
+      mountPath: /etc/ceph-csi-encryption-kms-config/
+    ...
+    ...
+    - name: ceph-csi-encryption-kms-config
+      configMap:
+        name: ceph-csi-encryption-kms-config
+    ...
+    
+将`csi-rbdplugin.yaml`中的`image`部分调整为可访问镜像地址
+
+    k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+    quay.io/cephcsi/cephcsi:v3.2.0
+    
+将`csi-rbdplugin-provisioner.yaml`中的`image`部分调整为可访问镜像地址
+
+    quay.io/cephcsi/cephcsi:v3.2.0
+    k8s.gcr.io/sig-storage/csi-provisioner:v2.0.4
+    k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.2
+    k8s.gcr.io/sig-storage/csi-attacher:v3.0.2
+    k8s.gcr.io/sig-storage/csi-resizer:v1.0.1
+    
+发布`csi-rbdplugin-provisioner.yaml`和`csi-rbdplugin.yaml`
+
+    kubectl -n ceph-csi create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbdplugin-provisioner.yaml
+    kubectl -n ceph-csi create -f ceph-csi-3.2.0/deploy/rbd/kubernetes/csi-rbdplugin.yaml
+
+查看运行状态
+
+    [root@ceph01 ~]# kubectl get pod -n ceph-csi
+    NAME                                         READY   STATUS    RESTARTS   AGE
+    csi-rbdplugin-ddc42                          3/3     Running   0          76s
+    csi-rbdplugin-fwwfv                          3/3     Running   0          76s
+    csi-rbdplugin-provisioner-76959bd74d-gwd9k   7/7     Running   0          5h32m
+    csi-rbdplugin-provisioner-76959bd74d-nb574   7/7     Running   0          5h32m
+    
+> 创建`StorageClass`
+
+`b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294`为`ceph`集群`ID`注意替换
+
+生成配置文件
+
+    cat <<EOF > ceph-csi-3.2.0/deploy/rbd/kubernetes/storageclass.yaml
+    ---
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: ceph-csi-rbd-sc
+    provisioner: rbd.csi.ceph.com
+    parameters:
+      clusterID: b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
+      pool: rbd-k8s-pool
+      imageFeatures: layering
+      csi.storage.k8s.io/provisioner-secret-name: csi-rbd-secret
+      csi.storage.k8s.io/provisioner-secret-namespace: ceph-csi
+      csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-secret
+      csi.storage.k8s.io/controller-expand-secret-namespace: ceph-csi
+      csi.storage.k8s.io/node-stage-secret-name: csi-rbd-secret
+      csi.storage.k8s.io/node-stage-secret-namespace: ceph-csi
+      csi.storage.k8s.io/fstype: ext4
+    reclaimPolicy: Delete
+    allowVolumeExpansion: true
+    mountOptions:
+      - discard
+    EOF
+    
+创建
+
+    kubectl apply -f ceph-csi-3.2.0/deploy/rbd/kubernetes/storageclass.yaml
+    
+配置为默认`storage class`
+
+    kubectl patch storageclass ceph-csi-rbd-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+查看`storage class`
+
+    [root@ceph01 ~]# kubectl get sc
+    NAME                        PROVISIONER        RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+    ceph-csi-rbd-sc (default)   rbd.csi.ceph.com   Delete          Immediate              true                   117s
+
+> 创建`pvc`验证可用性
+
+生成配置
+
+    cat <<EOF > ceph-csi-3.2.0/deploy/rbd/kubernetes/pvc-demo.yaml 
+    ---
+    kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: ceph-pvc-demo
+      namespace: default
+    spec:
+      storageClassName: ceph-csi-rbd-sc
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+    EOF
+    
+创建
+
+    kubectl apply -f ceph-csi-3.2.0/deploy/rbd/kubernetes/pvc-demo.yaml
+    
+查看
+
+    [root@ceph01 ~]# kubectl get pvc
+    NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+    ceph-pvc-demo   Bound    pvc-7b7d4d8a-c4f4-40b6-9372-661ece7c385e   1Gi        RWO            ceph-csi-rbd-sc   13s
+    
+> `pvc`扩容
+
+生成配置
+
+    cat <<EOF > ceph-csi-3.2.0/deploy/rbd/kubernetes/nginx-demo.yaml 
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: testpv
+      labels:
+        role: web-frontend
+    spec:
+      containers:
+      - name: web
+        image: nginx
+        ports:
+          - name: web
+            containerPort: 80
+        volumeMounts:
+          - name: ceph-pvc-demo
+            mountPath: "/usr/share/nginx/html"
+      volumes:
+      - name: ceph-pvc-demo
+        persistentVolumeClaim:
+          claimName: ceph-pvc-demo
+    EOF
+    
+发布
+
+    kubectl apply -f ceph-csi-3.2.0/deploy/rbd/kubernetes/nginx-demo.yaml
+    
+查看`pvc`
+
+    [root@ceph01 ~]# kubectl get pvc
+    NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+    ceph-pvc-demo   Bound    pvc-360f8c5b-0f82-4f17-957b-a7eb5cf93f7e   1Gi        RWO            ceph-csi-rbd-sc   2m50s
+
+编辑修改`pvc`
+
+    kubectl edit pvc ceph-pvc-demo
+    
+修改以下内容，`storage: 1Gi`调整为`storage: 10Gi`
+
+    ...
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+    ...
+    
+重启
+
+    kubectl get pod testpv -o yaml | kubectl replace --force -f -
+    
+再次查看`pvc`
+
+    [root@ceph01 ~]# kubectl get pvc
+    NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+    ceph-pvc-demo   Bound    pvc-360f8c5b-0f82-4f17-957b-a7eb5cf93f7e   10Gi       RWO            ceph-csi-rbd-sc   9m26s
+
+## k8s使用ceph文件系统
 
 > 下载所需镜像
 
     quay.io/external_storage/cephfs-provisioner:latest
-    
+    quay.io/cephcsi/cephcsi:v3.2.0
 > 安装
 
     git clone https://github.com/kubernetes-retired/external-storage.git
