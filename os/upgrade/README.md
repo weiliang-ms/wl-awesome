@@ -225,14 +225,14 @@
     X11Forwarding yes
     Subsystem sftp /usr/libexec/openssh/sftp-server
     EOF
+    
+调整`service`,重启`ssh`服务
 
-重启ssh服务
+    sed -i "s;Type=notify;#Type=notify;g" /usr/lib/systemd/system/sshd.service
+    systemctl daemon-reload && systemctl restart sshd
 
-    service sshd restart
 
-至此openssh升级完毕！
-
-成功后关闭telnet
+成功后关闭`telnet`
 
     systemctl disable telnet.socket --now
     systemctl disable xinetd --now
