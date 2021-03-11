@@ -85,6 +85,185 @@ CentOS:
 - 创建`Service Account`、`ClusterRole`和`ClusterRoleBindings`，以便以最低权限运行`webhook`服务
 - 创建`ValidatingWebhookConfig`并使用来自集群的适当值填充`CA bundle`
 
+### 部署
+
+> 下载配置文件上传至`k8s`节点`/root`下,解压
+
+- [rook-1.5.8.tar.gz](https://github.com/rook/rook/archive/v1.5.8.tar.gz)
+
+    
+    tar zxvf rook-1.5.8.tar.gz
+    
+#### 创建CRD
+
+    kubectl apply -f rook-1.5.8/cluster/examples/kubernetes/ceph/crds.yaml
+    
+#### 创建namespace、service accounts、RBAC rules
+
+    kubectl apply -f rook-1.5.8/cluster/examples/kubernetes/ceph/common.yaml
+    
+#### 存储节点添加标签
+
+    kubectl label nodes ceph01 role=storage-node
+    kubectl label nodes ceph02 role=storage-node
+    kubectl label nodes ceph03 role=storage-node
+    
+#### 安装rook operator
+
+调整镜像地址
+
+    # vim rook-1.5.8/cluster/examples/kubernetes/ceph/operator.yaml
+    image: rook/ceph:v1.5.8
+    # ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.2.0"
+    # ROOK_CSI_REGISTRAR_IMAGE: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
+    # ROOK_CSI_RESIZER_IMAGE: "k8s.gcr.io/sig-storage/csi-resizer:v1.0.0"
+    # ROOK_CSI_PROVISIONER_IMAGE: "k8s.gcr.io/sig-storage/csi-provisioner:v2.0.0"
+    # ROOK_CSI_SNAPSHOTTER_IMAGE: "k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.0"
+    # ROOK_CSI_ATTACHER_IMAGE: "k8s.gcr.io/sig-storage/csi-attacher:v3.0.0"
+    
+发布
+
+    kubectl apply -f rook-1.5.8/cluster/examples/kubernetes/ceph/operator.yaml
+
+#### 调整ceph集群配置
+
+`rook-1.5.8/cluster/examples/kubernetes/ceph/cluster.yaml`
+
+[配置解析：](https://github.com/rook/rook/blob/master/Documentation/ceph-cluster-crd.md#storage-selection-settings)
+
+- `metadata.namespace: rook-ceph` 默认即可
+- `spec.cephVersion` `ceph`版本
+    - `image: ceph/ceph:v15.2.9` 调整为实际可访问地址
+- `spec.dataDirHostPath: /var/lib/rook` 主机存放`ceph`配置文件目录，重装需要清空该目录
+- `spec.skipUpgradeChecks: false` 离线环境下设置为`true`关闭更新检测
+- `spec.mon.num: 3` `ceph mons` 数量，建议使用默认值（如需调整必须为奇数）
+- `spec.network:` 集群网络配置
+- `spec.placement` `ceph`服务调度亲和性，建议配置如下
 
 
+    ...
+      placement:
+        all:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: role
+                  operator: In
+                  values:
+                  - storage-node
+          podAffinity:
+          podAntiAffinity:
+          topologySpreadConstraints:
+          tolerations:
+          - key: storage-node
+            operator: Exists
+    ...
 
+- `spec.resources:` 资源配额，建议配置如下：
+
+
+      resources:
+    # The requests and limits set here, allow the mgr pod to use half of one CPU core and 1 gigabyte of memory
+        mgr:
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
+          requests:
+            cpu: "500m"
+            memory: "1024Mi"
+    # The above example requests/limits can also be added to the mon and osd components
+        mon:
+          limits:
+            cpu: "2"
+            memory: "4096Mi"
+          requests:
+            cpu: "500m"
+            memory: "1024Mi"
+        osd:
+          limits:
+            cpu: "2"
+            memory: "8192Mi"
+          requests:
+            cpu: "1"
+            memory: "1024Mi"
+        mds:
+          limits:
+            cpu: "4"
+            memory: "8192Mi"
+          requests:
+            cpu: "1"
+            memory: "1024Mi"
+            
+- `spec.storage: `配置存储，建议按节点配置
+
+
+      storage: # cluster level storage configuration and selection
+        useAllNodes: false
+        useAllDevices: false
+        #deviceFilter:
+        config:
+        nodes:
+        - name: "192.168.1.69"
+          devices:
+          - name: "sda"
+          - name: "sdc"
+          - name: "sdd"
+          - name: "sde"
+          - name: "sdf"
+          - name: "sdg"
+          - name: "sdh"
+          - name: "nvme0n1"
+          - name: "nvme1n1"
+          - name: "nvme2n1"
+          - name: "nvme3n1"
+        - name: "192.168.1.70"
+          devices:
+          - name: "sda"
+          - name: "sdb"
+          - name: "sdd"
+          - name: "sde"
+          - name: "sdf"
+          - name: "nvme0n1"
+          - name: "nvme1n1"
+          - name: "nvme2n1"
+          - name: "nvme3n1"
+        - name: "192.168.1.71"
+          devices:
+          - name: "sdb"
+          - name: "sdc"
+          - name: "sdd"
+          - name: "sde"
+          - name: "sdf"
+          - name: "nvme0n1"
+          - name: "nvme1n1"
+          - name: "nvme2n1"
+          - name: "nvme3n1"
+          
+**其他配置使用默认值**
+
+> 创建集群
+
+    kubectl apply -f rook-1.5.8/cluster/examples/kubernetes/ceph/cluster.yaml
+    
+> 查看状态
+
+查看`pod`
+
+    [root@ceph01 ceph]# kubectl get pod -n rook-ceph
+    NAME                                           READY   STATUS    RESTARTS   AGE
+    csi-cephfsplugin-bxsfm                         3/3     Running   0          14s
+    csi-cephfsplugin-provisioner-7d8f9765f-hkhj9   6/6     Running   0          13s
+    csi-cephfsplugin-provisioner-7d8f9765f-pwwvn   6/6     Running   0          13s
+    csi-cephfsplugin-v92l2                         3/3     Running   0          14s
+    csi-rbdplugin-dwftm                            3/3     Running   0          15s
+    csi-rbdplugin-provisioner-669cc846cb-kfkzc     6/6     Running   0          14s
+    csi-rbdplugin-provisioner-669cc846cb-rpp2r     6/6     Running   0          14s
+    csi-rbdplugin-rfxc6                            3/3     Running   0          15s
+    rook-ceph-operator-85bd8c8f64-gk2gz            1/1     Running   0          6m28s
+  
+查看集群状态
+
+    kubectl -n rook-ceph get CephCluster -o yaml
+    
+> 

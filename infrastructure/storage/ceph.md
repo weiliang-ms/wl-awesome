@@ -3618,14 +3618,6 @@
     kubectl -n $NAMESPACE apply -f ./rbac
     
 ## 卸载
-
-    ceph-deploy purge ceph01 ceph02 ceph03
-    
-    ceph-deploy purgedata ceph01 ceph02 ceph03
-    
-    ceph-deploy forgetkeys
-    
-    rm -rf /var/lib/ceph
     
 ### 删除文件系统
 
@@ -3715,6 +3707,14 @@
 
     ceph-deploy disk zap <node-hostname> /dev/<?>
     
+### 卸载组件并清空目录
+    
+    ceph-deploy purge ceph01 ceph02 ceph03
+    
+    ceph-deploy purgedata ceph01 ceph02 ceph03
+    
+    ceph-deploy forgetkeys
+        
 ## 参考文献
 
 - [SAN和NAS之间的基本区别](https://www.cnblogs.com/cainiao-chuanqi/p/12204944.html)
