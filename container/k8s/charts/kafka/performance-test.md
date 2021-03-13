@@ -303,31 +303,9 @@
 
 > 测试`100W`写记录,每条记录`2000`字节，每次写入`5000`条记录
 
-第一次
-
     [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 1000000 --record-size 2000  --throughput 5000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
     ...
     1000000 records sent, 4999.425066 records/sec (9.54 MB/sec), 0.85 ms avg latency, 347.00 ms max latency, 1 ms 50th, 1 ms 95th, 2 ms 99th, 41 ms 99.9th.
-    
-第二次
-
-    [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 1000000 --record-size 2000  --throughput 5000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
-    ...
-    
-第三次
-
-    [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 1000000 --record-size 2000  --throughput 5000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
-    ...
-
-第四次
-
-    [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 1000000 --record-size 2000  --throughput 5000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
-    ...
-    
-第五次
-
-    [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 1000000 --record-size 2000  --throughput 5000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
-    ...
     
 ### 1000W级数据
 
@@ -797,10 +775,10 @@
 | 消息总数（万） | 单个消息大小（字节） | 每秒发送消息数 | 节点数 |分区数 | 副本数 | 95%的消息延迟(单位:ms) | 写速率（MB/sec） |
 | :-----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | 
 | 10 | 1000 | 2000 |3|1|1|1|1.91|
-| 10 | 1000 | 2000 |3|3|2|3|1.91|
+| 10 | 1000 | 2000 |3|1|2|3|1.91|
 | 10 | 1000 | 2000 |3|3|2|2|1.91|
 | 100 | 2000 | 5000 |3|1|1|1|9.54|
-| 100 | 2000 | 5000 |3|3|2|6|9.54|
+| 100 | 2000 | 5000 |3|1|2|6|9.54|
 | 100 | 2000 | 5000 |3|3|2|2.6|9.54|
 | 1000 | 2000 | 5000 |3|1|1|1|9.54|
 | 1000 | 2000 | 10000 |3|3|2|3|19.07|
