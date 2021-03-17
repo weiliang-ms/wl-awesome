@@ -50,19 +50,6 @@
 - `k8s version`: `v1.18.6`
 - `k8s CNI`: `calico`
 
-## 基于虚机部署写性能测试
-
-- `--num-records` 总记录数
-- `--record-size` 每条记录大小（单位:字节）
-- `--throughput` 每秒写入记录数
-
-- `kafka`集群节点
-    - `192.168.1.90:9092`
-    - `192.168.1.91:9092`
-    - `192.168.1.92:9092`
-- `zk`节点：`192.168.1.90:2181`
-- `测试机`：192.168.1.69
-
 ### 磁盘性能
 
 > kafka服务端写性能
@@ -107,6 +94,19 @@
         latency  =  69.4 us
 
 即网络瓶颈为`118 MB/sec`，千兆级网卡
+
+## 基于虚机部署写性能测试
+
+- `--num-records` 总记录数
+- `--record-size` 每条记录大小（单位:字节）
+- `--throughput` 每秒写入记录数
+
+- `kafka`集群节点
+    - `192.168.1.90:9092`
+    - `192.168.1.91:9092`
+    - `192.168.1.92:9092`
+- `zk`节点：`192.168.1.90:2181`
+- `测试机`：192.168.1.69
 
 ### 创建topic
 
@@ -324,6 +324,20 @@
     [root@ceph01 local]# /usr/local/kafka/bin/kafka-producer-perf-test.sh --topic test_perf2 --num-records 10000000 --record-size 2000  --throughput 10000 --producer-props bootstrap.servers=192.168.1.90:9092,192.168.1.91:9092,192.168.1.92:9092
     ...
     10000000 records sent, 9999.830003 records/sec (19.07 MB/sec), 0.91 ms avg latency, 396.00 ms max latency, 1 ms 50th, 1 ms 95th, 2 ms 99th, 10 ms 99.9th.
+        
+## 基于虚机部署读性能测试
+
+- `--num-records` 总记录数
+- `--record-size` 每条记录大小（单位:字节）
+- `--throughput` 每秒写入记录数
+
+- `kafka`集群节点
+    - `192.168.1.90:9092`
+    - `192.168.1.91:9092`
+    - `192.168.1.92:9092`
+- `zk`节点：`192.168.1.90:2181`
+- `测试机`：192.168.1.69
+
         
 ## 基于k8s部署写性能测试
 
@@ -749,10 +763,24 @@
 
 > 测试`1亿`写记录,每条记录`2000`字节，每次写入`100万`条记录
 
-    / # kafka-producer-perf-test.sh --topic test_perf2 --num-records 100000000 --record-size 2000  --throughput 1000000 --producer-props bootstrap.servers=k
-    afka-pyegtd:9092
+    / # kafka-producer-perf-test.sh --topic test_perf2 --num-records 100000000 --record-size 2000  --throughput 1000000 --producer-props bootstrap.servers=kafka-pyegtd:9092
     ...   
     100000000 records sent, 59408.105167 records/sec (113.31 MB/sec), 275.60 ms avg latency, 1061.00 ms max latency, 46 ms 50th, 823 ms 95th, 868 ms 99th, 915 ms 99.9th 
+
+## 消费10W级记录
+
+> 单线程
+
+    / # kafka-consumer-perf-test.sh --broker-list kafka-pyegtd:9092 --topic test_perf --fetch-size 1048576 --messages 100000 --threads 1
+    start.time, end.time, data.consumed.in.MB, MB.sec, data.consumed.in.nMsg, nMsg.sec, rebalance.time.ms, fetch.time.ms, fetch.MB.sec, fetch.nMsg.sec
+    2021-03-13 08:18:52:730, 2021-03-13 08:18:54:172, 95.5811, 66.2837, 100112, 69425.7975, 1615623533239, -1615623531797, -0.0000, -0.0001
+
+- 消费时常：`1s`
+- 最大吞吐率：`95.5811MB/s` 
+- 消费速率：`66.2837MB/s`
+- 最大每秒消费: `100112`条
+- 平均每秒消费：`69425.7975`条
+
 
 ## 测试结果
 

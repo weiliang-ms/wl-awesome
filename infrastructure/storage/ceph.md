@@ -1155,7 +1155,7 @@
     
 > 安装`ceph`(所有节点)
 
-    yum install -y ceph
+    yum install -y ceph ceph-deploy
     
 > 初始化mon节点(deploy节点)
 
@@ -1290,10 +1290,10 @@
  
     cd /etc/ceph
     for i in {c..h};do
-    ceph-deploy OSD create --data /dev/sd$i ceph01
+    ceph-deploy osd create --data /dev/sd$i ceph01
     done
     
-    ceph-deploy OSD create --data /dev/sda ceph01
+    ceph-deploy osd create --data /dev/sda ceph01
     
 > 擦净节点`nvme`类型磁盘
 
@@ -1859,7 +1859,7 @@
  
 > 安装
 
-    yum install -y ceph-mgr-dashboard
+    ceph-deploy mgr create ceph01
     
 > 启用`Dashboard`
 
@@ -1981,16 +1981,6 @@
     ceph osd pool create {pool-name} {pg-num}  {pgp-num}   erasure \
          [erasure-code-profile] [crush-rule-name] [expected_num_objects]
 
-参数解析
-         
-- `pool-name`: 池名称，集群唯一
-- `pg-num`: 放置组数量
-- ``
-- ``
-- ``
-- ``
-- ``
-
 **最佳实践**
 
 ### 设置池的放置组数
@@ -2050,9 +2040,7 @@
     
 重启
 
-    [root@ceph01 ceph]# systemctl restart ceph-mon@ceph01
-    [root@ceph01 ceph]# systemctl restart ceph-mon@ceph02
-    [root@ceph01 ceph]# systemctl restart ceph-mon@ceph03
+    systemctl restart ceph-mon.target
 
     
 删除`ddd-pool`
