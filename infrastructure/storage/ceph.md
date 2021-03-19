@@ -10,27 +10,21 @@
   - [Ceph存储集群](#ceph%E5%AD%98%E5%82%A8%E9%9B%86%E7%BE%A4)
     - [`Ceph`数据存储流程](#ceph%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%B5%81%E7%A8%8B)
     - [`Ceph`的可伸缩性和高可用性](#ceph%E7%9A%84%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-    - [`CRUSH`算法介绍](#crush%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D)
+  - [`CRUSH`算法介绍](#crush%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D)
     - [`mon`高可用](#mon%E9%AB%98%E5%8F%AF%E7%94%A8)
-    - [身份认证高可用性](#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
-      - [动态集群管理](#%E5%8A%A8%E6%80%81%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86)
-      - [分级缓存](#%E5%88%86%E7%BA%A7%E7%BC%93%E5%AD%98)
-    - [Ceph协议](#ceph%E5%8D%8F%E8%AE%AE)
-      - [`Ceph`协议与`librados`](#ceph%E5%8D%8F%E8%AE%AE%E4%B8%8Elibrados)
-      - [对象观测通知](#%E5%AF%B9%E8%B1%A1%E8%A7%82%E6%B5%8B%E9%80%9A%E7%9F%A5)
-    - [数据分段](#%E6%95%B0%E6%8D%AE%E5%88%86%E6%AE%B5)
-    - [Ceph客户端](#ceph%E5%AE%A2%E6%88%B7%E7%AB%AF)
-      - [Ceph 块存储](#ceph-%E5%9D%97%E5%AD%98%E5%82%A8)
-      - [Ceph 文件系统](#ceph-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
-      - [Ceph 对象存储](#ceph-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8)
+  - [身份认证高可用性](#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7)
+  - [动态集群管理](#%E5%8A%A8%E6%80%81%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86)
+  - [分级缓存](#%E5%88%86%E7%BA%A7%E7%BC%93%E5%AD%98)
+  - [Ceph协议](#ceph%E5%8D%8F%E8%AE%AE)
+    - [`Ceph`协议与`librados`](#ceph%E5%8D%8F%E8%AE%AE%E4%B8%8Elibrados)
+    - [对象观测通知](#%E5%AF%B9%E8%B1%A1%E8%A7%82%E6%B5%8B%E9%80%9A%E7%9F%A5)
+  - [数据分段](#%E6%95%B0%E6%8D%AE%E5%88%86%E6%AE%B5)
 - [Ceph存储类型](#ceph%E5%AD%98%E5%82%A8%E7%B1%BB%E5%9E%8B)
-  - [cephfs](#cephfs)
+  - [Ceph块存储](#ceph%E5%9D%97%E5%AD%98%E5%82%A8)
+  - [Ceph文件系统](#ceph%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
     - [部署元数据服务器](#%E9%83%A8%E7%BD%B2%E5%85%83%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
       - [MDS宿主机配置需求](#mds%E5%AE%BF%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
-    - [cephfs使用](#cephfs%E4%BD%BF%E7%94%A8)
-      - [创建cephfs存储池](#%E5%88%9B%E5%BB%BAcephfs%E5%AD%98%E5%82%A8%E6%B1%A0)
-  - [块设备](#%E5%9D%97%E8%AE%BE%E5%A4%87)
-    - [ceph块存储介绍](#ceph%E5%9D%97%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D)
+  - [Ceph 对象存储](#ceph-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8)
   - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
     - [对比raid](#%E5%AF%B9%E6%AF%94raid)
     - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
@@ -64,7 +58,7 @@
       - [测试crush rule](#%E6%B5%8B%E8%AF%95crush-rule)
     - [安装dashboard](#%E5%AE%89%E8%A3%85dashboard)
 - [ceph存储实践](#ceph%E5%AD%98%E5%82%A8%E5%AE%9E%E8%B7%B5)
-  - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
+  - [块设备使用](#%E5%9D%97%E8%AE%BE%E5%A4%87%E4%BD%BF%E7%94%A8)
     - [ceph管理节点](#ceph%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9)
     - [客户端](#%E5%AE%A2%E6%88%B7%E7%AB%AF)
     - [适用场景](#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF)
@@ -79,10 +73,10 @@
     - [csi架构](#csi%E6%9E%B6%E6%9E%84)
       - [CSI Controller](#csi-controller)
       - [CSI Node](#csi-node)
-  - [k8s使用ceph块存储](#k8s%E4%BD%BF%E7%94%A8ceph%E5%9D%97%E5%AD%98%E5%82%A8)
+  - [k8s接入ceph块存储](#k8s%E6%8E%A5%E5%85%A5ceph%E5%9D%97%E5%AD%98%E5%82%A8)
     - [ceph服务端](#ceph%E6%9C%8D%E5%8A%A1%E7%AB%AF)
     - [k8s节点](#k8s%E8%8A%82%E7%82%B9)
-  - [k8s使用ceph文件系统](#k8s%E4%BD%BF%E7%94%A8ceph%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
+  - [k8s接入ceph文件系统](#k8s%E6%8E%A5%E5%85%A5ceph%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
     - [ceph服务端](#ceph%E6%9C%8D%E5%8A%A1%E7%AB%AF-1)
     - [k8s节点](#k8s%E8%8A%82%E7%82%B9-1)
 - [ceph运维管理](#ceph%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
@@ -239,7 +233,7 @@
 `Ceph`消除了集中式网关，使客户端可以直接与`ceph osd`守护进程交互。`ceph osd`守护进程在其他`Ceph`节点上创建对象副本，以确保数据的安全性和高可用性。
 `Ceph`还使用一组`mon`来确保高可用性。为了消除集中化，`Ceph`使用了一种称为`CRUSH`的算法
 
-### `CRUSH`算法介绍
+## `CRUSH`算法介绍
 
 `Ceph`客户端和`ceph osd`守护进程都使用`CRUSH`算法来有效地计算对象的位置信息，而不是依赖于一个中心查找表。
 与以前的方法相比，`CRUSH`提供了更好的数据管理机制，可以实现大规模的数据管理。
@@ -301,7 +295,7 @@
 
 **即部署多点ceph mon 规避单点故障**
 
-### 身份认证高可用性
+## 身份认证高可用性
 
 为了识别用户并防止中间人攻击，`Ceph`提供了`cephx`身份验证系统来验证用户和守护进程。（`cephx`协议不处理传输中的数据加密(例如，`SSL/TLS`)或静止时的加密。）
 
@@ -331,7 +325,7 @@
 这种身份验证提供的保护在`Ceph`客户端和`Ceph`服务器主机之间。身份验证没有扩展到`Ceph`客户端之外。
 如果用户从远程主机访问`Ceph`客户端，`Ceph`身份验证不应用于用户的主机和客户端主机之间的连接
 
-#### 动态集群管理
+## 动态集群管理
 
 每个池（pool）都有许多放置组（PG），`CRUSH`动态地将`PGs`映射到`OSDs`。当`Ceph`客户端存储对象时，`CRUSH`将每个对象映射到放置组
 
@@ -380,7 +374,7 @@
 清理（通常每天执行）捕获`OSD`错误或文件系统错误。
 `OSD`还可以通过逐位比较对象中的数据来执行更深入的清理。深度清理（通常每周执行一次）会在磁盘上发现在轻度清理时不明显的坏扇区。
 
-#### 分级缓存
+## 分级缓存
 
 缓存层为`Ceph`客户端提供了更好的`I/O`性能，用于存储在备份存储层中的数据子集。
 分级缓存包括创建一个作为缓存层的相对快速/昂贵的存储设备(例如，固态驱动器)池，以及一个配置为纠错码或相对较慢/便宜的设备作为经济存储层的后备池。
@@ -388,14 +382,14 @@
 
 ![](images/cache-tiering.png)
 
-### Ceph协议
+## Ceph协议
 
 `Ceph`客户端使用原生协议与`Ceph`存储集群进行交互，`Ceph`将这个功能打包到`librados`库中。
 下图描述了基本架构：
 
 ![](images/ceph-protocol.png)
 
-#### `Ceph`协议与`librados`
+### `Ceph`协议与`librados`
 
 现代应用程序需要一个具有异步通信功能的简单对象存储接口。
 `Ceph`存储集群提供了一个具有异步通信能力的简单对象存储接口。
@@ -409,7 +403,7 @@
 - 复合运算与双ack语义
 - 对象类
 
-#### 对象观测通知
+### 对象观测通知
 
 客户端可以持久性观测一个对象，并保持与主`OSD`的会话处于打开状态。
 客户端可以向所有观察者发送通知消息和有效负载，并在观察者收到通知时接收通知。
@@ -417,7 +411,7 @@
 
 ![](images/object-watch.png)
 
-### 数据分段
+## 数据分段
     
 存储设备有吞吐量限制，这会影响性能和可伸缩性。因此，存储系统通常支持跨多个存储设备分段存储顺序信息，以提高吞吐量和性能。
 `RAID`是最常见的数据分条形式。与`Ceph`的条带化最相似的`RAID`类型是`raid0`，或“条带卷”。`Ceph`的分条提供了`RAID 0`分条的吞吐量，`n-way RAID`镜像的可靠性和更快的恢复。
@@ -453,7 +447,9 @@
 
 一旦`Ceph`客户端将数据分条到条带单元并将条带单元映射到对象，`Ceph`的`CRUSH`算法将对象映射到放置组，并将放置组映射到`ceph osd`守护进程，然后将对象作为文件存储在存储磁盘上
 
-### Ceph客户端
+
+
+# Ceph存储类型
 
 `Ceph`客户端包括许多服务接口:
 
@@ -465,7 +461,19 @@
 
 ![](images/artitecture.png)
 
-#### Ceph 块存储
+## Ceph块存储
+
+块是字节序列（例如，512字节的数据块）。基于块的存储接口是使用旋转介质（如硬盘、CD、软盘，甚至传统的9磁道磁带）存储数据的最常用方法。
+块设备接口的普遍性使得虚拟块设备成为与`Ceph`这样的海量数据存储系统交互的理想候选设备
+
+`Ceph`块设备是精简配置的，可调整大小，并在`Ceph`集群中的多个`OSD`上存储数据条带化。
+`Ceph`块设备利用`RADOS`功能，如快照、复制和一致性。
+`Ceph`的`RADOS`块设备（RBD）使用内核模块或`librbd`库与`OSD`交互
+    
+![](images/rbd-artitechture.png)
+
+`Ceph`的`block`设备以无限的可扩展性向内核模块或`kvm`（如QEMU）以及为基于云的计算系统（如OpenStack和CloudStack）提供高性能存储，
+这些系统依赖`libvirt`和`QEMU`与`Ceph block`设备集成。您可以使用同一集群同时操作`Ceph-RADOS`网关、`CephFS`文件系统和`Ceph-block`设备。
 
 `Ceph`块设备在`Ceph`存储集群中的多个对象上划分块设备映像，每个对象映射到一个放置组并分布，放置组分布在整个集群中不同的`ceph osd`守护进程上。
 
@@ -473,7 +481,7 @@
 在虚拟机场景中，人们通常在`QEMU/KVM`中部署带有`rbd`网络存储驱动程序的`Ceph`块设备，其中服务端使用`librbd`向客户端提供块设备服务。
 许多云计算栈使用`libvirt`与管理程序集成。您可以通过`QEMU`和`libvirt`使用瘦配置的`Ceph`块设备来支持`OpenStack`和`CloudStack`以及其他解决方案。
 
-#### Ceph 文件系统
+## Ceph文件系统
 
 `Ceph`文件系统(cepphfs)提供了`posix`兼容的文件系统作为一种服务，它是在基于对象的`Ceph`存储集群之上分层的。
 `cepfs`文件映射到`Ceph`存储集群中存储的对象。`Ceph`客户端将`cepfs`文件系统挂载为内核对象或用户空间中的文件系统(FUSE)
@@ -492,25 +500,6 @@
 - 高可用：额外的`ceph-mds`实例可以是备用的，随时准备接管任何失效的`active ceph-mds`的职责。这很容易，因为包括日志在内的所有数据都存储在`RADOS`上。该转换由`ceph-mon`自动触发
 - 可扩展：多个`ceph mds`实例可以处于活动状态，它们将目录树拆分为子树（以及单个繁忙目录的碎片），从而有效地平衡所有活动服务器之间的负载
 
-#### Ceph 对象存储
-
-`Ceph`对象存储守护进程`radosgw`是一个`FastCGI`服务，它提供了一个`RESTful`的`HTTP API`来存储对象和元数据。
-它以自己的数据格式在`Ceph`存储集群之上分层，并维护自己的用户数据库、身份验证和访问控制。
-`RADOS`网关采用统一的命名空间，既可以使用`OpenStack swift`接口，也可以使用`Amazon s3`接口。
-例如，一个应用使用`s3`兼容的`API`写入数据，另一个应用使用`swift`兼容的`API`读取数据
-
-**S3/Swift对象和存储集群对象对比：**
-
-`Ceph`的`Object Storage`使用`Object`这个术语来描述它存储的数据。
-`S3`和`Swift`对象与`Ceph`写入`Ceph`存储集群的对象不同。
-`Ceph`对象存储对象映射到`Ceph`存储集群对象。
-`S3`和`Swift`对象不一定与存储集群中存储的对象以1:1的方式对应。
-`S3`或`Swift`对象有可能映射到多个`Ceph`对象。
-
-
-# Ceph存储类型
-## cephfs
-`Ceph`文件系统（CephFS）是一个兼容`POSIX`的文件系统，它使用`Ceph`存储集群来存储数据。使用`Ceph`文件系统需要`Ceph`存储集群中至少有一个`Ceph`元数据服务器。
 ### 部署元数据服务器
 #### MDS宿主机配置需求
 - `MDS`的当前版本是单线程和`cpu`绑定的，用于大多数活动，包括响应客户机请求。
@@ -525,40 +514,20 @@
 
 官方建议将`MDS`与其他`Ceph`守护进程部署在同一宿主机，但需进行配额限制
 
-### cephfs使用
+## Ceph 对象存储
 
-#### 创建cephfs存储池
+`Ceph`对象存储守护进程`radosgw`是一个`FastCGI`服务，它提供了一个`RESTful`的`HTTP API`来存储对象和元数据。
+它以自己的数据格式在`Ceph`存储集群之上分层，并维护自己的用户数据库、身份验证和访问控制。
+`RADOS`网关采用统一的命名空间，既可以使用`OpenStack swift`接口，也可以使用`Amazon s3`接口。
+例如，一个应用使用`s3`兼容的`API`写入数据，另一个应用使用`swift`兼容的`API`读取数据
 
-一个`Ceph`文件系统需要至少两个`RADOS`池，一个用于数据，一个用于元数据。参考以下几点配置存储池：
+**S3/Swift对象和存储集群对象对比：**
 
-- 对元数据池使用更高的复制级别，因为该池中的任何数据丢失都可能导致整个文件系统不可访问
-- 在元数据池中使用较低延迟的存储(如ssd)
-
-> 创建池
-
-    $ ceph osd pool create cephfs_data <pg_num>
-    $ ceph osd pool create cephfs_metadata <pg_num>
-    
-通常，元数据池最多有几`GB`的数据。因此，通常推荐较小的`PG`计数。64或128通常用于大型集群。
-
-> 
-
-## 块设备
-
-### ceph块存储介绍
-
-块是字节序列（例如，512字节的数据块）。基于块的存储接口是使用旋转介质（如硬盘、CD、软盘，甚至传统的9磁道磁带）存储数据的最常用方法。
-块设备接口的普遍性使得虚拟块设备成为与`Ceph`这样的海量数据存储系统交互的理想候选设备
-
-`Ceph`块设备是精简配置的，可调整大小，并在`Ceph`集群中的多个`OSD`上存储数据条带化。
-`Ceph`块设备利用`RADOS`功能，如快照、复制和一致性。
-`Ceph`的`RADOS`块设备（RBD）使用内核模块或`librbd`库与`OSD`交互
-    
-![](images/rbd-artitechture.png)
-
-`Ceph`的`block`设备以无限的可扩展性向内核模块或`kvm`（如QEMU）以及为基于云的计算系统（如OpenStack和CloudStack）提供高性能存储，
-这些系统依赖`libvirt`和`QEMU`与`Ceph block`设备集成。您可以使用同一集群同时操作`Ceph-RADOS`网关、`CephFS`文件系统和`Ceph-block`设备。
-
+`Ceph`的`Object Storage`使用`Object`这个术语来描述它存储的数据。
+`S3`和`Swift`对象与`Ceph`写入`Ceph`存储集群的对象不同。
+`Ceph`对象存储对象映射到`Ceph`存储集群对象。
+`S3`和`Swift`对象不一定与存储集群中存储的对象以1:1的方式对应。
+`S3`或`Swift`对象有可能映射到多个`Ceph`对象。
 
 ## 竞品对比
 
@@ -1946,7 +1915,7 @@
       
 # ceph存储实践
 
-## 块设备（rdb）使用
+## 块设备使用
 
 ### ceph管理节点
 
@@ -2446,7 +2415,7 @@
 
 `node-driver-registrar`容器与`kubelet`通过`Node`主机的一个`hostPath`目录下的`unixsocket`进行通信。`CSI Driver`容器与`kubelet`通过`Node`主机的另一个`hostPath`目录下的`unixsocket`进行通信，同时需要将`kubelet`的工作目录（默认为/var/lib/kubelet）挂载给`CSIDriver`容器，用于为`Pod`进行`Volume`的管理操作（包括mount、umount等）。
 
-## k8s使用ceph块存储
+## k8s接入ceph块存储
 
 使用[ceph-csi](https://github.com/ceph/ceph-csi) 实现
 
@@ -2765,7 +2734,7 @@
     NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
     ceph-pvc-demo   Bound    pvc-360f8c5b-0f82-4f17-957b-a7eb5cf93f7e   10Gi       RWO            ceph-csi-rbd-sc   9m26s
 
-## k8s使用ceph文件系统
+## k8s接入ceph文件系统
 
 ### ceph服务端
 
