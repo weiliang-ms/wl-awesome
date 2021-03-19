@@ -66,17 +66,9 @@
     - [安装dashboard](#%E5%AE%89%E8%A3%85dashboard)
 - [ceph存储实践](#ceph%E5%AD%98%E5%82%A8%E5%AE%9E%E8%B7%B5)
   - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
-    - [运维管理](#%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
-      - [rbd管理](#rbd%E7%AE%A1%E7%90%86)
-      - [创建rbd用户](#%E5%88%9B%E5%BB%BArbd%E7%94%A8%E6%88%B7)
-      - [创建rbd映像](#%E5%88%9B%E5%BB%BArbd%E6%98%A0%E5%83%8F)
-      - [查看块设备映像](#%E6%9F%A5%E7%9C%8B%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
-      - [调整块设备映像的大小](#%E8%B0%83%E6%95%B4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F%E7%9A%84%E5%A4%A7%E5%B0%8F)
-      - [删除块设备映像](#%E5%88%A0%E9%99%A4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
-    - [客户端使用ceph块存储](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8ceph%E5%9D%97%E5%AD%98%E5%82%A8)
-      - [服务端操作](#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%93%8D%E4%BD%9C)
-      - [客户端操作](#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C)
-      - [管理说明](#%E7%AE%A1%E7%90%86%E8%AF%B4%E6%98%8E)
+    - [ceph管理节点](#ceph%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9)
+    - [客户端](#%E5%AE%A2%E6%88%B7%E7%AB%AF)
+    - [适用场景](#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF)
 - [k8s对接ceph](#k8s%E5%AF%B9%E6%8E%A5ceph)
   - [k8s-csi](#k8s-csi)
     - [csi简介](#csi%E7%AE%80%E4%BB%8B)
@@ -115,6 +107,12 @@
     - [放置组数配置](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0%E9%85%8D%E7%BD%AE)
     - [放置组解析](#%E6%94%BE%E7%BD%AE%E7%BB%84%E8%A7%A3%E6%9E%90)
     - [放置组权衡](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%9D%83%E8%A1%A1)
+      - [rbd管理](#rbd%E7%AE%A1%E7%90%86)
+      - [创建rbd用户](#%E5%88%9B%E5%BB%BArbd%E7%94%A8%E6%88%B7)
+      - [创建rbd映像](#%E5%88%9B%E5%BB%BArbd%E6%98%A0%E5%83%8F)
+      - [查看块设备映像](#%E6%9F%A5%E7%9C%8B%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
+      - [调整块设备映像的大小](#%E8%B0%83%E6%95%B4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F%E7%9A%84%E5%A4%A7%E5%B0%8F)
+      - [删除块设备映像](#%E5%88%A0%E9%99%A4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
   - [卸载](#%E5%8D%B8%E8%BD%BD)
     - [删除文件系统](#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
     - [删除池](#%E5%88%A0%E9%99%A4%E6%B1%A0-1)
@@ -1941,137 +1939,11 @@
 
 ## 块设备（rdb）使用
 
-### 运维管理
-
-`rbd`命令允许您创建、列出和删除块设备映像。您还可以使用它来克隆映像、创建快照、将映像回滚到快照、查看快照等
-
-#### rbd管理
-
-**管理节点**
-
-创建池（SSD_rule为crush规则）
-
-    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
-    pool 'rbd-demo-pool' created
-    
-设置配额
-
-    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 1G
-    set-quota max_bytes = 1073741824 for pool rbd-demo-pool
-    
-关联应用
-
-    [root@ceph01 ~]# ceph osd pool application enable rbd-demo-pool rbd
-    enabled application 'rbd' on pool 'rbd-demo-pool'
-    
-初始化
-
-    # rbd pool init <pool-name>
-    rbd pool init rbd-demo-pool
-    
-#### 创建rbd用户
-
-语法格式
-
-    ceph auth get-or-create client.{ID} mon 'profile rbd' osd 'profile {profile name} [pool={pool-name}][, profile ...]' mgr 'profile rbd [pool={pool-name}]'
-
-创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
-
-    ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
-
-#### 创建rbd映像
-        
-在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
-
-    # rbd create --size {megabytes} {pool-name}/{image-name}
-    rbd create --size 1G rbd-demo-pool/rbd-demo-image
-    
-#### 查看块设备映像
-       
-查看池内映像
-       
-    # rbd ls {poolname}
-    [root@ceph01 ~]# rbd ls rbd-demo-pool
-    rbd-demo-image
-    
-查看块设备映像信息
-    
-    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
-    rbd image 'rbd-demo-image':
-            size 1 GiB in 256 objects
-            order 22 (4 MiB objects)
-            snapshot_count: 0
-            id: d3ef49824934
-            block_name_prefix: rbd_data.d3ef49824934
-            format: 2
-            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
-            op_features:
-            flags:
-            create_timestamp: Mon Mar  1 15:48:05 2021
-            access_timestamp: Mon Mar  1 15:48:05 2021
-            modify_timestamp: Mon Mar  1 15:48:05 2021
-            
-#### 调整块设备映像的大小
-
-收缩大小为`256M`
-
-    [root@ceph01 ~]# rbd resize --size 256M rbd-demo-pool/rbd-demo-image --allow-shrink
-    Resizing image: 100% complete...done.
-    
-查看块设备映像信息
-    
-    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
-    rbd image 'rbd-demo-image':
-            size 256 MiB in 64 objects
-            order 22 (4 MiB objects)
-            snapshot_count: 0
-            id: d3ef49824934
-            block_name_prefix: rbd_data.d3ef49824934
-            format: 2
-            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
-            op_features:
-            flags:
-            create_timestamp: Mon Mar  1 15:48:05 2021
-            access_timestamp: Mon Mar  1 15:48:05 2021
-            modify_timestamp: Mon Mar  1 15:48:05 2021
-            
-扩容大小至`1G`
-
-    [root@ceph01 ~]# rbd resize --size 1G rbd-demo-pool/rbd-demo-image --allow-shrink
-    Resizing image: 100% complete...done.
-
-查看块设备映像信息
-
-    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
-    rbd image 'rbd-demo-image':
-            size 1 GiB in 256 objects
-            order 22 (4 MiB objects)
-            snapshot_count: 0
-            id: d3ef49824934
-            block_name_prefix: rbd_data.d3ef49824934
-            format: 2
-            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
-            op_features:
-            flags:
-            create_timestamp: Mon Mar  1 15:48:05 2021
-            access_timestamp: Mon Mar  1 15:48:05 2021
-            modify_timestamp: Mon Mar  1 15:48:05 2021
-            
-#### 删除块设备映像
-
-    # rbd rm {pool-name}/{image-name}
-    [root@ceph01 ~]# rbd rm rbd-demo-pool/rbd-demo-image
-    Removing image: 100% complete...done.
-    
-### 客户端使用ceph块存储
-
-#### 服务端操作
-
-**管理节点**
+### ceph管理节点
 
 > 创建池（SSD_rule为crush规则）
 
-    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
+    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 64 64 
     pool 'rbd-demo-pool' created
     
 > 设置配额
@@ -2086,55 +1958,42 @@
     
 > 初始化
 
-    # rbd pool init <pool-name>
-    rbd pool init rbd-demo-pool
+    [root@ceph01 ~]# rbd pool init rbd-demo-pool
     
-> 创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
+> 创建rbd用户
 
     ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
-  
-查看用户清单与权限
 
-    [root@ceph01 ~]# ceph auth ls|grep -C 5 qemu
-    installed auth entries:
-    
-            key: AQDkTjNg/YTFHBAAWtXC1va23txI7B3jmSu2cg==
-            caps: [mon] allow profile bootstrap-rbd-mirror
-    client.bootstrap-rgw
-            key: AQDkTjNgJaDFHBAApth03RUjcuUGEcy7IDUxEg==
-            caps: [mon] allow profile bootstrap-rgw
-    client.qemu
-            key: AQAfmTxgw/KpJhAAgkDLwXhJuUh5FUkU2K7cgw==
-            caps: [mgr] profile rbd pool=rbd-demo-pool
-            caps: [mon] profile rbd
-            caps: [osd] profile rbd pool=rbd-demo-pool
-    mgr.ceph01
-    
-测试权限
-
-    [root@ceph01 ~]# ceph -s --name client.qemu
-      cluster:
-        id:     b1c2511e-a1a5-4d6d-a4be-0e7f0d6d4294
-        health: HEALTH_WARN
-                1 pools have too many placement groups
-                mon ceph03 is low on available space
-    
-      services:
-        mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 2h)
-        mgr: ceph01(active, since 8h), standbys: ceph02, ceph03
-        osd: 29 osds: 29 up (since 2d), 29 in (since 2d)
-    
-      data:
-        pools:   3 pools, 320 pgs
-        objects: 8 objects, 147 B
-        usage:   30 GiB used, 26 TiB / 26 TiB avail
-        pgs:     320 active+clean
-    
 > 创建rbd映像
         
-    rbd create --size 1G rbd-demo-pool/rbd-demo-image
+在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
 
-#### 客户端操作
+    rbd create --size 1G rbd-demo-pool/rbd-demo-image
+    
+> 查看块设备映像
+       
+    # rbd ls {poolname}
+    [root@ceph01 ~]# rbd ls rbd-demo-pool
+    rbd-demo-image
+    
+> 查看块设备映像信息
+    
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 1 GiB in 256 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: 3d92a06e59b5
+            block_name_prefix: rbd_data.3d92a06e59b5
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Fri Mar 19 15:45:58 2021
+            access_timestamp: Fri Mar 19 15:45:58 2021
+            modify_timestamp: Fri Mar 19 15:45:58 2021
+    
+### 客户端
 
 > 删除原有yum源repo文件
 
@@ -2351,7 +2210,6 @@
     
     exit 0
 
-
 赋权
     
     yum install redhat-lsb -y
@@ -2359,62 +2217,7 @@
     service rbdmap start 
     chkconfig rbdmap on
     
-#### 管理说明
-
-> 查看客户端rbd存储可用大小
-
-    [root@localhost ceph]# df -h
-    Filesystem               Size  Used Avail Use% Mounted on
-    devtmpfs                 3.9G     0  3.9G   0% /dev
-    tmpfs                    3.9G     0  3.9G   0% /dev/shm
-    tmpfs                    3.9G  8.6M  3.9G   1% /run
-    tmpfs                    3.9G     0  3.9G   0% /sys/fs/cgroup
-    /dev/mapper/centos-root   99G  2.2G   97G   3% /
-    /dev/sda1               1014M  141M  874M  14% /boot
-    /dev/rbd0                976M  2.6M  907M   1% /ceph
-    
-> 尝试创建`1G`文件
-
-    [root@localhost ~]# cd /ceph
-    [root@localhost ceph]# fallocate -l 1G test
-    fallocate: fallocate failed: No space left on device
-    
-撤销
-
-    fallocate -d test
-    rm -f test
-  
-> 服务端扩容
-
-`rbd-demo-pool`扩容至10G`rbd-demo-image`扩容至`5G`
-
-    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 10G
-    set-quota max_bytes = 10737418240 for pool rbd-demo-pool
-    
-    [root@ceph01 ~]# rbd resize --size 5G rbd-demo-pool/rbd-demo-image
-    Resizing image: 100% complete...done.
- 
-> 客户端扩容
-
-    [root@localhost ~]# resize2fs /dev/rbd0 5G
-    resize2fs 1.42.9 (28-Dec-2013)
-    Filesystem at /dev/rbd0 is mounted on /ceph; on-line resizing required
-    old_desc_blocks = 1, new_desc_blocks = 1
-    The filesystem on /dev/rbd0 is now 1310720 blocks long.
-    
-查看
-
-    [root@localhost ~]# df -h
-    Filesystem               Size  Used Avail Use% Mounted on
-    devtmpfs                 3.9G     0  3.9G   0% /dev
-    tmpfs                    3.9G     0  3.9G   0% /dev/shm
-    tmpfs                    3.9G  8.6M  3.9G   1% /run
-    tmpfs                    3.9G     0  3.9G   0% /sys/fs/cgroup
-    /dev/mapper/centos-root   99G  2.2G   97G   3% /
-    /dev/sda1               1014M  141M  874M  14% /boot
-    /dev/rbd0                4.9G  4.0M  4.7G   1% /ceph
-
-> 适用场景
+### 适用场景
 
 **可以当成本地盘来用：**
 
@@ -3587,6 +3390,124 @@
 对于每个放置组，`osd`和`mon`始终需要内存、网络和`CPU`，甚至在恢复期间需要更多。通过在放置组中聚集对象来共享此开销是它们存在的主要原因之一。
 
 最小化放置组的数量可以节省大量资源。
+
+#### rbd管理
+
+**管理节点**
+
+创建池（SSD_rule为crush规则）
+
+    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
+    pool 'rbd-demo-pool' created
+    
+设置配额
+
+    [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 1G
+    set-quota max_bytes = 1073741824 for pool rbd-demo-pool
+    
+关联应用
+
+    [root@ceph01 ~]# ceph osd pool application enable rbd-demo-pool rbd
+    enabled application 'rbd' on pool 'rbd-demo-pool'
+    
+初始化
+
+    # rbd pool init <pool-name>
+    rbd pool init rbd-demo-pool
+    
+#### 创建rbd用户
+
+语法格式
+
+    ceph auth get-or-create client.{ID} mon 'profile rbd' osd 'profile {profile name} [pool={pool-name}][, profile ...]' mgr 'profile rbd [pool={pool-name}]'
+
+创建ID为`qemu`、对`rbd-demo-pool`池有读写权限的用户
+
+    ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
+
+#### 创建rbd映像
+        
+在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
+
+    # rbd create --size {megabytes} {pool-name}/{image-name}
+    rbd create --size 1G rbd-demo-pool/rbd-demo-image
+    
+#### 查看块设备映像
+       
+查看池内映像
+       
+    # rbd ls {poolname}
+    [root@ceph01 ~]# rbd ls rbd-demo-pool
+    rbd-demo-image
+    
+查看块设备映像信息
+    
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 1 GiB in 256 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+#### 调整块设备映像的大小
+
+收缩大小为`256M`
+
+    [root@ceph01 ~]# rbd resize --size 256M rbd-demo-pool/rbd-demo-image --allow-shrink
+    Resizing image: 100% complete...done.
+    
+查看块设备映像信息
+    
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 256 MiB in 64 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+扩容大小至`1G`
+
+    [root@ceph01 ~]# rbd resize --size 1G rbd-demo-pool/rbd-demo-image --allow-shrink
+    Resizing image: 100% complete...done.
+
+查看块设备映像信息
+
+    [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
+    rbd image 'rbd-demo-image':
+            size 1 GiB in 256 objects
+            order 22 (4 MiB objects)
+            snapshot_count: 0
+            id: d3ef49824934
+            block_name_prefix: rbd_data.d3ef49824934
+            format: 2
+            features: layering, exclusive-lock, object-map, fast-diff, deep-flatten
+            op_features:
+            flags:
+            create_timestamp: Mon Mar  1 15:48:05 2021
+            access_timestamp: Mon Mar  1 15:48:05 2021
+            modify_timestamp: Mon Mar  1 15:48:05 2021
+            
+#### 删除块设备映像
+
+    # rbd rm {pool-name}/{image-name}
+    [root@ceph01 ~]# rbd rm rbd-demo-pool/rbd-demo-image
+    Removing image: 100% complete...done.
     
 ## 卸载
     
