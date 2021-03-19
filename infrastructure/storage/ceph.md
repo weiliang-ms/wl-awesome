@@ -2370,6 +2370,14 @@
 > 重启主机验证
 
     reboot
+    
+### 适用场景
+
+- 文件共享
+- 网站文件、代码存储
+- 数据备份
+- 日志存储
+- 数据分析
 
 # k8s对接ceph
 
@@ -3537,31 +3545,30 @@
 
 最小化放置组的数量可以节省大量资源。
 
-#### rbd管理
+## rbd管理
 
-**管理节点**
+### 创建
 
-创建池（SSD_rule为crush规则）
+> 创建池
 
-    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 256 256 SSD_rule
+    [root@ceph01 ~]# ceph osd pool create rbd-demo-pool 64 64
     pool 'rbd-demo-pool' created
     
-设置配额
+> 设置配额
 
     [root@ceph01 ~]# ceph osd pool set-quota rbd-demo-pool max_bytes 1G
     set-quota max_bytes = 1073741824 for pool rbd-demo-pool
     
-关联应用
+> 关联`rbd`应用
 
     [root@ceph01 ~]# ceph osd pool application enable rbd-demo-pool rbd
     enabled application 'rbd' on pool 'rbd-demo-pool'
     
-初始化
+> 初始化
 
-    # rbd pool init <pool-name>
     rbd pool init rbd-demo-pool
     
-#### 创建rbd用户
+> 创建rbd用户
 
 语法格式
 
@@ -3571,22 +3578,23 @@
 
     ceph auth get-or-create client.qemu mon 'profile rbd' osd 'profile rbd pool=rbd-demo-pool' mgr 'profile rbd pool=rbd-demo-pool' -o /etc/ceph/ceph.client.qemu.keyring
 
-#### 创建rbd映像
+> 创建rbd映像
         
 在将块设备添加到节点之前，必须先在`Ceph`存储集群中为其创建映像。要创建块设备映像，请执行以下操作：
 
     # rbd create --size {megabytes} {pool-name}/{image-name}
     rbd create --size 1G rbd-demo-pool/rbd-demo-image
     
-#### 查看块设备映像
+### 查看块设备映像
        
-查看池内映像
+> 查看池内映像
        
     # rbd ls {poolname}
     [root@ceph01 ~]# rbd ls rbd-demo-pool
     rbd-demo-image
     
-查看块设备映像信息
+
+> 查看块设备映像信息
     
     [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
     rbd image 'rbd-demo-image':
@@ -3603,14 +3611,15 @@
             access_timestamp: Mon Mar  1 15:48:05 2021
             modify_timestamp: Mon Mar  1 15:48:05 2021
             
-#### 调整块设备映像的大小
+### 调整块设备映像的大小
 
-收缩大小为`256M`
+#### 缩容
+> 收缩大小为`256M`
 
     [root@ceph01 ~]# rbd resize --size 256M rbd-demo-pool/rbd-demo-image --allow-shrink
     Resizing image: 100% complete...done.
     
-查看块设备映像信息
+> 查看块设备映像信息
     
     [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
     rbd image 'rbd-demo-image':
@@ -3626,13 +3635,17 @@
             create_timestamp: Mon Mar  1 15:48:05 2021
             access_timestamp: Mon Mar  1 15:48:05 2021
             modify_timestamp: Mon Mar  1 15:48:05 2021
+   
+#### 扩容
+
+**扩容大小上限为池配额大小**
             
-扩容大小至`1G`
+> 扩容大小至`1G`
 
     [root@ceph01 ~]# rbd resize --size 1G rbd-demo-pool/rbd-demo-image --allow-shrink
     Resizing image: 100% complete...done.
 
-查看块设备映像信息
+> 查看块设备映像信息
 
     [root@ceph01 ~]# rbd info rbd-demo-pool/rbd-demo-image
     rbd image 'rbd-demo-image':
@@ -3649,11 +3662,235 @@
             access_timestamp: Mon Mar  1 15:48:05 2021
             modify_timestamp: Mon Mar  1 15:48:05 2021
             
-#### 删除块设备映像
+### 删除块设备映像
 
     # rbd rm {pool-name}/{image-name}
     [root@ceph01 ~]# rbd rm rbd-demo-pool/rbd-demo-image
     Removing image: 100% complete...done.
+    
+### 挂载块设备
+
+> 删除原有yum源repo文件
+
+	rm -f /etc/yum.repos.d/*.repo
+	
+> 创建yum源文件（客户端）
+
+**online**
+
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+**offline**
+    
+下载以下文件上传至`/etc/yum.repos.d/`
+
+- [Centos-7.repo](http://mirrors.aliyun.com/repo/Centos-7.repo)
+- [epel-7.repo](http://mirrors.aliyun.com/repo/epel-7.repo)
+
+> 配置`ceph`镜像源仓库
+
+    cat > /etc/yum.repos.d/ceph.repo <<EOF
+    [Ceph]
+    name=Ceph \$basearch
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/\$basearch
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    
+    [Ceph-noarch]
+    name=Ceph noarch
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/noarch
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    
+    [Ceph-source]
+    name=Ceph SRPMS
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/SRPMS
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    EOF
+
+> 配置`yum`代理
+
+**适用于主机通过代理访问互联网场景**
+
+以下变量注意替换
+
+- username: 代理用户名
+- password: 代理用户密码
+- proxy_host: 代理IP地址
+- proxy_port: 代理端口
+
+
+    echo "proxy=http://username:password@proxy_host:proxy_port" >> /etc/yum.conf
+
+> 安装`ceph-common`
+
+    yum install -y ceph-common
+    
+> 拷贝配置文件
+
+    mkdir -p /etc/ceph
+    
+客户端创建挂载目录
+
+    mkdir -p /ceph
+    chmod 777 /ceph
+    
+从服务端`scp`以下文件至客户端`/etc/ceph`下
+
+- `/etc/ceph/ceph.client.qemu.keyring`
+- `/etc/ceph/ceph.conf`
+
+
+    scp /etc/ceph/{ceph.conf,ceph.client.admin.keyring} ip:/etc/ceph/
+
+> 映射块设备
+
+    [root@localhost ~]# rbd map rbd-demo-pool/rbd-demo-image --name client.qemu
+    /dev/rbd0
+    [root@localhost ~]# echo "rbd-demo-pool/rbd-demo-image id=qemu,keyring=/etc/ceph/ceph.client.qemu.keyring" >> /etc/ceph/rbdmap
+    
+> 格式化块设备
+
+     mkfs.ext4 -q /dev/rbd0
+     
+> 挂载使用
+
+    mount /dev/rbd0 /ceph
+
+> 查看挂载
+
+    lsblk
+    
+> 查看块设备映射
+
+    [root@localhost ~]# rbd device list
+    id pool          namespace image          snap device
+    0  rbd-demo-pool           rbd-demo-image -    /dev/rbd0
+ 
+> 修改`fstab`，设置开机挂载
+
+    echo "/dev/rbd0 /ceph ext4 defaults,noatime,_netdev 0 0" >> /etc/fstab
+    
+> 配置开机自启动
+
+    vim /etc/init.d/rbdmap
+    
+    #!/bin/bash
+    #chkconfig: 2345 80 60
+    #description: start/stop rbdmap
+    ### BEGIN INIT INFO
+    # Provides:          rbdmap
+    # Required-Start:    $network
+    # Required-Stop:     $network
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6
+    # Short-Description: Ceph RBD Mapping
+    # Description:       Ceph RBD Mapping
+    ### END INIT INFO
+    
+    DESC="RBD Mapping"
+    RBDMAPFILE="/etc/ceph/rbdmap"
+    
+    . /lib/lsb/init-functions
+    #. /etc/redhat-lsb/lsb_log_message，加入此行后不正长
+    do_map() {
+        if [ ! -f "$RBDMAPFILE" ]; then
+            echo "$DESC : No $RBDMAPFILE found."
+            exit 0
+        fi
+    
+        echo "Starting $DESC"
+        # Read /etc/rbdtab to create non-existant mapping
+        newrbd=
+        RET=0
+        while read DEV PARAMS; do
+            case "$DEV" in
+              ""|\#*)
+                continue
+                ;;
+              */*)
+                ;;
+              *)
+                DEV=rbd/$DEV
+                ;;
+            esac
+            OIFS=$IFS
+            IFS=','
+            for PARAM in ${PARAMS[@]}; do
+                CMDPARAMS="$CMDPARAMS --$(echo $PARAM | tr '=' ' ')"
+            done
+            IFS=$OIFS
+            if [ ! -b /dev/rbd/$DEV ]; then
+                echo $DEV
+                rbd map $DEV $CMDPARAMS
+                [ $? -ne "0" ] && RET=1
+                newrbd="yes"
+            fi
+        done < $RBDMAPFILE
+        echo $RET
+    
+        # Mount new rbd
+        if [ "$newrbd" ]; then
+                    echo "Mounting all filesystems"
+            mount -a
+            echo $?
+        fi
+    }
+    
+    do_unmap() {
+        echo "Stopping $DESC"
+        RET=0
+        # Unmap all rbd device
+        for DEV in /dev/rbd[0-9]*; do
+            echo $DEV
+            # Umount before unmap
+            MNTDEP=$(findmnt --mtab --source $DEV --output TARGET | sed 1,1d | sort -r)
+            for MNT in $MNTDEP; do
+                umount $MNT || sleep 1 && umount -l $DEV
+            done
+            rbd unmap $DEV
+            [ $? -ne "0" ] && RET=1
+        done
+        echo $RET
+    }
+    
+    
+    case "$1" in
+      start)
+        do_map
+        ;;
+    
+      stop)
+        do_unmap
+        ;;
+    
+      reload)
+        do_map
+        ;;
+    
+      status)
+        rbd showmapped
+        ;;
+    
+      *)
+        echo "Usage: rbdmap {start|stop|reload|status}"
+        exit 1
+        ;;
+    esac
+    
+    exit 0
+
+赋权
+    
+    yum install redhat-lsb -y
+    chmod +x /etc/init.d/rbdmap
+    service rbdmap start 
+    chkconfig rbdmap on
     
 ## 卸载
     
