@@ -25,6 +25,8 @@
       - [MDS宿主机配置需求](#mds%E5%AE%BF%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
     - [cephfs使用](#cephfs%E4%BD%BF%E7%94%A8)
       - [创建cephfs存储池](#%E5%88%9B%E5%BB%BAcephfs%E5%AD%98%E5%82%A8%E6%B1%A0)
+  - [块设备](#%E5%9D%97%E8%AE%BE%E5%A4%87)
+    - [ceph块存储介绍](#ceph%E5%9D%97%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D)
   - [竞品对比](#%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94)
     - [对比raid](#%E5%AF%B9%E6%AF%94raid)
     - [对比SAN、NAS、DAS](#%E5%AF%B9%E6%AF%94sannasdas)
@@ -88,7 +90,6 @@
     - [放置组解析](#%E6%94%BE%E7%BD%AE%E7%BB%84%E8%A7%A3%E6%9E%90)
     - [放置组权衡](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%9D%83%E8%A1%A1)
   - [块设备（rdb）使用](#%E5%9D%97%E8%AE%BE%E5%A4%87rdb%E4%BD%BF%E7%94%A8)
-    - [ceph块存储介绍](#ceph%E5%9D%97%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D)
     - [运维管理](#%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86)
       - [rbd管理](#rbd%E7%AE%A1%E7%90%86)
       - [创建rbd用户](#%E5%88%9B%E5%BB%BArbd%E7%94%A8%E6%88%B7)
@@ -536,6 +537,23 @@
 通常，元数据池最多有几`GB`的数据。因此，通常推荐较小的`PG`计数。64或128通常用于大型集群。
 
 > 
+
+## 块设备
+
+### ceph块存储介绍
+
+块是字节序列（例如，512字节的数据块）。基于块的存储接口是使用旋转介质（如硬盘、CD、软盘，甚至传统的9磁道磁带）存储数据的最常用方法。
+块设备接口的普遍性使得虚拟块设备成为与`Ceph`这样的海量数据存储系统交互的理想候选设备
+
+`Ceph`块设备是精简配置的，可调整大小，并在`Ceph`集群中的多个`OSD`上存储数据条带化。
+`Ceph`块设备利用`RADOS`功能，如快照、复制和一致性。
+`Ceph`的`RADOS`块设备（RBD）使用内核模块或`librbd`库与`OSD`交互
+    
+![](images/rbd-artitechture.png)
+
+`Ceph`的`block`设备以无限的可扩展性向内核模块或`kvm`（如QEMU）以及为基于云的计算系统（如OpenStack和CloudStack）提供高性能存储，
+这些系统依赖`libvirt`和`QEMU`与`Ceph block`设备集成。您可以使用同一集群同时操作`Ceph-RADOS`网关、`CephFS`文件系统和`Ceph-block`设备。
+
 
 ## 竞品对比
 
@@ -2411,19 +2429,6 @@
 
 
 ## 块设备（rdb）使用
-### ceph块存储介绍
-
-块是字节序列（例如，512字节的数据块）。基于块的存储接口是使用旋转介质（如硬盘、CD、软盘，甚至传统的9磁道磁带）存储数据的最常用方法。
-块设备接口的普遍性使得虚拟块设备成为与`Ceph`这样的海量数据存储系统交互的理想候选设备
-
-`Ceph`块设备是精简配置的，可调整大小，并在`Ceph`集群中的多个`OSD`上存储数据条带化。
-`Ceph`块设备利用`RADOS`功能，如快照、复制和一致性。
-`Ceph`的`RADOS`块设备（RBD）使用内核模块或`librbd`库与`OSD`交互
-    
-![](images/rbd-artitechture.png)
-
-`Ceph`的`block`设备以无限的可扩展性向内核模块或`kvm`（如QEMU）以及为基于云的计算系统（如OpenStack和CloudStack）提供高性能存储，
-这些系统依赖`libvirt`和`QEMU`与`Ceph block`设备集成。您可以使用同一集群同时操作`Ceph-RADOS`网关、`CephFS`文件系统和`Ceph-block`设备。
 
 ### 运维管理
 
