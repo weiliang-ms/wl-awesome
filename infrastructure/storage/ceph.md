@@ -1937,496 +1937,7 @@
 
     systemctl restart ceph-mgr@ceph01
       
-# ceph运维管理
-
-## 服务启停
-
-### 按节点启动所有ceph服务
-
-    systemctl start ceph.target
-    
-或
-
-    sudo systemctl start ceph-osd.target
-    sudo systemctl start ceph-mon.target
-    sudo systemctl start ceph-mds.target
-    
-### 按节点停止所有ceph服务
-
-    systemctl stop ceph\*.service ceph\*.target
-
-或
-
-    sudo systemctl stop ceph-mon\*.service ceph-mon.target
-    sudo systemctl stop ceph-osd\*.service ceph-osd.target
-    sudo systemctl stop ceph-mds\*.service ceph-mds.target
-    
-### 控制节点管理集群所有服务
-
-启
-
-    sudo systemctl start ceph-osd@{id}
-    sudo systemctl start ceph-mon@{hostname}
-    sudo systemctl start ceph-mds@{hostname}
-    
-停
-
-    sudo systemctl stop ceph-osd@{id}
-    sudo systemctl stop ceph-mon@{hostname}
-    sudo systemctl stop ceph-mds@{hostname}
-
-## pool管理
-
-### 查看`pool`
-
-    [root@ceph01 ~]# ceph osd lspools
-    1 ssd-demo-pool
-    2 nvme-demo-pool
-
-### 创建一个pool
-
-格式
-
-    ceph osd pool create {pool-name} {pg-num} [{pgp-num}] [replicated] \
-         [crush-rule-name] [expected-num-objects]
-         
-    或
-         
-    ceph osd pool create {pool-name} {pg-num}  {pgp-num}   erasure \
-         [erasure-code-profile] [crush-rule-name] [expected_num_objects]
-
-**最佳实践**
-
-### 设置池的放置组数
-
-    ceph osd pool set {pool-name} pgp_num {pgp_num}
-
-### 获取池的放置组数
-
-    ceph osd pool get {pool-name} pg_num
-    
-### 获取集群的PG统计信息
-  
-    # ceph pg dump [--format {format}]
-    ceph pg dump -f json
-
-### 将池与应用程序关联
-
-池在使用之前需要与应用程序相关联。将与`cepfs`一起使用的池或由`RGW`自动创建的池将自动关联。
-用于与`RBD`一起使用的池应该使用`RBD`工具进行初始化。
-
-    # ceph osd pool application enable {pool-name} {application-name}(cephfs, rbd, rgw)
-    [root@ceph01 ~]# ceph osd pool application enable ssd-demo-pool rbd
-    enabled application 'rbd' on pool 'ssd-demo-pool'
-    [root@ceph01 ~]# ceph osd pool application enable nvme-demo-pool cephfs
-    enabled application 'cephfs' on pool 'nvme-demo-pool'
-
-### 池配额
-
-您可以为每个池的最大字节数和/或最大对象数设置池配额。
-
-    # ceph osd pool set-quota {pool-name} [max_objects {obj-count}] [max_bytes {bytes}]
-    ceph osd pool set-quota data max_objects 10000
-    
-要删除配额，请将其值设置为0
-
-    ceph osd pool set-quota data max_objects 0
-    
-### 删除池
-
-语法格式
-
-    ceph osd pool delete {pool-name} [{pool-name} --yes-i-really-really-mean-it]
-
-修改配置
-
-    vim /etc/ceph/ceph.conf
-    
-添加如下：
-
-    [mon]
-    mon_allow_pool_delete=true
-
-更新
-
-    cd /etc/ceph
-    ceph-deploy --overwrite-conf config push ceph01 ceph02 ceph03
-    
-重启
-
-    systemctl restart ceph-mon.target
-
-    
-删除`ddd-pool`
-
-    [root@ceph01 ceph]# ceph osd pool delete ddd-pool ddd-pool --yes-i-really-really-mean-it
-    pool 'ddd-pool' removed
-    
-### 池重命名
-
-    ceph osd pool rename {current-pool-name} {new-pool-name}
-    
-### 显示池统计信息
-
-    [root@ceph01 ~]# rados df
-    POOL_NAME        USED OBJECTS CLONES COPIES MISSING_ON_PRIMARY UNFOUND DEGRADED RD_OPS  RD WR_OPS    WR USED COMPR UNDER COMPR
-    nvme-demo-pool 12 KiB       1      0      3                  0       0        0      0 0 B      1 1 KiB        0 B         0 B
-    ssd-demo-pool  12 KiB       1      0      3                  0       0        0      0 0 B      1 1 KiB        0 B         0 B
-    
-    total_objects    2
-    total_used       30 GiB
-    total_avail      26 TiB
-    total_space      26 TiB
-    
-池`io`
-
-    [root@ceph01 ~]# ceph osd pool stats ssd-demo-pool
-    pool ssd-demo-pool id 1
-      nothing is going on
-      
-### 创建池快照
-    
-    # ceph osd pool mksnap {pool-name} {snap-name}
-    [root@ceph01 ~]# ceph osd pool mksnap ssd-demo-pool ssd-demo-pool-snap-20210301
-    created pool ssd-demo-pool snap ssd-demo-pool-snap-20210301
-    
-### 删除池快照
-
-    # ceph osd pool rmsnap {pool-name} {snap-name}
-    [root@ceph01 ~]# ceph osd pool rmsnap ssd-demo-pool ssd-demo-pool-snap-20210301
-    removed pool ssd-demo-pool snap ssd-demo-pool-snap-20210301
-    
-### 池其他配置
-
-查看可配置项
-
-    [root@ceph01 ~]# ceph osd pool -h
-    
-     General usage:
-     ==============
-    usage: ceph [-h] [-c CEPHCONF] [-i INPUT_FILE] [-o OUTPUT_FILE]
-                [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID]
-                [--name CLIENT_NAME] [--cluster CLUSTER]
-                [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug]
-                [--watch-info] [--watch-sec] [--watch-warn] [--watch-error]
-                [--watch-channel {cluster,audit,*}] [--version] [--verbose]
-                [--concise] [-f {json,json-pretty,xml,xml-pretty,plain}]
-                [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]
-    
-    Ceph administration tool
-    
-    optional arguments:
-      -h, --help            request mon help
-      -c CEPHCONF, --conf CEPHCONF
-                            ceph configuration file
-      -i INPUT_FILE, --in-file INPUT_FILE
-                            input file, or "-" for stdin
-      -o OUTPUT_FILE, --out-file OUTPUT_FILE
-                            output file, or "-" for stdout
-      --setuser SETUSER     set user file permission
-      --setgroup SETGROUP   set group file permission
-      --id CLIENT_ID, --user CLIENT_ID
-                            client id for authentication
-      --name CLIENT_NAME, -n CLIENT_NAME
-                            client name for authentication
-      --cluster CLUSTER     cluster name
-      --admin-daemon ADMIN_SOCKET
-                            submit admin-socket commands ("help" for help
-      -s, --status          show cluster status
-      -w, --watch           watch live cluster changes
-      --watch-debug         watch debug events
-      --watch-info          watch info events
-      --watch-sec           watch security events
-      --watch-warn          watch warn events
-      --watch-error         watch error events
-      --watch-channel {cluster,audit,*}
-                            which log channel to follow when using -w/--watch. One
-                            of ['cluster', 'audit', '*']
-      --version, -v         display version
-      --verbose             make verbose
-      --concise             make less verbose
-      -f {json,json-pretty,xml,xml-pretty,plain}, --format {json,json-pretty,xml,xml-pretty,plain}
-      --connect-timeout CLUSTER_TIMEOUT
-                            set a timeout for connecting to the cluster
-      --block               block until completion (scrub and deep-scrub only)
-      --period PERIOD, -p PERIOD
-                            polling period, default 1.0 second (for polling
-                            commands only)
-    
-     Local commands:
-     ===============
-    
-    ping <mon.id>           Send simple presence/life test to a mon
-                            <mon.id> may be 'mon.*' for all mons
-    daemon {type.id|path} <cmd>
-                            Same as --admin-daemon, but auto-find admin socket
-    daemonperf {type.id | path} [stat-pats] [priority] [<interval>] [<count>]
-    daemonperf {type.id | path} list|ls [stat-pats] [priority]
-                            Get selected perf stats from daemon/admin socket
-                            Optional shell-glob comma-delim match string stat-pats
-                            Optional selection priority (can abbreviate name):
-                             critical, interesting, useful, noninteresting, debug
-                            List shows a table of all available stats
-                            Run <count> times (default forever),
-                             once per <interval> seconds (default 1)
-    
-    
-     Monitor commands:
-     =================
-    osd pool application disable <poolname> <app> {--yes-i-really-mean-it}   disables use of an application <app> on pool <poolname>
-    osd pool application enable <poolname> <app> {--yes-i-really-mean-it}    enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>
-    osd pool application get {<poolname>} {<app>} {<key>}                    get value of key <key> of application <app> on pool <poolname>
-    osd pool application rm <poolname> <app> <key>                           removes application <app> metadata key <key> on pool <poolname>
-    osd pool application set <poolname> <app> <key> <value>                  sets application <app> metadata key <key> to <value> on pool <poolname>
-    osd pool autoscale-status                                                report on pool pg_num sizing recommendation and intent
-    osd pool cancel-force-backfill <poolname> [<poolname>...]                restore normal recovery priority of specified pool <who>
-    osd pool cancel-force-recovery <poolname> [<poolname>...]                restore normal recovery priority of specified pool <who>
-    osd pool create <poolname> <int[0-]> {<int[0-]>} {replicated|erasure}    create pool
-     {<erasure_code_profile>} {<rule>} {<int>} {<int>} {<int[0-]>} {<int[0-
-     ]>} {<float[0.0-1.0]>}
-    osd pool deep-scrub <poolname> [<poolname>...]                           initiate deep-scrub on pool <who>
-    osd pool force-backfill <poolname> [<poolname>...]                       force backfill of specified pool <who> first
-    osd pool force-recovery <poolname> [<poolname>...]                       force recovery of specified pool <who> first
-    osd pool get <poolname> size|min_size|pg_num|pgp_num|crush_rule|         get pool parameter <var>
-     hashpspool|nodelete|nopgchange|nosizechange|write_fadvise_dontneed|
-     noscrub|nodeep-scrub|hit_set_type|hit_set_period|hit_set_count|hit_set_
-     fpp|use_gmt_hitset|target_max_objects|target_max_bytes|cache_target_
-     dirty_ratio|cache_target_dirty_high_ratio|cache_target_full_ratio|
-     cache_min_flush_age|cache_min_evict_age|erasure_code_profile|min_read_
-     recency_for_promote|all|min_write_recency_for_promote|fast_read|hit_
-     set_grade_decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_
-     max_interval|deep_scrub_interval|recovery_priority|recovery_op_
-     priority|scrub_priority|compression_mode|compression_algorithm|
-     compression_required_ratio|compression_max_blob_size|compression_min_
-     blob_size|csum_type|csum_min_block|csum_max_block|allow_ec_overwrites|
-     fingerprint_algorithm|pg_autoscale_mode|pg_autoscale_bias|pg_num_min|
-     target_size_bytes|target_size_ratio
-    osd pool get-quota <poolname>                                            obtain object or byte limits for pool
-    osd pool ls {detail}                                                     list pools
-    osd pool mksnap <poolname> <snap>                                        make snapshot <snap> in <pool>
-    osd pool rename <poolname> <poolname>                                    rename <srcpool> to <destpool>
-    osd pool repair <poolname> [<poolname>...]                               initiate repair on pool <who>
-    osd pool rm <poolname> {<poolname>} {--yes-i-really-really-mean-it} {--  remove pool
-     yes-i-really-really-mean-it-not-faking}
-    osd pool rmsnap <poolname> <snap>                                        remove snapshot <snap> from <pool>
-    osd pool scrub <poolname> [<poolname>...]                                initiate scrub on pool <who>
-    osd pool set <poolname> size|min_size|pg_num|pgp_num|pgp_num_actual|     set pool parameter <var> to <val>
-     crush_rule|hashpspool|nodelete|nopgchange|nosizechange|write_fadvise_
-     dontneed|noscrub|nodeep-scrub|hit_set_type|hit_set_period|hit_set_
-     count|hit_set_fpp|use_gmt_hitset|target_max_bytes|target_max_objects|
-     cache_target_dirty_ratio|cache_target_dirty_high_ratio|cache_target_
-     full_ratio|cache_min_flush_age|cache_min_evict_age|min_read_recency_
-     for_promote|min_write_recency_for_promote|fast_read|hit_set_grade_
-     decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_max_interval|
-     deep_scrub_interval|recovery_priority|recovery_op_priority|scrub_
-     priority|compression_mode|compression_algorithm|compression_required_
-     ratio|compression_max_blob_size|compression_min_blob_size|csum_type|
-     csum_min_block|csum_max_block|allow_ec_overwrites|fingerprint_
-     algorithm|pg_autoscale_mode|pg_autoscale_bias|pg_num_min|target_size_
-     bytes|target_size_ratio <val> {--yes-i-really-mean-it}
-    osd pool set-quota <poolname> max_objects|max_bytes <val>                set object or byte limit on pool
-    osd pool stats {<poolname>}                                              obtain stats from all pools, or from specified pool
-    
-### 设置对象副本数
-
-默认为3
-
-    ceph osd pool set {poolname} size {num-replicas}
-
-### pg_autoscale_mode
-
-放置组（PGs）是`Ceph`分发数据的内部实现细节。
-过启用`pg autoscaling`，您可以允许集群提出建议或根据集群的使用方式自动调整`PGs`。
-
-系统中的每个池都有一个`pg_autoscale_mode`属性，可以设置为`off`、`on`或`warn`：
-
-- off：禁用此池的自动缩放。由管理员为每个池选择适当的`PG`数量。
-- on：启用给定池的`PG`计数的自动调整。
-- warn：当`PG`计数需要调整时发出健康警报（默认）
-
-> 为指定池设置放置组数自动伸缩
-
-    # ceph osd pool set <pool-name> pg_autoscale_mode <mode>
-    
-    [root@ceph01 ~]# ceph osd pool set ssd-demo-pool pg_autoscale_mode on
-    set pool 1 pg_autoscale_mode to on
-    
-> 设置集群内所有池放置组数自动伸缩
-
-    # ceph config set global OSD_pool_default_pg_autoscale_mode <mode>
-    
-    ceph config set global OSD_pool_default_pg_autoscale_mode on
-    
-查看集群内放置组数伸缩策略
-
-    [root@ceph01 ~]# ceph osd pool autoscale-status
-    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
-    nvme-demo-pool     7               3.0       11178G 0.0000                               1.0    256         32 warn
-    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
-    
-创建`ddd-pool`，并查看集群内放置组数伸缩策略
-
-    [root@ceph01 ~]# ceph osd pool create ddd-pool 1 1
-    pool 'ddd-pool' created
-    [root@ceph01 ~]# ceph osd pool autoscale-status
-    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
-    nvme-demo-pool     7               3.0       26380G 0.0000                               1.0    256         32 warn
-    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
-    ddd-pool           0               3.0       26380G 0.0000                               1.0      1         32 on
-    
-> 查看池伸缩建议
-
-    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
-    nvme-demo-pool     7               3.0       26380G 0.0000                               1.0    256         32 warn
-    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
-    ddd-pool           0               3.0       26380G 0.0000                               1.0     32            on
-    
-- `SIZE`：存储在池中的数据量
-- `TARGET SIZE`：管理员指定的他们希望最终存储在此池中的数据量
-- `RATE`：池的乘数，用于确定消耗了多少原始存储容量。例如，3副本池的比率为3.0，而`k=4`，`m=2`擦除编码池的比率为1.5。
-- `RAW CAPACITY`：负责存储此池(可能还有其他池)数据的`OSD`上的裸存储容量的总和。
-- `RATIO`：当前池正在消耗的总容量的比率(即RATIO = size * rate / raw capacity)。
-- `TARGET RATIO`：管理员指定的期望此池消耗的存储空间相对于设置了目标比率的其他池的比率。如果同时指定了目标大小字节和比率，则该比率优先
-- `EFFECTIVE RATIO`：有效比率是通过两种方式调整后的目标比率：
-    - 减去设置了目标大小的池预期使用的任何容量
-    - 在设置了目标比率的池之间规范化目标比率，以便它们共同以空间的其余部分为目标。例如，4个池的目标收益率为1.0，其有效收益率为0.25。
-系统使用实际比率和有效比率中的较大者进行计算。
-- `PG_NUM`：池的当前`PG`数
-- `NEW PG_NUM`：池的`pgu NUM`期望值。它始终是2的幂，并且只有当期望值与当前值相差超过3倍时才会出现。
-- `AUTOSCALE`：`pool_pg_autosacle`模式，可以是`on`、`off`或`warn`。
-
-> 自动缩放
-     
-允许集群根据使用情况自动扩展`PGs`是最简单的方法。`Ceph`将查看整个系统的总可用存储和`PGs`的目标数量，查看每个池中存储了多少数据，并尝试相应地分配`PGs`。
-系统采用的方法相对保守，仅在当前`pg`(pg_num)的数量比它认为应该的数量少3倍以上时才对池进行更改。
-
-每个`OSD`的`pg`目标数基于`mon_target_pg_per_OSD`可配置（默认值：100），可通过以下方式进行调整:
-
-    ceph config set global mon_target_pg_per_OSD 100
-
-### 指定池的期望大小
-
-当第一次创建集群或池时，它将消耗集群总容量的一小部分，并且在系统看来似乎只需要少量的放置组。
-但是，在大多数情况下，集群管理员都很清楚，随着时间的推移，哪些池将消耗大部分系统容量。
-通过向`Ceph`提供此信息，可以从一开始就使用更合适数量的`pg`，从而防止`pg_num`的后续更改以及在进行这些调整时与移动数据相关的开销
-
-池的目标大小可以通过两种方式指定：要么根据池的绝对大小（即字节），要么作为相对于设置了目标大小比的其他池的权重。
-
-`ddd-pool`预计使用`1G`存储空间
-
-    ceph osd pool set ddd-pool target_size_bytes 1G
-
-相对于设置了`target_size_ratio`的其他池，`mpool`预计将消耗1.0。
-如果`mpool`是集群中唯一的池，这意味着预计将使用总容量的100%。
-如果有第二个带有`target_size_ratio`1.0的池，那么两个池都希望使用50%的集群容量。
-
-    ceph osd pool set mypool target_size_ratio 1.0
-    
-### 放置组数配置
-
-    # ceph osd pool create {pool-name} pg_num
-    
-必须选择`pg_num`的值，因为它（当前）无法自动计算。以下是一些常用值：
-
-- 少于`5 OSDs`设置`pg_num`为128
-- `5-10 OSDs`设置`pg_num`为512
-- `10-50 OSDs`设置`pg_num`为1024
-- 如果您有超过`50`个`OSD`，则需要使用[pgcalc](https://ceph.com/pgcalc/) 计算`pg_num`值
-
-
-                 (OSDs * 100)
-    Total PGs =  ------------
-                  pool size
-                  
-结果应始终四舍五入到最接近的二次方,只有2的幂才能平衡放置组中对象的数量。其他值将导致数据在您的`OSD`中的不均匀分布。
-
-例如，对于具有200个`OSD`和3个副本的池大小的群集，您可以按以下方式估计`PG`的数量：
-
-    (200 * 100)
-    ----------- = 6667. 最接近该数值的2的幂等为8192
-         3
-
-### 放置组解析
-
-放置组（PG）聚合池中的对象，因为在每个对象的基础上跟踪对象放置和对象元数据在计算上非常昂贵，
-即，具有数百万个对象的系统无法在每个对象的基础上真实地跟踪放置。
-
-`Ceph`客户端将计算对象应该在哪个放置组中。它通过散列对象`ID`并基于定义池中`pg`的数量和池的`ID`应用一个操作来实现这一点
-
-放置组中的对象内容存储在一组`OSD`中。例如，在大小为2的复制池中，每个放置组将在两个`OSD`上存储对象.
-
-如果`OSD#2`失败，另一个将被分配到放置组`#1`，并将填充`OSD#1`中所有对象的副本。如果池大小从2更改为3，则会为放置组分配一个附加的`OSD`，并接收放置组中所有对象的副本。
-
-放置组不拥有`OSD`,它们与来自同一池甚至其他池的其他放置组共享`OSD`。如果`OSD#2`失败，放置组`#2`还必须使用`OSD#3`还原对象的副本。
-
-当放置组的数量增加时，新的放置组将被分配`OSD`。`挤压`功能的结果也将更改，以前放置组中的某些对象将复制到新放置组中，并从旧放置组中删除。
-
-### 放置组权衡
-
-数据持久性和所有`OSD`之间的均匀分布需要更多的放置组，但是它们的数量应该减少到最小以节省`CPU`和内存。
-
-> 数据持久性
-  
-单个`OSD`故障后，数据丢失的风险会增大，直到其中包含的数据被完全恢复。让我们想象一个场景，在单个放置组中导致永久的数据丢失:
-
-- `OSD`故障（可看作磁盘故障），包含对象的所有副本丢失。对于放置组内的所有对象，副本的数量突然从3个下降到2个。
-- `Ceph`通过选择一个新的`OSD`来重新创建所有对象的第三个副本，从而开始恢复此放置组。
-- 同一放置组中的另一个`OSD`在新`OSD`完全填充第三个拷贝之前失败。一些对象将只有一个幸存的副本。
-- `Ceph`会选择另一个`OSD`，并继续复制对象，以恢复所需的副本数量。
-- 同一放置组中的第三个`OSD`在恢复完成之前失败。如果此`OSD`包含对象的唯一剩余副本，则它将永久丢失。  
-
-在一个包含10个`OSD`、在3个复制池中有512个放置组的集群中，`CRUSH`将给每个放置组三个`OSD`。
-最终，每个`OSD`将托管(512 * 3)/ 10 ~= 150个放置组。
-因此，当第一个`OSD`失败时，上述场景将同时启动所有150个安置组的恢复。
-
-正在恢复的150个安置组可能均匀地分布在剩余的9个`OSDs`上。
-因此，每个剩余的`OSD`都可能向其他所有`OSD`发送对象副本，并接收一些新对象来存储，因为它们成为了新的放置组的一部分。
-
-完成此恢复所需的时间完全取决于`Ceph`集群的体系结构。假设每个`OSD`由一台机器上的1`TB` `SSD`托管，
-所有这些`OSD`都连接到`10Gb/s`交换机，单个`OSD`的恢复在M分钟内完成。
-如果每台机器有两个`OSD`、没有`SSD`、`1Gb/s`交换机，它至少会慢一个数量级。
-
-在这种大小的集群中，放置组的数量对数据持f久性几乎没有影响。它可能是128或8192，恢复不会慢或快。
-
-但是，将同一个`Ceph`集群增加到20个`OSD`而不是10个`OSD`可能会加快恢复速度，从而显著提高数据持久性。
-每个`OSD`现在只参与~75个放置组，而不是在只有10个`OSD`时参与~150个，而且仍然需要剩下的19个`OSD`执行相同数量的对象副本才能恢复。
-但是，以前10个`OSD`每个必须复制大约`100GB`，现在它们每个必须复制`50GB`。
-如果网络是瓶颈，那么恢复的速度将是现在的两倍。换句话说，当`OSDs`的数量增加时，恢复速度会更快。
-
-如果这个集群增长到40个`OSD`，那么每个`OSD`只能承载35个放置组。
-如果`OSD`故障，除非它被另一个瓶颈阻塞，否则恢复将继续加快。
-但是，如果这个集群增长到200个`OSD`，每个`OSD`只能承载~7个放置组。
-如果一个`OSD`故障，那么在这些放置组中最多21个`OSD`（7*3）之间会发生恢复：恢复所需的时间将比有40个`OSD`时的集群长，这意味着放置组的数量应该增加。
-
-无论恢复时间有多短，第二个`OSD`都有可能在恢复过程中失败。
-在上述10个`osd`集群中，如果其中任何一个失败，那么~17个放置组（即~150/9个正在恢复的放置组）将只有一个幸存副本。
-如果剩余的8个`OSD`中的任何一个失败，那么两个放置组的最后一个对象很可能会丢失（即大约17/8个放置组，只恢复了剩余的一个副本）。
-
-当群集的大小增加到20个`osd`时，由于丢失3个`osd`而损坏的放置组的数量会下降。
-丢失的第二个`OSD`将降级~4（即恢复~75/19个放置组），而不是~17，并且丢失的第三个`OSD`只有在包含幸存副本的四个`OSD`之一时才会丢失数据。
-换句话说，如果在恢复时间范围内丢失一个`OSD`的概率为0.0001%，则在具有10个`OSD`的集群中，丢失的概率从17×10×0.0001%变为具有20个`OSD`的集群中的4×20×0.0001%
-
-**简而言之，更多的`osd`意味着更快的恢复和更低的导致永久性丢失放置组的级联故障风险。就数据持久性而言，512或4096个放置组在少于50个`osd`的集群中大致相当。**
-
-> 池中的对象分布
-  
-理想情况下，对象均匀分布在每个放置组中。由于`CRUSH`计算每个对象的放置组，
-但实际上不知道该放置组中的每个`OSD`中存储了多少数据，因此放置组的数量与`OSD`的数量之间的比率可能会显著影响数据的分布。
-
-例如，如果在一个三副本池中有十个`OSD`的单个放置组，那么只会使用三个`OSD`，因为`CRUSH`没有其他选择。
-当有更多的放置组可用时，对象更可能均匀地分布在其中。`CRUSH`还尽一切努力将`osd`均匀地分布在所有现有的放置组中。
-
-不均匀的数据分布可能是由osd和放置组之间的比率以外的因素造成的。
-由于挤压不考虑对象的大小，一些非常大的对象可能会造成不平衡。
-假设100万个4K对象（总共4GB）均匀分布在10个`OSD`上的1024个放置组中。他们将在每个`OSD`上使用`4GB/10=400MB`。
-如果将一个`400MB`对象添加到池中，则支持放置该对象的放置组的三个`OSD`将被`400MB+400MB=800MB`填充，而其他七个`OSD`将仅被`400MB`占用。
-
-> 内存、CPU和网络使用情况
-
-对于每个放置组，`osd`和`mon`始终需要内存、网络和`CPU`，甚至在恢复期间需要更多。通过在放置组中聚集对象来共享此开销是它们存在的主要原因之一。
-
-最小化放置组的数量可以节省大量资源。
-
+# ceph存储实践
 
 ## 块设备（rdb）使用
 
@@ -2552,7 +2063,6 @@
     [root@ceph01 ~]# rbd rm rbd-demo-pool/rbd-demo-image
     Removing image: 100% complete...done.
     
-
 ### 客户端使用ceph块存储
 
 #### 服务端操作
@@ -2912,8 +2422,6 @@
 - 开发数据库存储
 - 存储日志
 
-    
-    
 # k8s对接ceph
 
 ## k8s-csi
@@ -3590,21 +3098,495 @@
     
 **与`ceph rbd`不同的是，扩容`pvc`时不需重启后端应用**
 
-## k8s使用ceph文件系统
+# ceph运维管理
 
-> 下载所需镜像
+## 服务启停
 
-    quay.io/external_storage/cephfs-provisioner:latest
-    quay.io/cephcsi/cephcsi:v3.2.0
+### 按节点启动所有ceph服务
+
+    systemctl start ceph.target
     
-> 安装
+或
 
-    git clone https://github.com/kubernetes-retired/external-storage.git
-    external-storage/ceph/cephfs/deploy/
-    NAMESPACE=kube-system
-    sed -r -i "s/namespace: [^ ]+/namespace: $NAMESPACE/g" ./rbac/*.yaml
-    sed -i "/PROVISIONER_SECRET_NAMESPACE/{n;s/value:.*/value: $NAMESPACE/;}" rbac/deployment.yaml
-    kubectl -n $NAMESPACE apply -f ./rbac
+    sudo systemctl start ceph-osd.target
+    sudo systemctl start ceph-mon.target
+    sudo systemctl start ceph-mds.target
+    
+### 按节点停止所有ceph服务
+
+    systemctl stop ceph\*.service ceph\*.target
+
+或
+
+    sudo systemctl stop ceph-mon\*.service ceph-mon.target
+    sudo systemctl stop ceph-osd\*.service ceph-osd.target
+    sudo systemctl stop ceph-mds\*.service ceph-mds.target
+    
+### 控制节点管理集群所有服务
+
+启
+
+    sudo systemctl start ceph-osd@{id}
+    sudo systemctl start ceph-mon@{hostname}
+    sudo systemctl start ceph-mds@{hostname}
+    
+停
+
+    sudo systemctl stop ceph-osd@{id}
+    sudo systemctl stop ceph-mon@{hostname}
+    sudo systemctl stop ceph-mds@{hostname}
+
+## pool管理
+
+### 查看`pool`
+
+    [root@ceph01 ~]# ceph osd lspools
+    1 ssd-demo-pool
+    2 nvme-demo-pool
+
+### 创建一个pool
+
+格式
+
+    ceph osd pool create {pool-name} {pg-num} [{pgp-num}] [replicated] \
+         [crush-rule-name] [expected-num-objects]
+         
+    或
+         
+    ceph osd pool create {pool-name} {pg-num}  {pgp-num}   erasure \
+         [erasure-code-profile] [crush-rule-name] [expected_num_objects]
+
+**最佳实践**
+
+### 设置池的放置组数
+
+    ceph osd pool set {pool-name} pgp_num {pgp_num}
+
+### 获取池的放置组数
+
+    ceph osd pool get {pool-name} pg_num
+    
+### 获取集群的PG统计信息
+  
+    # ceph pg dump [--format {format}]
+    ceph pg dump -f json
+
+### 将池与应用程序关联
+
+池在使用之前需要与应用程序相关联。将与`cepfs`一起使用的池或由`RGW`自动创建的池将自动关联。
+用于与`RBD`一起使用的池应该使用`RBD`工具进行初始化。
+
+    # ceph osd pool application enable {pool-name} {application-name}(cephfs, rbd, rgw)
+    [root@ceph01 ~]# ceph osd pool application enable ssd-demo-pool rbd
+    enabled application 'rbd' on pool 'ssd-demo-pool'
+    [root@ceph01 ~]# ceph osd pool application enable nvme-demo-pool cephfs
+    enabled application 'cephfs' on pool 'nvme-demo-pool'
+
+### 池配额
+
+您可以为每个池的最大字节数和/或最大对象数设置池配额。
+
+    # ceph osd pool set-quota {pool-name} [max_objects {obj-count}] [max_bytes {bytes}]
+    ceph osd pool set-quota data max_objects 10000
+    
+要删除配额，请将其值设置为0
+
+    ceph osd pool set-quota data max_objects 0
+    
+### 删除池
+
+语法格式
+
+    ceph osd pool delete {pool-name} [{pool-name} --yes-i-really-really-mean-it]
+
+修改配置
+
+    vim /etc/ceph/ceph.conf
+    
+添加如下：
+
+    [mon]
+    mon_allow_pool_delete=true
+
+更新
+
+    cd /etc/ceph
+    ceph-deploy --overwrite-conf config push ceph01 ceph02 ceph03
+    
+重启
+
+    systemctl restart ceph-mon.target
+
+    
+删除`ddd-pool`
+
+    [root@ceph01 ceph]# ceph osd pool delete ddd-pool ddd-pool --yes-i-really-really-mean-it
+    pool 'ddd-pool' removed
+    
+### 池重命名
+
+    ceph osd pool rename {current-pool-name} {new-pool-name}
+    
+### 显示池统计信息
+
+    [root@ceph01 ~]# rados df
+    POOL_NAME        USED OBJECTS CLONES COPIES MISSING_ON_PRIMARY UNFOUND DEGRADED RD_OPS  RD WR_OPS    WR USED COMPR UNDER COMPR
+    nvme-demo-pool 12 KiB       1      0      3                  0       0        0      0 0 B      1 1 KiB        0 B         0 B
+    ssd-demo-pool  12 KiB       1      0      3                  0       0        0      0 0 B      1 1 KiB        0 B         0 B
+    
+    total_objects    2
+    total_used       30 GiB
+    total_avail      26 TiB
+    total_space      26 TiB
+    
+池`io`
+
+    [root@ceph01 ~]# ceph osd pool stats ssd-demo-pool
+    pool ssd-demo-pool id 1
+      nothing is going on
+      
+### 创建池快照
+    
+    # ceph osd pool mksnap {pool-name} {snap-name}
+    [root@ceph01 ~]# ceph osd pool mksnap ssd-demo-pool ssd-demo-pool-snap-20210301
+    created pool ssd-demo-pool snap ssd-demo-pool-snap-20210301
+    
+### 删除池快照
+
+    # ceph osd pool rmsnap {pool-name} {snap-name}
+    [root@ceph01 ~]# ceph osd pool rmsnap ssd-demo-pool ssd-demo-pool-snap-20210301
+    removed pool ssd-demo-pool snap ssd-demo-pool-snap-20210301
+    
+### 池其他配置
+
+查看可配置项
+
+    [root@ceph01 ~]# ceph osd pool -h
+    
+     General usage:
+     ==============
+    usage: ceph [-h] [-c CEPHCONF] [-i INPUT_FILE] [-o OUTPUT_FILE]
+                [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID]
+                [--name CLIENT_NAME] [--cluster CLUSTER]
+                [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug]
+                [--watch-info] [--watch-sec] [--watch-warn] [--watch-error]
+                [--watch-channel {cluster,audit,*}] [--version] [--verbose]
+                [--concise] [-f {json,json-pretty,xml,xml-pretty,plain}]
+                [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]
+    
+    Ceph administration tool
+    
+    optional arguments:
+      -h, --help            request mon help
+      -c CEPHCONF, --conf CEPHCONF
+                            ceph configuration file
+      -i INPUT_FILE, --in-file INPUT_FILE
+                            input file, or "-" for stdin
+      -o OUTPUT_FILE, --out-file OUTPUT_FILE
+                            output file, or "-" for stdout
+      --setuser SETUSER     set user file permission
+      --setgroup SETGROUP   set group file permission
+      --id CLIENT_ID, --user CLIENT_ID
+                            client id for authentication
+      --name CLIENT_NAME, -n CLIENT_NAME
+                            client name for authentication
+      --cluster CLUSTER     cluster name
+      --admin-daemon ADMIN_SOCKET
+                            submit admin-socket commands ("help" for help
+      -s, --status          show cluster status
+      -w, --watch           watch live cluster changes
+      --watch-debug         watch debug events
+      --watch-info          watch info events
+      --watch-sec           watch security events
+      --watch-warn          watch warn events
+      --watch-error         watch error events
+      --watch-channel {cluster,audit,*}
+                            which log channel to follow when using -w/--watch. One
+                            of ['cluster', 'audit', '*']
+      --version, -v         display version
+      --verbose             make verbose
+      --concise             make less verbose
+      -f {json,json-pretty,xml,xml-pretty,plain}, --format {json,json-pretty,xml,xml-pretty,plain}
+      --connect-timeout CLUSTER_TIMEOUT
+                            set a timeout for connecting to the cluster
+      --block               block until completion (scrub and deep-scrub only)
+      --period PERIOD, -p PERIOD
+                            polling period, default 1.0 second (for polling
+                            commands only)
+    
+     Local commands:
+     ===============
+    
+    ping <mon.id>           Send simple presence/life test to a mon
+                            <mon.id> may be 'mon.*' for all mons
+    daemon {type.id|path} <cmd>
+                            Same as --admin-daemon, but auto-find admin socket
+    daemonperf {type.id | path} [stat-pats] [priority] [<interval>] [<count>]
+    daemonperf {type.id | path} list|ls [stat-pats] [priority]
+                            Get selected perf stats from daemon/admin socket
+                            Optional shell-glob comma-delim match string stat-pats
+                            Optional selection priority (can abbreviate name):
+                             critical, interesting, useful, noninteresting, debug
+                            List shows a table of all available stats
+                            Run <count> times (default forever),
+                             once per <interval> seconds (default 1)
+    
+    
+     Monitor commands:
+     =================
+    osd pool application disable <poolname> <app> {--yes-i-really-mean-it}   disables use of an application <app> on pool <poolname>
+    osd pool application enable <poolname> <app> {--yes-i-really-mean-it}    enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>
+    osd pool application get {<poolname>} {<app>} {<key>}                    get value of key <key> of application <app> on pool <poolname>
+    osd pool application rm <poolname> <app> <key>                           removes application <app> metadata key <key> on pool <poolname>
+    osd pool application set <poolname> <app> <key> <value>                  sets application <app> metadata key <key> to <value> on pool <poolname>
+    osd pool autoscale-status                                                report on pool pg_num sizing recommendation and intent
+    osd pool cancel-force-backfill <poolname> [<poolname>...]                restore normal recovery priority of specified pool <who>
+    osd pool cancel-force-recovery <poolname> [<poolname>...]                restore normal recovery priority of specified pool <who>
+    osd pool create <poolname> <int[0-]> {<int[0-]>} {replicated|erasure}    create pool
+     {<erasure_code_profile>} {<rule>} {<int>} {<int>} {<int[0-]>} {<int[0-
+     ]>} {<float[0.0-1.0]>}
+    osd pool deep-scrub <poolname> [<poolname>...]                           initiate deep-scrub on pool <who>
+    osd pool force-backfill <poolname> [<poolname>...]                       force backfill of specified pool <who> first
+    osd pool force-recovery <poolname> [<poolname>...]                       force recovery of specified pool <who> first
+    osd pool get <poolname> size|min_size|pg_num|pgp_num|crush_rule|         get pool parameter <var>
+     hashpspool|nodelete|nopgchange|nosizechange|write_fadvise_dontneed|
+     noscrub|nodeep-scrub|hit_set_type|hit_set_period|hit_set_count|hit_set_
+     fpp|use_gmt_hitset|target_max_objects|target_max_bytes|cache_target_
+     dirty_ratio|cache_target_dirty_high_ratio|cache_target_full_ratio|
+     cache_min_flush_age|cache_min_evict_age|erasure_code_profile|min_read_
+     recency_for_promote|all|min_write_recency_for_promote|fast_read|hit_
+     set_grade_decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_
+     max_interval|deep_scrub_interval|recovery_priority|recovery_op_
+     priority|scrub_priority|compression_mode|compression_algorithm|
+     compression_required_ratio|compression_max_blob_size|compression_min_
+     blob_size|csum_type|csum_min_block|csum_max_block|allow_ec_overwrites|
+     fingerprint_algorithm|pg_autoscale_mode|pg_autoscale_bias|pg_num_min|
+     target_size_bytes|target_size_ratio
+    osd pool get-quota <poolname>                                            obtain object or byte limits for pool
+    osd pool ls {detail}                                                     list pools
+    osd pool mksnap <poolname> <snap>                                        make snapshot <snap> in <pool>
+    osd pool rename <poolname> <poolname>                                    rename <srcpool> to <destpool>
+    osd pool repair <poolname> [<poolname>...]                               initiate repair on pool <who>
+    osd pool rm <poolname> {<poolname>} {--yes-i-really-really-mean-it} {--  remove pool
+     yes-i-really-really-mean-it-not-faking}
+    osd pool rmsnap <poolname> <snap>                                        remove snapshot <snap> from <pool>
+    osd pool scrub <poolname> [<poolname>...]                                initiate scrub on pool <who>
+    osd pool set <poolname> size|min_size|pg_num|pgp_num|pgp_num_actual|     set pool parameter <var> to <val>
+     crush_rule|hashpspool|nodelete|nopgchange|nosizechange|write_fadvise_
+     dontneed|noscrub|nodeep-scrub|hit_set_type|hit_set_period|hit_set_
+     count|hit_set_fpp|use_gmt_hitset|target_max_bytes|target_max_objects|
+     cache_target_dirty_ratio|cache_target_dirty_high_ratio|cache_target_
+     full_ratio|cache_min_flush_age|cache_min_evict_age|min_read_recency_
+     for_promote|min_write_recency_for_promote|fast_read|hit_set_grade_
+     decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_max_interval|
+     deep_scrub_interval|recovery_priority|recovery_op_priority|scrub_
+     priority|compression_mode|compression_algorithm|compression_required_
+     ratio|compression_max_blob_size|compression_min_blob_size|csum_type|
+     csum_min_block|csum_max_block|allow_ec_overwrites|fingerprint_
+     algorithm|pg_autoscale_mode|pg_autoscale_bias|pg_num_min|target_size_
+     bytes|target_size_ratio <val> {--yes-i-really-mean-it}
+    osd pool set-quota <poolname> max_objects|max_bytes <val>                set object or byte limit on pool
+    osd pool stats {<poolname>}                                              obtain stats from all pools, or from specified pool
+    
+### 设置对象副本数
+
+默认为3
+
+    ceph osd pool set {poolname} size {num-replicas}
+
+### pg_autoscale_mode
+
+放置组（PGs）是`Ceph`分发数据的内部实现细节。
+过启用`pg autoscaling`，您可以允许集群提出建议或根据集群的使用方式自动调整`PGs`。
+
+系统中的每个池都有一个`pg_autoscale_mode`属性，可以设置为`off`、`on`或`warn`：
+
+- off：禁用此池的自动缩放。由管理员为每个池选择适当的`PG`数量。
+- on：启用给定池的`PG`计数的自动调整。
+- warn：当`PG`计数需要调整时发出健康警报（默认）
+
+> 为指定池设置放置组数自动伸缩
+
+    # ceph osd pool set <pool-name> pg_autoscale_mode <mode>
+    
+    [root@ceph01 ~]# ceph osd pool set ssd-demo-pool pg_autoscale_mode on
+    set pool 1 pg_autoscale_mode to on
+    
+> 设置集群内所有池放置组数自动伸缩
+
+    # ceph config set global OSD_pool_default_pg_autoscale_mode <mode>
+    
+    ceph config set global OSD_pool_default_pg_autoscale_mode on
+    
+查看集群内放置组数伸缩策略
+
+    [root@ceph01 ~]# ceph osd pool autoscale-status
+    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
+    nvme-demo-pool     7               3.0       11178G 0.0000                               1.0    256         32 warn
+    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
+    
+创建`ddd-pool`，并查看集群内放置组数伸缩策略
+
+    [root@ceph01 ~]# ceph osd pool create ddd-pool 1 1
+    pool 'ddd-pool' created
+    [root@ceph01 ~]# ceph osd pool autoscale-status
+    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
+    nvme-demo-pool     7               3.0       26380G 0.0000                               1.0    256         32 warn
+    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
+    ddd-pool           0               3.0       26380G 0.0000                               1.0      1         32 on
+    
+> 查看池伸缩建议
+
+    POOL             SIZE TARGET SIZE RATE RAW CAPACITY  RATIO TARGET RATIO EFFECTIVE RATIO BIAS PG_NUM NEW PG_NUM AUTOSCALE
+    nvme-demo-pool     7               3.0       26380G 0.0000                               1.0    256         32 warn
+    ssd-demo-pool      7               3.0       15202G 0.0000                               1.0     32            on
+    ddd-pool           0               3.0       26380G 0.0000                               1.0     32            on
+    
+- `SIZE`：存储在池中的数据量
+- `TARGET SIZE`：管理员指定的他们希望最终存储在此池中的数据量
+- `RATE`：池的乘数，用于确定消耗了多少原始存储容量。例如，3副本池的比率为3.0，而`k=4`，`m=2`擦除编码池的比率为1.5。
+- `RAW CAPACITY`：负责存储此池(可能还有其他池)数据的`OSD`上的裸存储容量的总和。
+- `RATIO`：当前池正在消耗的总容量的比率(即RATIO = size * rate / raw capacity)。
+- `TARGET RATIO`：管理员指定的期望此池消耗的存储空间相对于设置了目标比率的其他池的比率。如果同时指定了目标大小字节和比率，则该比率优先
+- `EFFECTIVE RATIO`：有效比率是通过两种方式调整后的目标比率：
+    - 减去设置了目标大小的池预期使用的任何容量
+    - 在设置了目标比率的池之间规范化目标比率，以便它们共同以空间的其余部分为目标。例如，4个池的目标收益率为1.0，其有效收益率为0.25。
+系统使用实际比率和有效比率中的较大者进行计算。
+- `PG_NUM`：池的当前`PG`数
+- `NEW PG_NUM`：池的`pgu NUM`期望值。它始终是2的幂，并且只有当期望值与当前值相差超过3倍时才会出现。
+- `AUTOSCALE`：`pool_pg_autosacle`模式，可以是`on`、`off`或`warn`。
+
+> 自动缩放
+     
+允许集群根据使用情况自动扩展`PGs`是最简单的方法。`Ceph`将查看整个系统的总可用存储和`PGs`的目标数量，查看每个池中存储了多少数据，并尝试相应地分配`PGs`。
+系统采用的方法相对保守，仅在当前`pg`(pg_num)的数量比它认为应该的数量少3倍以上时才对池进行更改。
+
+每个`OSD`的`pg`目标数基于`mon_target_pg_per_OSD`可配置（默认值：100），可通过以下方式进行调整:
+
+    ceph config set global mon_target_pg_per_OSD 100
+
+### 指定池的期望大小
+
+当第一次创建集群或池时，它将消耗集群总容量的一小部分，并且在系统看来似乎只需要少量的放置组。
+但是，在大多数情况下，集群管理员都很清楚，随着时间的推移，哪些池将消耗大部分系统容量。
+通过向`Ceph`提供此信息，可以从一开始就使用更合适数量的`pg`，从而防止`pg_num`的后续更改以及在进行这些调整时与移动数据相关的开销
+
+池的目标大小可以通过两种方式指定：要么根据池的绝对大小（即字节），要么作为相对于设置了目标大小比的其他池的权重。
+
+`ddd-pool`预计使用`1G`存储空间
+
+    ceph osd pool set ddd-pool target_size_bytes 1G
+
+相对于设置了`target_size_ratio`的其他池，`mpool`预计将消耗1.0。
+如果`mpool`是集群中唯一的池，这意味着预计将使用总容量的100%。
+如果有第二个带有`target_size_ratio`1.0的池，那么两个池都希望使用50%的集群容量。
+
+    ceph osd pool set mypool target_size_ratio 1.0
+    
+### 放置组数配置
+
+    # ceph osd pool create {pool-name} pg_num
+    
+必须选择`pg_num`的值，因为它（当前）无法自动计算。以下是一些常用值：
+
+- 少于`5 OSDs`设置`pg_num`为128
+- `5-10 OSDs`设置`pg_num`为512
+- `10-50 OSDs`设置`pg_num`为1024
+- 如果您有超过`50`个`OSD`，则需要使用[pgcalc](https://ceph.com/pgcalc/) 计算`pg_num`值
+
+
+                 (OSDs * 100)
+    Total PGs =  ------------
+                  pool size
+                  
+结果应始终四舍五入到最接近的二次方,只有2的幂才能平衡放置组中对象的数量。其他值将导致数据在您的`OSD`中的不均匀分布。
+
+例如，对于具有200个`OSD`和3个副本的池大小的群集，您可以按以下方式估计`PG`的数量：
+
+    (200 * 100)
+    ----------- = 6667. 最接近该数值的2的幂等为8192
+         3
+
+### 放置组解析
+
+放置组（PG）聚合池中的对象，因为在每个对象的基础上跟踪对象放置和对象元数据在计算上非常昂贵，
+即，具有数百万个对象的系统无法在每个对象的基础上真实地跟踪放置。
+
+`Ceph`客户端将计算对象应该在哪个放置组中。它通过散列对象`ID`并基于定义池中`pg`的数量和池的`ID`应用一个操作来实现这一点
+
+放置组中的对象内容存储在一组`OSD`中。例如，在大小为2的复制池中，每个放置组将在两个`OSD`上存储对象.
+
+如果`OSD#2`失败，另一个将被分配到放置组`#1`，并将填充`OSD#1`中所有对象的副本。如果池大小从2更改为3，则会为放置组分配一个附加的`OSD`，并接收放置组中所有对象的副本。
+
+放置组不拥有`OSD`,它们与来自同一池甚至其他池的其他放置组共享`OSD`。如果`OSD#2`失败，放置组`#2`还必须使用`OSD#3`还原对象的副本。
+
+当放置组的数量增加时，新的放置组将被分配`OSD`。`挤压`功能的结果也将更改，以前放置组中的某些对象将复制到新放置组中，并从旧放置组中删除。
+
+### 放置组权衡
+
+数据持久性和所有`OSD`之间的均匀分布需要更多的放置组，但是它们的数量应该减少到最小以节省`CPU`和内存。
+
+> 数据持久性
+  
+单个`OSD`故障后，数据丢失的风险会增大，直到其中包含的数据被完全恢复。让我们想象一个场景，在单个放置组中导致永久的数据丢失:
+
+- `OSD`故障（可看作磁盘故障），包含对象的所有副本丢失。对于放置组内的所有对象，副本的数量突然从3个下降到2个。
+- `Ceph`通过选择一个新的`OSD`来重新创建所有对象的第三个副本，从而开始恢复此放置组。
+- 同一放置组中的另一个`OSD`在新`OSD`完全填充第三个拷贝之前失败。一些对象将只有一个幸存的副本。
+- `Ceph`会选择另一个`OSD`，并继续复制对象，以恢复所需的副本数量。
+- 同一放置组中的第三个`OSD`在恢复完成之前失败。如果此`OSD`包含对象的唯一剩余副本，则它将永久丢失。  
+
+在一个包含10个`OSD`、在3个复制池中有512个放置组的集群中，`CRUSH`将给每个放置组三个`OSD`。
+最终，每个`OSD`将托管(512 * 3)/ 10 ~= 150个放置组。
+因此，当第一个`OSD`失败时，上述场景将同时启动所有150个安置组的恢复。
+
+正在恢复的150个安置组可能均匀地分布在剩余的9个`OSDs`上。
+因此，每个剩余的`OSD`都可能向其他所有`OSD`发送对象副本，并接收一些新对象来存储，因为它们成为了新的放置组的一部分。
+
+完成此恢复所需的时间完全取决于`Ceph`集群的体系结构。假设每个`OSD`由一台机器上的1`TB` `SSD`托管，
+所有这些`OSD`都连接到`10Gb/s`交换机，单个`OSD`的恢复在M分钟内完成。
+如果每台机器有两个`OSD`、没有`SSD`、`1Gb/s`交换机，它至少会慢一个数量级。
+
+在这种大小的集群中，放置组的数量对数据持f久性几乎没有影响。它可能是128或8192，恢复不会慢或快。
+
+但是，将同一个`Ceph`集群增加到20个`OSD`而不是10个`OSD`可能会加快恢复速度，从而显著提高数据持久性。
+每个`OSD`现在只参与~75个放置组，而不是在只有10个`OSD`时参与~150个，而且仍然需要剩下的19个`OSD`执行相同数量的对象副本才能恢复。
+但是，以前10个`OSD`每个必须复制大约`100GB`，现在它们每个必须复制`50GB`。
+如果网络是瓶颈，那么恢复的速度将是现在的两倍。换句话说，当`OSDs`的数量增加时，恢复速度会更快。
+
+如果这个集群增长到40个`OSD`，那么每个`OSD`只能承载35个放置组。
+如果`OSD`故障，除非它被另一个瓶颈阻塞，否则恢复将继续加快。
+但是，如果这个集群增长到200个`OSD`，每个`OSD`只能承载~7个放置组。
+如果一个`OSD`故障，那么在这些放置组中最多21个`OSD`（7*3）之间会发生恢复：恢复所需的时间将比有40个`OSD`时的集群长，这意味着放置组的数量应该增加。
+
+无论恢复时间有多短，第二个`OSD`都有可能在恢复过程中失败。
+在上述10个`osd`集群中，如果其中任何一个失败，那么~17个放置组（即~150/9个正在恢复的放置组）将只有一个幸存副本。
+如果剩余的8个`OSD`中的任何一个失败，那么两个放置组的最后一个对象很可能会丢失（即大约17/8个放置组，只恢复了剩余的一个副本）。
+
+当群集的大小增加到20个`osd`时，由于丢失3个`osd`而损坏的放置组的数量会下降。
+丢失的第二个`OSD`将降级~4（即恢复~75/19个放置组），而不是~17，并且丢失的第三个`OSD`只有在包含幸存副本的四个`OSD`之一时才会丢失数据。
+换句话说，如果在恢复时间范围内丢失一个`OSD`的概率为0.0001%，则在具有10个`OSD`的集群中，丢失的概率从17×10×0.0001%变为具有20个`OSD`的集群中的4×20×0.0001%
+
+**简而言之，更多的`osd`意味着更快的恢复和更低的导致永久性丢失放置组的级联故障风险。就数据持久性而言，512或4096个放置组在少于50个`osd`的集群中大致相当。**
+
+> 池中的对象分布
+  
+理想情况下，对象均匀分布在每个放置组中。由于`CRUSH`计算每个对象的放置组，
+但实际上不知道该放置组中的每个`OSD`中存储了多少数据，因此放置组的数量与`OSD`的数量之间的比率可能会显著影响数据的分布。
+
+例如，如果在一个三副本池中有十个`OSD`的单个放置组，那么只会使用三个`OSD`，因为`CRUSH`没有其他选择。
+当有更多的放置组可用时，对象更可能均匀地分布在其中。`CRUSH`还尽一切努力将`osd`均匀地分布在所有现有的放置组中。
+
+不均匀的数据分布可能是由osd和放置组之间的比率以外的因素造成的。
+由于挤压不考虑对象的大小，一些非常大的对象可能会造成不平衡。
+假设100万个4K对象（总共4GB）均匀分布在10个`OSD`上的1024个放置组中。他们将在每个`OSD`上使用`4GB/10=400MB`。
+如果将一个`400MB`对象添加到池中，则支持放置该对象的放置组的三个`OSD`将被`400MB+400MB=800MB`填充，而其他七个`OSD`将仅被`400MB`占用。
+
+> 内存、CPU和网络使用情况
+
+对于每个放置组，`osd`和`mon`始终需要内存、网络和`CPU`，甚至在恢复期间需要更多。通过在放置组中聚集对象来共享此开销是它们存在的主要原因之一。
+
+最小化放置组的数量可以节省大量资源。
     
 ## 卸载
     
