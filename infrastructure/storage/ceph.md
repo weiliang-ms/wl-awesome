@@ -69,6 +69,9 @@
     - [ceph管理节点](#ceph%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9)
     - [客户端](#%E5%AE%A2%E6%88%B7%E7%AB%AF)
     - [适用场景](#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF)
+  - [ceph文件系统使用](#ceph%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8)
+    - [服务端](#%E6%9C%8D%E5%8A%A1%E7%AB%AF)
+    - [客户端](#%E5%AE%A2%E6%88%B7%E7%AB%AF-1)
 - [k8s对接ceph](#k8s%E5%AF%B9%E6%8E%A5ceph)
   - [k8s-csi](#k8s-csi)
     - [csi简介](#csi%E7%AE%80%E4%BB%8B)
@@ -2224,6 +2227,149 @@
 - 虚机存储
 - 开发数据库存储
 - 存储日志
+
+## ceph文件系统使用
+
+### 服务端
+
+> 安装`mds`（ceph节点安装，建议3个`mds`）
+
+    ceph-deploy mds create ceph01 ceph02 ceph03  
+
+> 创建`cephfs`存储池与元数据池
+
+    ceph osd pool create cephfs_data 64
+    ceph osd pool create cephfs_metadata 64
+    
+> 创建文件系统
+
+    ceph fs new cephfs cephfs_metadata cephfs_data
+    
+> 关联应用
+
+    [root@ceph01 ~]# ceph osd pool application enable cephfs_data cephfs
+    enabled application 'cephfs' on pool 'cephfs_data'
+    
+> 设置配额
+
+    ceph osd pool set-quota cephfs_data max_bytes 100G
+    
+> 创建用户
+
+    [root@ceph01 ~]#  ceph auth get-or-create client.cephfs mon 'allow r' mds 'allow r, allow rw path=/' osd 'allow rw pool=cephfs_data'
+    [client.cephfs]
+            key = AQCHWlRg46I6EBAAg+xBZnFsqOYIGluPd5h1QA==
+            
+### 客户端
+
+**内核需4.x**
+
+> 删除原有yum源repo文件
+
+	rm -f /etc/yum.repos.d/*.repo
+	
+> 创建yum源文件（客户端）
+
+**online**
+
+	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+	curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+**offline**
+    
+下载以下文件上传至`/etc/yum.repos.d/`
+
+- [Centos-7.repo](http://mirrors.aliyun.com/repo/Centos-7.repo)
+- [epel-7.repo](http://mirrors.aliyun.com/repo/epel-7.repo)
+
+> 配置`ceph`镜像源仓库
+
+    cat > /etc/yum.repos.d/ceph.repo <<EOF
+    [Ceph]
+    name=Ceph \$basearch
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/\$basearch
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    
+    [Ceph-noarch]
+    name=Ceph noarch
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/noarch
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    
+    [Ceph-source]
+    name=Ceph SRPMS
+    baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/SRPMS
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
+    EOF
+
+> 配置`yum`代理
+
+**适用于主机通过代理访问互联网场景**
+
+以下变量注意替换
+
+- username: 代理用户名
+- password: 代理用户密码
+- proxy_host: 代理IP地址
+- proxy_port: 代理端口
+
+
+    echo "proxy=http://username:password@proxy_host:proxy_port" >> /etc/yum.conf
+
+> 安装`ceph-common`
+
+    yum install -y ceph-common
+
+> 创建目录
+
+配置目录
+
+    mkdir -p /etc/ceph
+    
+挂载`cephfs`目录
+
+    mkdir -p /cephfs
+    
+> 创建认证文件
+
+**服务端执行以下命令获取cephfs用户认证信息**
+
+    [root@ceph01 ~]# ceph auth get client.cephfs
+    exported keyring for client.cephfs
+    [client.cephfs]
+            key = AQCHWlRg46I6EBAAg+xBZnFsqOYIGluPd5h1QA==
+            caps mds = "allow r, allow rw path=/"
+            caps mon = "allow r"
+            caps osd = "allow rw pool=cephfs_data"
+            
+客户端创建认证文件
+
+    cat <<EOF > /etc/ceph/cephfs.key
+    AQCHWlRg46I6EBAAg+xBZnFsqOYIGluPd5h1QA==
+    EOF
+    
+> 挂载文件系统
+
+    mount -t ceph 192.168.1.69:6789,192.168.1.70:6789,192.168.1.71:6789:/ /cephfs -o name=cephfs,secretfile=/etc/ceph/cephfs.key
+
+> 创建测试文件
+
+    touch /cephfs/123
+    
+> 配置开机挂载
+
+    cat <<EOF >> /etc/fstab
+    192.168.1.69:6789,192.168.1.70:6789,192.168.1.71:6789:/     /cephfs    ceph    name=cephfs,secretfile=/etc/ceph/cephfs.key,noatime,_netdev    0       2
+    EOF
+
+> 重启主机验证
+
+    reboot
 
 # k8s对接ceph
 
