@@ -1,3 +1,7 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
 - [导读](#%E5%AF%BC%E8%AF%BB)
   - [说明](#%E8%AF%B4%E6%98%8E)
   - [索引](#%E7%B4%A2%E5%BC%95)
@@ -72,6 +76,7 @@
   - [ceph文件系统使用](#ceph%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8)
     - [服务端](#%E6%9C%8D%E5%8A%A1%E7%AB%AF)
     - [客户端](#%E5%AE%A2%E6%88%B7%E7%AB%AF-1)
+    - [适用场景](#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF-1)
 - [k8s对接ceph](#k8s%E5%AF%B9%E6%8E%A5ceph)
   - [k8s-csi](#k8s-csi)
     - [csi简介](#csi%E7%AE%80%E4%BB%8B)
@@ -110,18 +115,22 @@
     - [放置组数配置](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%95%B0%E9%85%8D%E7%BD%AE)
     - [放置组解析](#%E6%94%BE%E7%BD%AE%E7%BB%84%E8%A7%A3%E6%9E%90)
     - [放置组权衡](#%E6%94%BE%E7%BD%AE%E7%BB%84%E6%9D%83%E8%A1%A1)
-      - [rbd管理](#rbd%E7%AE%A1%E7%90%86)
-      - [创建rbd用户](#%E5%88%9B%E5%BB%BArbd%E7%94%A8%E6%88%B7)
-      - [创建rbd映像](#%E5%88%9B%E5%BB%BArbd%E6%98%A0%E5%83%8F)
-      - [查看块设备映像](#%E6%9F%A5%E7%9C%8B%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
-      - [调整块设备映像的大小](#%E8%B0%83%E6%95%B4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F%E7%9A%84%E5%A4%A7%E5%B0%8F)
-      - [删除块设备映像](#%E5%88%A0%E9%99%A4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
+  - [rbd管理](#rbd%E7%AE%A1%E7%90%86)
+    - [创建](#%E5%88%9B%E5%BB%BA)
+    - [查看块设备映像](#%E6%9F%A5%E7%9C%8B%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
+    - [调整块设备映像的大小](#%E8%B0%83%E6%95%B4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F%E7%9A%84%E5%A4%A7%E5%B0%8F)
+      - [缩容](#%E7%BC%A9%E5%AE%B9)
+      - [扩容](#%E6%89%A9%E5%AE%B9)
+    - [删除块设备映像](#%E5%88%A0%E9%99%A4%E5%9D%97%E8%AE%BE%E5%A4%87%E6%98%A0%E5%83%8F)
+    - [挂载块设备](#%E6%8C%82%E8%BD%BD%E5%9D%97%E8%AE%BE%E5%A4%87)
   - [卸载](#%E5%8D%B8%E8%BD%BD)
     - [删除文件系统](#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
     - [删除池](#%E5%88%A0%E9%99%A4%E6%B1%A0-1)
     - [删除OSD](#%E5%88%A0%E9%99%A4osd)
     - [卸载组件并清空目录](#%E5%8D%B8%E8%BD%BD%E7%BB%84%E4%BB%B6%E5%B9%B6%E6%B8%85%E7%A9%BA%E7%9B%AE%E5%BD%95)
   - [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # 导读
 ## 说明
