@@ -56,13 +56,8 @@
   - [安装ceph](#%E5%AE%89%E8%A3%85ceph)
   - [配置ceph](#%E9%85%8D%E7%BD%AEceph)
     - [添加OSD](#%E6%B7%BB%E5%8A%A0osd)
-      - [ceph01节点添加`OSD](#ceph01%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph02节点添加`OSD](#ceph02%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
-      - [ceph03节点添加`OSD](#ceph03%E8%8A%82%E7%82%B9%E6%B7%BB%E5%8A%A0osd)
       - [常见问题解决](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3)
     - [crush class](#crush-class)
-      - [说明](#%E8%AF%B4%E6%98%8E-1)
-      - [配置](#%E9%85%8D%E7%BD%AE)
     - [crush pool](#crush-pool)
       - [ssd crush rule](#ssd-crush-rule)
       - [nvme crush rule](#nvme-crush-rule)
@@ -1226,9 +1221,10 @@
 ## 配置ceph
 
 ### 添加OSD
-#### ceph01节点添加`OSD
 
-> 列出节点`ceph01`磁盘信息
+> ceph01节点添加OSD
+
+列出节点`ceph01`磁盘信息
 
     ceph-deploy disk list ceph01
     
@@ -1333,9 +1329,9 @@
     ceph-deploy OSD create --data /dev/nvme${i}n1 ceph01
     done
     
-#### ceph02节点添加`OSD
+> ceph02节点添加OSD
 
-> 列出节点`ceph02`磁盘信息(ceph01节点执行)
+列出节点`ceph02`磁盘信息(ceph01节点执行)
 
     ceph-deploy disk list ceph02
     
@@ -1459,9 +1455,9 @@
     ceph-deploy OSD create --data /dev/nvme${i}n1 ceph02
     done
     
-#### ceph03节点添加`OSD
+> ceph03节点添加OSD
 
-> 列出节点`ceph03`磁盘信息（ceph01节点执行）
+列出节点`ceph03`磁盘信息（ceph01节点执行）
 
     ceph-deploy disk list ceph03
     
@@ -1550,13 +1546,14 @@
 
 ### crush class
 
-#### 说明
+- 说明
 
 从`luminous`版本`ceph`新增了一个功能`crush class`，这个功能又可以称为磁盘智能分组。因为这个功能就是根据磁盘类型自动的进行属性的关联，然后进行分类。无需手动修改`crushmap`，极大的减少了人为的操作。
 
 `ceph`中的每个`OSD`设备都可以选择一个`class`类型与之关联，默认情况下，在创建`OSD`的时候会自动识别设备类型，然后设置该设备为相应的类。通常有三种`class`类型：`hdd`，`ssd`，`nvme`。
     
-> 查看集群OSD crush tree(ceph01节点执行)
+
+查看集群OSD crush tree(ceph01节点执行)
 
     [root@ceph01 ~]# ceph osd crush tree --show-shadow
     ID CLASS WEIGHT   TYPE NAME
@@ -1594,9 +1591,9 @@
     27   ssd  0.90970         OSD.27
     28   ssd  0.90970         OSD.28
 
-#### 配置
+- 配置
 
-> 修改nvme类型class
+修改nvme类型class
 
     ceph osd crush rm-device-class 7
     ceph osd crush set-device-class nvme OSD.7
