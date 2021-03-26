@@ -85,13 +85,13 @@ volume指定为只读方式
 	docker run -d --name=nginxtest --mount source=nginx-vol,destination=/usr/share/nginx/html,readonly nginx:latest
 
 	#查看本地volume情况(nginx容器内的数据已挂载出来)
-![](images/volume-readonly.png)
+![](../../infrastructure/virtaul/images/volume-readonly.png)
 
 	#访问容器内，验证可读属性（）
 	docker container exec -it nginxtest bash
 	cd /usr/share/nginx/html
 	echo 1 >> 50x.html
-![](images/readonly-system.png)
+![](../../infrastructure/virtaul/images/readonly-system.png)
 
 ## Bind mounts ##
 
@@ -168,7 +168,7 @@ tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主
 
 	#1、分配虚拟机8G内存
 
-![](images/vm_memory.png)
+![](../../infrastructure/virtaul/images/vm_memory.png)
 
 	#2、启动nginx容器，指定--tmpfs方式存储数据
 	
@@ -207,7 +207,7 @@ tmpfs方式数据存储宿主机系统内存中，并且不会持久化到宿主
 
 	#9、如果我们通过不断向容器内/app下写入数据会怎样？(竟然没有出现crash相关情况发生，初步猜测最开始存放的数据被回收释放)
 
-![](images/outofmemory_test.png)
+![](../../infrastructure/virtaul/images/outofmemory_test.png)
 
 	#10、测试删除容器，内存是否会被释放
 	docker container rm -f bf5605056391

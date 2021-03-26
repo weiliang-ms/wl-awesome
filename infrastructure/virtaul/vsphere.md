@@ -11,13 +11,13 @@
 
 > 编辑虚拟机调整硬盘空间，重启虚拟机
 
-![](./images/scaledisk.jpg)
+![](images/scaledisk.jpg)
 
 > 查看分区后扩容后的大小
 
     fdisk -l
     
-![](./images/fdisk.png)
+![](images/fdisk.png)
 
 已经扩到了100G（扩容前30G）
 
@@ -25,18 +25,18 @@
 
     fdisk /dev/sda
     
-![](./images/fdisk_new_part.png)
+![](images/fdisk_new_part.png)
 
 最后键入w写入
 
-![](./images/fdisk_new_lvm_part.png)
+![](images/fdisk_new_lvm_part.png)
 
 > 创建物理卷，并加入到卷组
 
     partprobe
     pvcreate /dev/sda3
     
-![](./images/partprobe.png)
+![](images/partprobe.png)
     
 扩展vg卷组大小
 

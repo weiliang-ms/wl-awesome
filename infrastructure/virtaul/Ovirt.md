@@ -19,7 +19,7 @@
 
 **根据磁盘数量创建阵列、推荐raid5**
 
-![](images/raid_10.png)
+![](../storage/images/raid_10.png)
 
 ## oVirt安装
 

@@ -292,9 +292,9 @@ If the container root filesystem does not contain either `/etc/passwd` or `/etc/
 
 - `<src>`为可识别的压缩类型文件时（identity, gzip, bzip2 or xz，与文件名无关），会自动被解压
 
-![](images/unpack_01.png)
+![](../../infrastructure/virtaul/images/unpack_01.png)
 
-![](images/unpack_02.png)
+![](../../infrastructure/virtaul/images/unpack_02.png)
 
 - If `<dest>` doesn’t exist, it is created along with all missing directories in its path.
 
