@@ -1,6 +1,5 @@
 ![awesome](https://img.shields.io/badge/wl-awesome-yellow "LICENSE") 
-- [操作系统](#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F)
-  - [包管理器](/os/package/README.md)
+- 操作系统
     - [apt](/os/package/README.md#apt)
     - [gem](/os/package/README.md#gem)
     - [helm](/os/package/README.md#helm)
@@ -10,7 +9,7 @@
   - [系统设置](/os/settings/README.md)
   - [驱动管理](/os/driver/README.md)
   - [shell](/os/shell/README.md)
-- [集成部署](#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2)
+- 集成部署
   - [ftp](/deploy/README.md#deploy)
   - [hadoop](/deploy/README.md#hadoop)
   - [mysql](/deploy/mysql.md)
@@ -22,7 +21,7 @@
   - [poweradmin](/deploy/README.md#poweradmin)
   - [Python3.6](/deploy/README.md#python36)
   - [trafodion](/deploy/README.md#trafodion)
-- [DevOps]()
+- DevOps
   - [jenkins](/cicd/jenkins.md)
 - [基础设施](#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD)
   - [存储](#%E5%AD%98%E5%82%A8)
@@ -34,7 +33,7 @@
       - [路由配置](/infrastructure/network/route.md)
       - [科学上网-windows](/infrastructure/network/proxy/windows)  
       - [科学上网-linux](/infrastructure/network/proxy/linux)
-  - [虚拟化]()
+  - 虚拟化
     - [Ovirt](/infrastructure/virtaul/Ovirt.md)
     - [lvm扩容](/infrastructure/virtaul/vsphere.md)
     - [openstack](/infrastructure/virtaul/openstack.md)
