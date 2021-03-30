@@ -34,4 +34,9 @@
     systemctl daemon-reload
     systemctl restart kubelet
 
+> 删除命名空间
+[reason](https://www.yuque.com/imroc/kubernetes-troubleshooting/pnl1nf)
+ceph-csi注意替换
+
+    curl -H "Content-Type: application/json" -XPUT -d '{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"ceph-csi"},"spec":{"finalizers":[]}}' http://localhost:8001/api/v1/namespaces/ceph-csi/finalize
     
