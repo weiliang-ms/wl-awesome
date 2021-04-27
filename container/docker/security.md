@@ -801,7 +801,454 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
+## docker守护程序文件配置
+
+### 设置docker文件的所有权为`root:root`
+
+- 描述
+
+- 隐患分析
+
+`docker.service`文件包含可能会改变`Docker`守护进程行为的敏感参数。
+因此，它应该由`root`拥有和归属，以保持文件的完整性。
+
+- 审计方式
+
+```shell script
+systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 ls -l
+```
+
+返回值应为
+
+```
+-rw-r--r-- 1 root root 1157 Apr 26 08:04 /etc/systemd/system/docker.service
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chown root:root
+```
+
+### 设置docker.service文件权限为644或更多限制性
+
+- 描述
+
+验证`docker.service`文件权限是否正确设置为`644`或更多限制
+
+- 隐患分析
+
+`docker.service`文件包含可能会改变`Docker`守护进程行为的敏感参数。
+因此，它应该由`root`拥有和归属，以保持文件的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
+644
+```
+
+- 修复建议
+
+若权限非`644`，修改授权
+```shell script
+systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chmod 644
+```
+
+### 设置`docker.socket`文件的所有权为`root:root`
+
+- 描述
+
+验证`docker.socket`文件所有权和组所有权是否正确设置为`root`
+
+- 隐患分析
+
+`docker.socket`文件包含可能会改变`Docker`远程`API`行为的敏感参数。
+因此，它应该拥有`root`权限，以保持文件的完整性。
+
+- 审计方式
+
+```shell script
+systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 ls -l
+```
+
+返回值应为
+
+```
+-rw-r--r-- 1 root root 197 Mar 10  2020 /usr/lib/systemd/system/docker.socket
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chown root:root
+```
+
+### 设置docker.socket文件权限为644或更多限制性
+
+- 描述
+
+验证`docker.socket`文件权限是否正确设置为`644`或更多限制
+
+- 隐患分析
+
+`docker.socket`文件包含可能会改变`Docker`远程`API`行为的敏感参数。
+因此，它应该拥有`root`权限，以保持文件的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
+644
+```
+
+- 修复建议
+
+若权限非`644`，修改授权
+```shell script
+systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chmod 644
+```
+
+###  设置`/etc/docker`目录所有权为`root:root`
+
+- 描述
+
+验证`/etc/docker`目录所有权和组所有权是否正确设置为`root:root`
+
+- 隐患分析
+
+除了各种敏感文件之外，`/etc/docker`目录还包含证书和密钥。 
+因此，它应该由`root:root`拥有和归组来维护目录的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %U:%G /etc/docker
+root:root
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chown root:root /etc/docker
+```
+
+### 设置/etc/docker目录权限为755或更多限制性
+
+- 描述
+
+验证`/etc/docker`目录权限是否正确设置为`755`
+
+- 隐患分析
+
+除了各种敏感文件之外，`/etc/docker`目录还包含证书和密钥。 
+因此，它应该由`root:root`拥有和归组来维护目录的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %a /etc/docker
+755
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chmod 755 /etc/docker
+```
+
+### 设置仓库证书文件所有权为`root:root`
+
+- 描述
+
+验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）均由`root`拥有并归组所有
+
+- 隐患分析
+
+`/etc/docker/certs.d/<registry-name>`目录包含`Docker`镜像仓库证书。
+这些证书文件必须由`root`和其组拥有，以维护证书的完整性
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %U:%G /etc/docker/certs.d/* 
+root:root
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chown root:root /etc/docker/certs.d/*
+```
+
+### 设置仓库证书文件权限为444或更多限制性 
+
+- 描述
+
+验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）所有权限是否正确设置为`444`
+
+- 隐患分析
+
+`/etc/docker/certs.d/<registry-name>`目录包含`Docker`镜像仓库证书。
+这些证书文件必须具有`444`权限，以维护证书的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %a /etc/docker/certs.d/*
+755
+```
+
+- 修复建议
+
+若权限非`444`，修改授权
+```shell script
+chmod 444 /etc/docker/certs.d/*
+```
+
+### 设置`TLS CA`证书文件所有权为`root:root`
+
+- 描述
+
+验证`TLS CA`证书文件均由`root`拥有并归组所有
+
+- 隐患分析
+
+`TLS CA`证书文件应受到保护，不受任何篡改。它用于指定的`CA`证书验证。
+因此，它必须由`root`拥有，以维护`CA`证书的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# ls /etc/docker/certs.d/*/* |xargs -n1 stat -c %U:%G
+root:root
+root:root
+root:root
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chown root:root /etc/docker/certs.d/*/*
+```
+
+### 设置TLS CA证书文件权限为444或更多限制性
+
+- 描述
+
+验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）所有权限是否正确设置为`444`
+
+- 隐患分析
+
+`TLS CA`证书文件应受到保护，不受任何篡改。它用于指定的`CA`证书验证。
+这些证书文件必须具有`444`权限，以维护证书的完整性。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %a /etc/docker/certs.d/*/*
+644
+644
+644
+```
+
+- 修复建议
+
+若权限非`444`，修改授权
+```shell script
+chmod 444 /etc/docker/certs.d/*/*
+```
+
+### 设置docker服务器证书文件所有权为`root:root`
+
+- 描述
+
+验证`Docker`服务器证书文件（与`--tlscert`参数一起传递的文件）是否由`root`和其组拥有
+
+- 隐患分析
+
+`Docker`服务器证书文件应受到保护，不受任何篡改。它用于验证`Docker`服务器。
+因此，它必须由`root`拥有以维护证书的完整性。
+
+- 审计方式
+
+**注意:** `/root/docker`替换为docker服务端实际证书存放目录
+
+```shell script
+[root@localhost ~]# ls -l /root/docker
+total 44
+-rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
+-rw-r--r-- 1 root root 1980 Apr 26 02:56 ca.pem
+-rw-r--r-- 1 root root   17 Apr 26 02:57 ca.srl
+-rw-r--r-- 1 root root 1801 Apr 26 02:57 cert.pem
+-rw-r--r-- 1 root root 1582 Apr 26 02:57 client.csr
+-rw-r--r-- 1 root root   30 Apr 26 02:57 extfile-client.cnf
+-rw-r--r-- 1 root root   86 Apr 26 02:56 extfile.cnf
+-rw-r--r-- 1 root root 3243 Apr 26 02:57 key.pem
+-rw-r--r-- 1 root root 1862 Apr 26 02:56 server-cert.pem
+-rw-r--r-- 1 root root 1594 Apr 26 02:56 server.csr
+-rw-r--r-- 1 root root 3243 Apr 26 02:56 server-key.pem
+
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chown root:root /root/docker/*
+```
+
+### 设置`Docker`服务器证书文件权限为`400`或更多限制
+
+- 描述
+
+验证`Docker`服务器证书文件（与`--tlscert`参数一起传递的文件）权限是否为`400`
+
+- 隐患分析
+
+`Docker`服务器证书文件应受到保护，不受任何篡改。它用于验证`Docker`服务器。
+因此，它必须由`root`拥有以维护证书的完整性。
+
+- 审计方式
+
+**注意:** `/root/docker`替换为docker服务端实际证书存放目录
+
+```shell script
+[root@localhost ~]# ls -l /root/docker
+total 44
+-rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
+-rw-r--r-- 1 root root 1980 Apr 26 02:56 ca.pem
+-rw-r--r-- 1 root root   17 Apr 26 02:57 ca.srl
+-rw-r--r-- 1 root root 1801 Apr 26 02:57 cert.pem
+-rw-r--r-- 1 root root 1582 Apr 26 02:57 client.csr
+-rw-r--r-- 1 root root   30 Apr 26 02:57 extfile-client.cnf
+-rw-r--r-- 1 root root   86 Apr 26 02:56 extfile.cnf
+-rw-r--r-- 1 root root 3243 Apr 26 02:57 key.pem
+-rw-r--r-- 1 root root 1862 Apr 26 02:56 server-cert.pem
+-rw-r--r-- 1 root root 1594 Apr 26 02:56 server.csr
+-rw-r--r-- 1 root root 3243 Apr 26 02:56 server-key.pem
+
+```
+
+- 修复建议
+
+若权限非`400`，修改授权
+```shell script
+chmod 400 /root/docker/*
+```
+
+### 设置docker.sock文件所有权为`root:docker`
+
+- 描述
+
+验证`docker.sock`文件由`root`拥有，而用户组为`docker`。
+
+- 隐患分析
+
+`Docker`守护进程以`root`用户身份运行。 因此，默认的`Unix`套接字必须由`root`拥有。 
+如果任何其他用户或进程拥有此套接字，那么该非特权用户或进程可能与`Docker`守护进程交互。
+另外，这样的非特权用户或进程可能与容器交互，这样非常不安全。
+另外，`Docker`安装程序会创建一个名为`docker`的用户组。
+可以将用户添加到该组，然后这些用户将能够读写默认的`Docker Unix`套接字。
+`docker`组成员由系统管理员严格控制。 如果任何其他组拥有此套接字，那么该组的成员可能会与`Docker`守护进程交互。。
+因此，默认的`Docker Unix`套接字文件必须由`docker`组拥有权限，以维护套接字文件的完整性
+
+- 审计
+
+```shell script
+[root@localhost ~]# stat -c %U:%G /var/run/docker.sock
+root:docker
+```
+
+- 修复建议
+
+若所属用户非`root:docker`，修改授权
+```shell script
+chown root:docker /var/run/docker.sock
+```
+
+### 设置docker.sock文件权限为660或更多限制性
+
+- 描述
+
+验证`docker`套接字文件是否具有`660`或更多限制的权限
+
+- 隐患分析
+
+只有`root`和`docker`组的成员允许读取和写入默认的`Docker Unix`套接字。
+因此，`Docker`套接字文件必须具有`660`或更多限制的权限
+
+- 审计
+
+```shell script
+[root@localhost ~]# stat -c %a /var/run/docker.sock
+660
+```
+
+- 修复建议
+
+若权限非`660`，修改授权
+```shell script
+chmod 660 /var/run/docker.sock
+```
+
+### 设置`docker.json`文件所有权为`root:root` 
+
+- 描述
+
+验证`docker.json`文件由`root`归属。
+
+- 隐患分析
+
+`docker.json`文件包含可能会改变`Docker`守护程序行为的敏感参数。
+因此，它应该由`root`拥有，以维护文件的完整性
+
+- 审计
+
+```shell script
+[root@localhost ~]# stat -c %U:%G /etc/docker/daemon.json
+root:root
+```
+
+- 修复建议
+
+若所属用户非`root:root`，修改授权
+```shell script
+chown root:root /etc/docker/daemon.json
+```
+
+### 设置`docker.json`文件权限为644或更多限制性
+
+- 描述
+
+验证`docker.json`文件权限是否正确设置为`644`或更多限制
+
+- 隐患分析
+
+`docker.json`文件包含可能会改变`Docker`守护程序行为的敏感参数。
+因此，它应该由`root`拥有，以维护文件的完整性
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# stat -c %a /etc/docker/daemon.json
+644
+```
+
+- 修复建议
+
+若权限非`644`，修改授权
+```shell script
+chmod 644 /etc/docker/daemon.json
+```
+
 ## 参考文档
 
-[Docker容器最佳安全实践白皮书（V1.0）]()
-[Docker官方文档](https://docs.docker.com/)
+- Docker容器最佳安全实践白皮书（V1.0）
+- [Docker官方文档](https://docs.docker.com/)
