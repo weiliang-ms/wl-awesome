@@ -1392,7 +1392,688 @@ docker exec <container-id> rpm -qa
 
 - 审计方式
 
- 
+### 正确设置容器上的 CPU 优先级
+
+- 描述
+
+默认情况下，`Docker`主机上的所有容器均可共享资源。通过使用`Docker`主机的资源管理功能（如`CPU`共享），可以控制容器可能占用的主机`CPU`资源
+
+- 隐患分析
+
+默认情况下`CPU`时间在容器间平均分配。 如果需要，为了控制容器实例之间的`CPU`时间，可以使用`CPU`共享功能。
+`CPU`共享允许将一个容器优先于另一个容器，并禁止较低优先级的容器更频繁占用`CPU`资源。可确保高优先级的容器更好地运行
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:CpuShares={{.HostConfig.CpuShares}}'
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:CpuShares=0
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:CpuShares=0
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:CpuShares=0
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:CpuShares=0
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:CpuShares=0
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
+```
+
+如果上述命令返回`0`或`1024`，则表示`CPU`无限制。
+如果上述命令返回非`1024`值以外的非零值，则表示`CPU`已经限制。
+
+- 修复建议
+
+管理容器之间的`CPU`份额。为此，请使用`--cpu-shares`参数启动容器
+
+### 特权端口禁止映射到容器内
+
+- 描述
+
+低于`1024`的`TCP/IP`端口号被认为是特权端口，由于各种安全原因，普通用户和进程不允许使用它们。
+
+- 隐患分析
+
+
+
+
+
+### 只映射必要的端口
+
+- 描述
+
+容器镜像的`Dockerfile`定义了在容器实例上默认要打开的端口。端口列表可能与在容器内运行的应用程序相关
+
+- 隐患分析
+
+一个容器可以运行在`Dockerfile`文件中为其镜像定义的端口，也可以任意传递运行时参数以打开一个端口列表。
+此外，`Dockerfile`文件可能会进行各种更改，暴露的端口列表可能与在容器内运行的应用程序不相关。
+推荐做法是不要打开不需要的端口
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Ports=map[80/tcp:[map[HostIp:192.168.235.128 HostPort:18080]]]
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Ports=map[]
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Ports=map[]
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:Ports=map[]
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
+```
+
+查看列表，并确保映射的端口是容器真正需要的端口
+
+### 确保容器的内存使用合理
+
+- 描述
+
+默认情况下，`Docker`主机上的所有容器均等共享资源。
+通过使用`Docker`主机的资源管理功能，例如内存限制，您可以控制容器可能消耗的内存量
+
+- 隐患分析
+
+默认情况下，容器可以使用主机上的所有内存。
+您可以使用内存限制机制来防止由于一个容器消耗了所有主机资源而导致拒绝服务，以致同一主机上的其他容器无法执行预期功能
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Memory={{.HostConfig.Memory}}'
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Memory=0
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Memory=0
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Memory=0
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Memory=0
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:Memory=0
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Memory=0
+```
+
+如果上述命令返回0，则表示内存无限制。如果上述命令返回非零值，则表示已有内存限制策略
+
+- 修复建议
+
+建议使用`--momery`参数运行容器，例如可以如下运行一个容器
+
+```shell script
+docker run -idt --memory 256m centos
+```
+
+### 设置容器的根文件系统为只读
+
+- 描述
+
+通过使用`Docker`运行的只读选项，容器的根文件系统应被视为`只读镜像`。 这样可以防止在容器运行时写入容器的根文件系统
+
+- 隐患分析
+
+启用此选项会迫使运行时的容器明确定义其数据写入策略，可减少安全风险，
+因为容器实例的文件系统不能被篡改或写入，除非它对文件系统文件夹和目录具有明确的读写权限。
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:ReadonlyRootfs={{.HostConfig.ReadonlyRootfs}}'
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:ReadonlyRootfs=false
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:ReadonlyRootfs=false
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:ReadonlyRootfs=false
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:ReadonlyRootfs=false
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:ReadonlyRootfs=false
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:ReadonlyRootfs=false
+```
+
+如果上述命令返回`true`，则表示容器的根文件系统是只读的。
+如果上述命令返回`false`，则意味着容器的根文件系统是可写的
+
+- 修复建议
+
+在容器的运行时添加一个只读标志以强制容器的根文件系统以只读方式装入
+
+```shell script
+docker run  <Run arguments> -read-only <Container Image Name or ID> <Command>
+```
+
+在容器的运行时启用只读选项，包括但不限于如下：
+
+> 1.使用`--tmpfs` 选项为非持久数据写入临时文件系统
+
+```shell script
+docker run -idt --read-only --tmpfs "/run" --tmpfs "/tmp" centos bash
+```
+
+> 2.启用Docker rw在容器的运行时载入，以便将容器数据直接保存在Docker主机文件系统上
+
+```shell script
+docker run -idt --read-only -v /opt/app/data:/run/app/data:rw centos
+```
+
+> 3.在容器运行期间，将容器数据传输到容器外部，以便保持容器数据。包括托管数据库，网络文件共享和 API。
+
+### 确保进入容器的流量绑定到特定的主机接口
+
+- 描述
+
+默认情况下，`Docker`容器可以连接到外部，但外部无法连接到容器。
+每个传出连接都源自主机自己的`IP`地址。所以只允许通过主机上的特定外部接口访问容器服务
+
+- 隐患分析
+
+如果主机上有多个网络接口，则容器可以接受任何网络接一上公开端口的连接，这可能不安全。
+很多时候，特定的端口暴露在外部，并且在这些端口上运行诸如入侵检测，入侵防护，防火墙，负载均衡等服务以筛选传入的公共流量。
+因此，只允许来自特定外部接口的传入连接
+
+- 审计方式
+
+通过执行以下命令列出容器的所有运行实例及其端口映射
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Ports=map[]
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Ports=map[]
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:Ports=map[]
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
+```
+
+查看列表并确保公开的容器端口与特定接口绑定，而不是通配符`IP`地址`- 0.0.0.0`
+例如，如果上述命令返回是不安全的，并且容器可以接受指定端口8080上的任何主机接口上的连接
+
+- 修复建议
+
+将容器端口绑定到所需主机端口上的特定主机接口。
+
+```shell script
+[root@localhost ~]# docker run -idt --name=nginx2 -p 192.168.235.128:18080:80 --network=nginx-net nginx:1.14-alpine
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
+83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Ports=map[80/tcp:[map[HostIp:192.168.235.128 HostPort:18080]]]
+748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Ports=map[]
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Ports=map[]
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:Ports=map[]
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
+```
+
+### 容器重启策略on-failure设置为 5
+
+- 描述
+
+在`docker run`命令中使用`--restart`标志，可以指定重启策略，以便在廿出时确定是否重启容器。
+基于安全考虑，应该设置重启尝试次数限制为5次
+
+- 隐患分析
+
+如果无限期地尝试启动容器，可能会导致主机上的拒绝服务。
+这可能是一种简单的方法来执行分布式拒绝服务攻击，特别是在同一主机上有多个容器时。
+此外，忽略容器的廿出状态并始终尝试重新启动容器导致未调查容器终止的根本原因。
+如果一个容器被终止，应该做的是去调查它重启的原因，而不是试图无限期地重启它。 
+因此，建议使用故障重启策略并将其限制为最多 5 次重启尝试
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:RestartPolicyName={{.HostConfig.RestartPolicy.Name}} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount}}'
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:RestartPolicyName=no MaximumRetryCount=0
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:RestartPolicyName=no MaximumRetryCount=0
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:RestartPolicyName=no MaximumRetryCount=0
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:RestartPolicyName=no MaximumRetryCount=0
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:RestartPolicyName=no MaximumRetryCount=0
+```
+
+- 修复建议
+
+如果一个容器需要自己重新启动，可以如下设置：
+
+```shell script
+docker run -idt --restart=on-failure:5 nginx
+```
+
+### 确保主机的进程命名空间不共享
+
+- 描述
+
+进程`ID（PID）`命名空间隔离进程`ID`空间，这意味着不同`PID`命名空间中的进程可以具有相同的`PID`。这就是容器和主机之间的进程级隔离
+
+- 隐患分析
+
+`PID`名称空间提供了进程的隔离。`PID`命名空间删除了系统进程的视图，并允许重用包括`PID`的进程`ID`。
+如果主机的`PID`名称空间与容器共享，它基本上允许容器内的进程查看主机上的所有进程。
+这就打破了主机和容器之间进程级别隔离的优点。若访问容器最终可以知道主机系统上运行的所有进程，甚至可以从容器内杀死主机系统进程。
+这可能是灾难性的。因此，不要将容器与主机的进程名称空间共享
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:PidMode={{.HostConfig.PidMode}}'
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:PidMode=
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:PidMode=
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:PidMode=
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:PidMode=
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidMode=
+```
+
+如果上述命令返回`host`，则表示主机`PID`名称空间与容器共享，存在安全风险
+
+- 修复建议
+
+不要使用`--pid=host`参数启动容器。例如，不要启动一个容器，如下所示
+
+````shell script
+docker run -idt --pid=host centos
+````
+
+### 主机的IPC命令空间不共享
+
+- 描述
+
+`IPC（POSIX / Sys IPC）`命名空间提供命名共享内存段，信号量和消息队列的分离。因此主机上的`IPC`命名空间不应该与容器共享，并且应该保持独立。
+
+- 隐患分析
+
+`IPC`命名空间提供主机和容器之间的`IPC`分离。
+如果主机的`IPC`名称空间与容器共享，它允许容器内的进程查看主机系统上的所有`IPC`。
+这打破了主机和容器之间`IPC`级别隔离的好处。可通过访问容器操纵主机`IPC`。
+这可能是灾难性的。 因此，不要将主机的`IPC`名称空间与容器共享
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:IpcMode={{.HostConfig.IpcMode}}'
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:IpcMode=private
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:IpcMode=private
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:IpcMode=private
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:IpcMode=private
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:IpcMode=private
+```
+
+如果上述命令返回`host`，则意味着主机`IPC`命名空间与容器共享。
+
+- 修复建议
+
+不要使用`--ipc=host`参数启动容器。 例如，不要启动如下容器
+
+```shell script
+docker run -idt --ipc=host centos
+```
+
+- 说明
+
+共享内存段用于加速进程间通信。 它通常被高性能应用程序使用。
+如果这些应用程序被容器化为多个容器，则可能需要共享容器的`IPC`名称空间以实现高性能。 
+在这种情况下，您仍然应该共享容器特定的`IPC`命名空间而不是整个主机`IPC`命名空间。
+可以将容器的`IPC`名称空间与另一个容器共享，如下所示：
+
+```shell script
+docker run -idt --ipc=container:e43299eew043243284 centos
+```
+
+### 主机设备不直接共享给容器
+
+- 描述
+
+主机设备可以在运行时直接共享给容器。 不要将主机设备直接共享给容器，特别是对不受信任的容器
+
+- 隐患分析
+
+选项`--device` 将主机设备共享给容器，因此容器可以直接访问这些主机设备。
+不允许容器以特权模式运行以访问和操作主机设备默认情况下，容器将能够读取，写入和`mknod`这些设备。
+此外，容器可能会从主机中删除设备。 因此，不要直接将主机设备共享给容器。如果必须的将主机设备共享给容器，请适当地使用共享权限：
+
+```shell script
+w -> write
+r -> read
+m -> mknod
+```
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Devices={{.HostConfig.Devices}}'
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Devices=[]
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Devices=[]
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:Devices=[]
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:Devices=[]
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Devices=[]
+```
+
+验证是否需要从容器中访问主机设备，并且正确设置所需的权限。如果上述命令返回[]，则容器无权访问主机设备
+
+- 修复建议
+
+不要将主机设备直接共享于容器。如果必须将主机设备共享给容器，请使用正确的一组权限，以下为错误示范
+
+```shell script
+docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
+```
+
+### 设置装载传播模式不共享
+
+- 描述
+
+装载传播模式允许在容器上以`shared`、`private`和`slave`模式挂载数据卷。只有必要的时候才使用共享模式
+
+- 隐患分析
+
+共享模式下挂载卷不会限制任何其他容器的安装并对该卷进行更改。
+如果使用的数据卷对变化比较敏感，则这可能是灾难性的。最好不要将安装传播模式设置为共享
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{.Id}:Propagation={{range $mnt:=.Mounts}}{{json $mnt.Propagation}}{{end}}'
+{.Id}:Propagation=
+{.Id}:Propagation=
+{.Id}:Propagation=
+{.Id}:Propagation=
+{.Id}:Propagation=
+```
+
+上述命令将返回已安装卷的传播模式。除非需要，不应将传播模式设置为共享。
+
+- 修复建议
+
+不建议以共享模式传播中安装卷。例如，不要启动容器，如下所示
+
+```shell script
+docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image Name or ID> <Command>
+```
+
+### 设置主机的UTS命令空间不共享
+
+- 描述
+
+`UTS`命名空间提供两个系统标识符的隔离：主机名和`NIS`域名。
+它用于设置在该名称空间中运行进程可见的主机名和域名。
+在容器中运行的进程通常不需要知道主机名和域名。因此，名称空间不应与主机共享
+
+- 隐患分析
+
+与主机共享`UTS`命名空间提供了容器可更改主机的主机名。这是不安全的
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet --all |xargs docker inspect --format '{{.Id}}:UTSMode={{.HostConfig.UTSMode}}'
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:UTSMode=
+5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:UTSMode=
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:UTSMode=
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:UTSMode=
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:UTSMode=
+```
+如果上述命令返回`host`，则意味着主机`UTS`名称空间与容器共享，是不符合要求的。
+如果上述命令不返回任何内容，则主机的`UTS`名称空间不共享
+
+- 修复建议
+
+不要使用`--uts=host`参数启动容器。例如，不要启动如下容器：
+
+```shell script
+docker run -idt --uts=host alpine
+```
+
+### docker exec命令不能使用特权选项
+
+- 描述
+
+不要使用`--privileged`选项来执行`docker exec`
+
+- 隐患分析
+
+在`docker exec`中使用`--privileged`选项可为命令提供扩展的`Linux`功能。这可能会造成不安全的情况
+
+- 修复建议
+
+在`docker exec`命令中不要使用`--privileged`选项
+
+### docker exec命令不能与user选项一起使用
+
+- 描述
+
+不要使用`--user`选项执行`docker exec`
+
+- 隐患分析
+
+在`docker exec`中使用`--user`选项以该用户身份在容器内执行该命令。这可能会造成不安全的情况。
+例如，假设你的容器是以`tomcat`用户（或任何其他非`root`用户）身份运行的，
+那么可以使用`--user=root`选项以`root`用户身份运行命令，这是非常危险的
+
+- 修复建议
+
+在`docker exec`命令中不要使用`--user`选项
+
+### 检查容器运行时状态
+
+- 描述
+
+如果容器镜像没有定义`HEALTHCHECK`指令，请在容器运行时使用`--health-cmd`参数来检查容器运行状况
+
+- 隐患分析
+
+可用性是安全一个重要特性。如果您用的容器镜像没有预定义的`HEALTHCHECK`指令，
+请使用`--health-cmd`参数在运行时检查容器运行状况。根据报告的健康状况，可以采取必要的措施
+
+- 审计方式
+
+运行以下命令并确保所有容器都报告运行状况
+
+```shell script
+[root@localhost ~]# docker ps --quiet |xargs -n1 docker inspect --format='{{.State.Health.Status}}'
+Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
+Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
+Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
+Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
+```
+
+- 修复建议
+
+添加`--health-cmd`参数
+
+```shell script
+[root@localhost ~]# docker run --name=test -d \
+>     --health-cmd='stat /etc/passwd || exit 1' \
+>     --health-interval=2s \
+> busybox:1.31.1 sleep 1d
+3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc
+[root@localhost ~]# 1.31.1
+-bash: 1.31.1: command not found
+[root@localhost ~]# sleep 2; docker inspect --format='{{.State.Health.Status}}' test
+healthy
+[root@localhost ~]# docker exec test rm /etc/passwd
+[root@localhost ~]# sleep 2; docker inspect --format='{{.State.Health.Status}}' test
+unhealthy
+```
+
+
+### 限制使用PID cgroup
+
+- 描述
+
+在容器运行时使用`--pids-limit`标志
+
+- 隐患分析
+
+攻击者可以在容器内发射`fork`炸弹。 这个`fork`炸弹可能会使整个系统崩溃，并需要重新启动主机以使系统重新运行。 
+`PIDs cgroup --pids-limit`将通过限制在给定时间内可能发生在容器内的`fork`数来防止这种攻击
+
+- 审计分析
+
+运行以下命令并确保`PidsLimit`未设置为`0`或`-1`。
+`PidsLimit`为`0`或`-1`意味着任何数量的进程可以同时在容器内分叉。
+
+```shell script
+[root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:PidsLi                                                            mit={{.HostConfig.PidsLimit}}'
+0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:PidsLimit=<no value>
+d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:PidsLimit=<no value>
+cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidsLimit=<no value>
+```
+
+- 修复建议
+
+升级内核至`4.3+`，添加`--pids-limit参数`，如
+
+```shell script
+docker run -idt --name=box --pids-limit=100 busybox:1.31.1
+```
+
+### 不要使用Docker的默认网桥docker0
+
+- 描述
+
+不要使用`Docker`的默认`bridge docker0`。 使用`Docker`的用户定义的网络进行容器联网
+
+- 隐患分析
+
+`Docker`将以桥模式创建的虚拟接口连接到名为`docker0`的公共桥。
+这种默认网络模型易受`ARP`欺骗和`MAC`洪泛攻击的攻击，因为没有应用过滤
+
+- 审计方式
+
+运行以下命令，并验证容器是否在用户定义的网络上，而不是默认的`docker0`网桥
+
+```shell script
+[root@localhost ~]# docker network ls --quiet|xargs docker network inspect --format='{{.Name}}.{{.Options}}'|grep docker0
+bridge.map[com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500]
+```
+
+若返回值不为空，说明使用`docker0`网桥
+
+- 修复建议
+
+**使用自定义网桥**
+
+> 关于自定义网桥与默认docker0网桥的主要区别
+
+- 自定义网桥自动提供容器间的`DNS`解析
+
+默认网桥通过`IP`地址实现容器间的寻址，也可通过`--link`参数实现容器`DNS`解析（容器A名称->容器A IP地址），但不推荐`--link`方式
+
+- 自定义网桥提供更好的隔离
+
+如果宿主机上所有容器没有指定`--network`参数，那它们将使用默认网桥`docker0`，并可以无限制的互相通信，存在一定安全隐患。
+
+而自定义网桥提供了的网络隔离，只有相同网络域（network）内的容器才能相互访问
+
+> 创建自定义网桥
+
+```shell script
+docker network create nginx-net
+```
+
+> 运行测试用例
+
+```shell script
+[root@localhost ~]# docker run -idt --name=nginx --network=nginx-net nginx:1.14-alpine
+[root@localhost ~]# docker run -idt --name=box --network=nginx-net busybox:1.31.1
+[root@localhost ~]# docker exec box wget nginx -S
+Connecting to nginx (172.18.0.2:80)
+  HTTP/1.1 200 OK
+  Server: nginx/1.14.2
+  Date: Sat, 01 May 2021 07:06:59 GMT
+  Content-Type: text/html
+  Content-Length: 612
+  Last-Modified: Wed, 10 Apr 2019 01:08:42 GMT
+  Connection: close
+  ETag: "5cad421a-264"
+  Accept-Ranges: bytes
+```
+
+### 任何容器内不能安装Docker套接字
+
+- 描述
+
+`docker socket`不应该安装在容器内
+
+- 隐患分析
+
+如果`Docker`套接字安装在容器内，它将允许在容器内运行的进程执行`Docker`命令，这有效地允许完全控制主机
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:Volumes={{.Mounts}}'|grep docker.sock
+```
+
+上述命令将返回`docker.sock`作为卷映射到容器的任何实例
+
+- 修复建议
+
+确保没有容器将`docker.sock`作为卷
+
+## Docker安全操作
+
+### 避免镜像泛滥
+
+- 描述
+
+不要在同一主机上保留大量容器镜像，根据需要仅使用标记的镜像。 
+
+- 隐患分析
+
+标记镜像有助于从`latest`退回到生产中镜像的特定版本。
+如果实例化了未使用或旧标签的镜像，则可能包含可能被利用的漏洞。
+此外，如果您无法从系统中删除未使用的镜像，并且存在各种此类冗余和未使用的镜像，主机文件空间可能会变满，从而导致拒绝服务。
+
+- 审计方式
+
+> 1.通过执行以下命令列出当前实例化的所有镜像`ID`
+
+```shell script
+[root@localhost ~]# docker images --quiet | xargs docker inspect --format='{{.Id}}:Image={{.Config.Image}}'
+sha256:d6e46aa2470df1d32034c6707c8041158b652f38d2a9ae3d7ad7e7532d22ebe0:Image=sha256:3543079adc6fb5170279692361be8b24e89ef1809a374c1b4429e1d560d1459c
+```
+
+> 2.通过执行以下命令列出系统中存在的所有镜像
+
+```shell script
+[root@localhost ~]# docker images
+REPOSITORY                         TAG       IMAGE ID       CREATED        SIZE
+harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
+```
+
+> 3.比较步骤1和步骤2中的镜像`ID`列表，找出当前未实例化的镜像。如果发现未使用或旧镜像，请与系统管理员讨论是否需要在系统上保留这些镜像
+
+- 修复建议
+
+保留您实际需要的一组镜像，并建立工作流程以从主机中删除陈旧的镜像。
+此外，使用诸如按摘要的功能从镜像仓库中获取特定镜像。
+对于无用镜像，应予以删除
+
+### 避免容器泛滥
+
+- 描述
+
+不要在同一主机上保留大量无用容器 
+
+- 隐患分析
+
+容器的灵活性使得运行多个应用程序实例变得很容易，并间接导致存在于不同安全补丁级别的`Docker`镜像。
+因此，避免容器泛滥，并将主机上的容器数量保持在可管理的总量上
+
+- 审计方式
+
+> 1.查找主机上的容器总数
+
+```shell script
+[root@localhost ~]# docker info --format '{{.Containers}}'
+1
+```
+> 2.执行以下命令以查找主机上实际正在运行或处于停止状态的容器总数。
+
+```shell script
+[root@localhost ~]# docker info --format '{{.ContainersStopped}}'
+0
+[root@localhost ~]# docker info --format '{{.ContainersRunning}}'
+1
+```
+
+如果主机上保留的容器数量与主机上实际运行的容器数量之间的差异很大（比如说 25 或更多），
+那么请清理无用容器（确保`stopped`无用再进行清理）。
+
+- 修复建议
+
+定期检查每个主机的容器清单，并使用以下命令清理已停止的容器
+
+```
+[root@localhost ~]# docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Total reclaimed space: 0B
+```
  
 ## 参考文档
 

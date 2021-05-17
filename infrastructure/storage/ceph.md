@@ -3346,9 +3346,9 @@
     
 > 设置集群内所有池放置组数自动伸缩
 
-    # ceph config set global OSD_pool_default_pg_autoscale_mode <mode>
+    # ceph config set global osd_pool_default_pg_autoscale_mode <mode>
     
-    ceph config set global OSD_pool_default_pg_autoscale_mode on
+    ceph config set global osd_pool_default_pg_autoscale_mode on
     
 查看集群内放置组数伸缩策略
 
