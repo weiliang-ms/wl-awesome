@@ -1422,6 +1422,179 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
 
 管理容器之间的`CPU`份额。为此，请使用`--cpu-shares`参数启动容器
 
+### Linux内核功能在容器内受限
+
+- 描述
+
+默认情况下，`Docker`使用一组受限制的`Linux`内核功能启动容器。
+这意味着可以将任何进程授予所需的功能，而不是`root`访问。
+使用`Linux`内核功能，这些进程不必以`root`用户身份运行。
+
+- 隐患分析
+
+`Docker`支持添加和删除功能，允许使用非默认配置文件。
+这可能会使`Docker`通过移除功能更加安全，或者通过增加功能来减少安全性。
+因此，建议除去容器进程明确要求的所有功能。
+例如，容器进程通常不需要如下所示的功能：`NET_ADMIN`、`SYS_ADMIN`、 `SYS_MODULE`
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:CapAdd={{.HostConfig.CapAdd}} CapDrop={{.HostConfig.CapDrop}}'
+7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:CapAdd=<no value> CapDrop=<no value>
+bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:CapAdd=<no value> CapDrop=<no value>
+7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:CapAdd=<no value> CapDrop=<no value>
+0780c27f8eb858e172e6a7458d2b2221130e6dde0f64887d396ad5bc350a4a64:CapAdd=<no value> CapDrop=<no value>
+```
+
+验证添加和删除的`Linux`内核功能是否符合每个容器实例的容器进程所需的功能
+
+- 修复建议
+
+只添加必须功能特性
+
+```shell script
+docker run -dit --cap-drop=all --cap-add={"NET_ADMIN", "SYS_ADMIN"} centos /bin/bash
+```
+
+默认情况下，以下功能可用于容器:
+
+`AUDIT_WRITE`、`CHOWN`、`DAC_OVERRIDE`、`FOWNER`、`FSETID`、`KILL`、`MKNOD`、`NET_BIND_SERVICE`、`NET_RAW`、
+`SETFCAP`、`SETGID`、`SETPCAP`、`SETUID`、`SYS_CHROOT`
+
+> Linux kernel capabilities机制介绍
+
+默认情况下，`Docker`启动具有一组受限功能的容器。
+
+`capabilities`机制将二进制`root/no-root`二分法转换为细粒度的访问控制系统。
+只需要绑定`1024`以下端口的进程(比如`web`服务器)不需要以`root`身份运行:它们只需要被授予`net_bind_service`能力即可。
+对于通常需要根特权的几乎所有特定领域，还有许多其他功能。
+
+典型的服务器以`root`身份运行多个进程，包括`SSH`守护进程、`cron`守护进程、日志守护进程、内核模块、网络配置工具等。
+容器是不同的，因为几乎所有这些任务都由容器周围的基础设施处理:
+
+- `SSH`访问通常由运行在`Docker`宿主机管理
+- 必要时，`cron`应该作为一个用户进程运行，专门为需要调度服务的应用程序定制，而不是作为一个平台范围的工具
+- 日志管理通常也交给`Docker`，或者像`Loggly`或`Splunk`这样的第三方服务
+- 硬件管理是不相关的，这意味着您永远不需要在容器中运行`udevd`或等效的守护进程
+- 网络管理也都在宿主机上设置，除非特殊需求。这意味着容器不需要执行`ifconfig`、`route`或`ip`命令（当然，除非容器被专门设计成路由器或防火墙）
+
+
+这意味这大部分情况下，容器完全不需要真正的`root`权限。因此，容器可以运行一个减少的`capabilities`集，容器中的`root`也比真正的`root`拥有更少的`capabilities`,比如：
+
+- 完全禁止任何`mount`操作
+- 禁止访问络`socket`
+- 禁止访问一些文件系统的操作，比如创建新的设备`node`等等
+- 禁止模块加载
+
+这意味这就算攻击者在容器中取得了`root`权限，也很难造成严重破坏
+
+这不会影响到普通的`web`应用程序，但会大大减少恶意用户的攻击。默认情况下，`Docker`会删除所有需要的功能，使用`allowlist`而不是`denylist`方法
+
+运行`Docker`容器的一个主要风险是，给容器的默认功能集和挂载可能会提供不完全的隔离
+
+`Docker`支持添加和删除`capabilities`功能，允许使用非默认配置文件。这可能会使`Docker`通过删除功能而变得更安全，或者通过增加功能而变得更不安全。对于用户来说，最佳实践是删除除其流程显式需要的功能之外的所有功能
+
+**简言之：`Linux Kernel capabilities`提供更细粒度的`root`权限控制**
+
+### 不使用特权容器
+
+- 描述
+
+使用`--privileged`标志将所有`Linux`内核功能提供给容器，从而覆盖`-cap-add`和`-cap-drop`标志。若无必须请不要使用
+
+- 隐患分析
+
+`--privileged`标志给容器提供所有功能,并且还提升了`cgroup`控制器执行的所有限制。
+换句话说，容器可以做几乎主机可以做的一切。这个标志存在允许特殊用例,就像在`Docker`中运行`Docker`一样
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Privileged={{.HostConfig.Privileged}}'
+7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Privileged=false
+bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Privileged=false
+7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:Privileged=false
+0780c27f8eb858e172e6a7458d2b2221130e6dde0f64887d396ad5bc350a4a64:Privileged=false
+```
+
+确保`Privileged`为`false`
+
+- 修复措施
+
+不要运行带有`--privileged`标志的容器。例如，不要启动如下容器：
+
+```shell script
+docker run -idt --privileged centos /bin/bash
+```
+
+### 敏感的主机系统目录未挂载在容器上
+
+- 描述
+
+不应允许将敏感的主机系统目录（如下所示）作为容器卷进行挂载，特别是在读写模式下。
+
+```shell script
+boot dev etc lib lib64 proc run sbin sys usr var
+```
+
+- 隐患分析
+
+如果敏感目录以读写方式挂载，则可以对这些敏感目录中的文件进行更改。
+这些更改可能会降低安全性，且直接影响`Docker`宿主机
+
+- 审计方式
+
+```shell script
+[root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Volumes={{.Mounts}}'
+7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Volumes=[map[Destination:/config Driver:local Mode: Name:800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f Propagation: RW:true Source:/var/lib/docker/volumes/800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f/_data Type:volume]]
+bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[Destination:/var/lib/postgresql/data Driver:local Mode: Name:774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4 Propagation: RW:true Source:/var/lib/docker/volumes/774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4/_data Type:volume]]
+7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:Volumes=[map[Destination:/usr/src/redmine/config/configuration.yml Mode: Propagation:rprivate RW:true Source:/cephfs/redmine/config/configuration.yml Type:bind] map[Destination:/usr/src/redmine/files Mode: Propagation:rprivate RW:true Source:/cephfs/redmine/files Type:bind] map[Destination:/usr/src/redmine/app/models/attachment.rb Mode: Propagation:rprivate RW:true Source:/cephfs/redmine/config/attachment.rb Type:bind] map[Destination:/usr/src/redmine/config.ru Mode: Propagation:rprivate RW:true Source:/cephfs/redmine/config/config.ru Type:bind]]
+0780c27f8eb858e172e6a7458d2b2221130e6dde0f64887d396ad5bc350a4a64:Volumes=[map[Destination:/var/lib/mysql Mode: Propagation:rprivate RW:true Source:/cephfs/redmine/mysql Type:bind]]
+```
+
+- 修复建议
+
+不要将主机敏感目录挂载在容器上，尤其是在读写模式下
+
+### SSH不在容器中运行
+
+- 描述
+
+`SSH`服务不应该在容器内运行
+
+- 隐患分析
+
+在容器内运行`SSH`可以增加安全管理的复杂性
+难以管理`SSH`服务器的访问策略和安全合规性
+难以管理各种容器的密钥和密码
+难以管理`SSH`服务器的安全升级
+可以在不使用`SSH`情况下对容器进行`shell`访问，避免不必要地增加安全管理的复杂性。
+
+- 审计方式
+
+```shell script
+for i in `docker ps --quiet`;do
+docker exec $i ps -el|grep sshd >/dev/null
+if [ $? -eq 0 ]; then
+    echo "container : $i run sshd..."
+fi
+done
+```
+
+返回值如下，说明下面几个容器内部运行`ssh`服务
+
+```shell script
+container : 0781479bef1b run sshd...
+container : fea9d4d5708a run sshd...
+container : 38bb65479056 run sshd...
+container : 212fec812c01 run sshd...
+```
+
+- 修复建议
+
+卸载容器内部`ssh`服务或重新构建不含有`ssh`的镜像，运行容器
+
 ### 特权端口禁止映射到容器内
 
 - 描述
@@ -1430,9 +1603,27 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
 
 - 隐患分析
 
+默认情况下，如果用户没有明确声明容器端口进行主机端口映射，`Docker`会自动地将容器端口映射到主机上的`49153-65535`中。
+但是，如果用户明确声明它，`Docker`可以将容器端口映射到主机上的特权端口。
+这是因为容器使用不限制特权端口映射的`NET_BIND_SERVICE Linux`内核功能来执行。
+特权端口接收和发送各种敏感和特权的数据。允许`Docker`使用它们可能会带来严重的影响
 
+- 审计方式
 
+通过执行以下命令列出容器的所有运行实例及其端口映射
 
+```shell script
+[root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'                               7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Ports=map[6060/tcp:[map[HostIp:0.0.0.0 HostPort:6060]] 6061/tcp:<nil>]
+bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Ports=map[5432/tcp:[map[HostIp:0.0.0.0 HostPort:5432]]]
+7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:Ports=map[3000/tcp:[map[HostIp:0.0.0.0 HostPort:4000]]]
+0780c27f8eb858e172e6a7458d2b2221130e6dde0f64887d396ad5bc350a4a64:Ports=map[3306/tcp:[map[HostIp:0.0.0.0 HostPort:3316]]]
+```
+
+查看列表，并确保容器端口未映射到低于`1024`的主机端口号
+
+- 修复建议
+
+启动容器时，不要将容器端口映射到特权主机端口。另外，确保没有容器在`Docker`文件中特权端口映射声明
 
 ### 只映射必要的端口
 
