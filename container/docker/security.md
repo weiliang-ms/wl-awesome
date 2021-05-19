@@ -5,76 +5,76 @@
 - [容器安全](#%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8)
   - [概述](#%E6%A6%82%E8%BF%B0)
   - [1 主机安全配置](#1-%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE)
-    - [1.1 为docker挂载单独存储目录](#11-%E4%B8%BAdocker%E6%8C%82%E8%BD%BD%E5%8D%95%E7%8B%AC%E5%AD%98%E5%82%A8%E7%9B%AE%E5%BD%95)
+    - [1.1 为`docker`挂载单独存储目录](#11-%E4%B8%BAdocker%E6%8C%82%E8%BD%BD%E5%8D%95%E7%8B%AC%E5%AD%98%E5%82%A8%E7%9B%AE%E5%BD%95)
     - [1.2 容器宿主机加固](#12-%E5%AE%B9%E5%99%A8%E5%AE%BF%E4%B8%BB%E6%9C%BA%E5%8A%A0%E5%9B%BA)
-    - [1.3 更新Docker到最新版本](#13-%E6%9B%B4%E6%96%B0docker%E5%88%B0%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)
-    - [1.4 只有受信任的用户才能控制Docker守护进程](#14-%E5%8F%AA%E6%9C%89%E5%8F%97%E4%BF%A1%E4%BB%BB%E7%9A%84%E7%94%A8%E6%88%B7%E6%89%8D%E8%83%BD%E6%8E%A7%E5%88%B6docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B)
-  - [2.docker守护进程配置](#2docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AE)
+    - [1.3 更新`Docker`到最新版本](#13-%E6%9B%B4%E6%96%B0docker%E5%88%B0%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)
+    - [1.4 只有受信任的用户才能控制`Docker`守护进程](#14-%E5%8F%AA%E6%9C%89%E5%8F%97%E4%BF%A1%E4%BB%BB%E7%9A%84%E7%94%A8%E6%88%B7%E6%89%8D%E8%83%BD%E6%8E%A7%E5%88%B6docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B)
+  - [2.`docker`守护进程配置](#2docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AE)
     - [2.1 不适用不安全的镜像仓库](#21-%E4%B8%8D%E9%80%82%E7%94%A8%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93)
-    - [2.2 不使用aufs存储驱动程序](#22-%E4%B8%8D%E4%BD%BF%E7%94%A8aufs%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F)
-    - [2.3 Docker守护进程配置TLS身份认证](#23-docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AEtls%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81)
-    - [2.4 配置合适的ulimit](#24-%E9%85%8D%E7%BD%AE%E5%90%88%E9%80%82%E7%9A%84ulimit)
+    - [2.2 不使用`aufs`存储驱动程序](#22-%E4%B8%8D%E4%BD%BF%E7%94%A8aufs%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F)
+    - [2.3 `Docker`守护进程配置`TLS`身份认证](#23-docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AEtls%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81)
+    - [2.4 配置合适的`ulimit`](#24-%E9%85%8D%E7%BD%AE%E5%90%88%E9%80%82%E7%9A%84ulimit)
     - [2.5 启用用户命名空间](#25-%E5%90%AF%E7%94%A8%E7%94%A8%E6%88%B7%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4)
-    - [2.6 使用默认cgroup](#26-%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4cgroup)
+    - [2.6 使用默认`cgroup`](#26-%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4cgroup)
     - [2.7 设置容器的默认空间大小](#27-%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E7%9A%84%E9%BB%98%E8%AE%A4%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F)
-    - [2.8 启用docker客户端命令的授权](#28-%E5%90%AF%E7%94%A8docker%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%91%BD%E4%BB%A4%E7%9A%84%E6%8E%88%E6%9D%83)
+    - [2.8 启用`docker`客户端命令的授权](#28-%E5%90%AF%E7%94%A8docker%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%91%BD%E4%BB%A4%E7%9A%84%E6%8E%88%E6%9D%83)
     - [2.9 配置集中和远程日志记录](#29-%E9%85%8D%E7%BD%AE%E9%9B%86%E4%B8%AD%E5%92%8C%E8%BF%9C%E7%A8%8B%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95)
     - [2.10 禁用旧仓库版本（v1）上的操作](#210-%E7%A6%81%E7%94%A8%E6%97%A7%E4%BB%93%E5%BA%93%E7%89%88%E6%9C%ACv1%E4%B8%8A%E7%9A%84%E6%93%8D%E4%BD%9C)
     - [2.11 启用实时恢复](#211-%E5%90%AF%E7%94%A8%E5%AE%9E%E6%97%B6%E6%81%A2%E5%A4%8D)
-    - [2.12 禁用userland代理](#212-%E7%A6%81%E7%94%A8userland%E4%BB%A3%E7%90%86)
-    - [2.13 应用守护进程范围的自定义seccomp配置文件](#213-%E5%BA%94%E7%94%A8%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E8%8C%83%E5%9B%B4%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89seccomp%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+    - [2.12 禁用`userland`代理](#212-%E7%A6%81%E7%94%A8userland%E4%BB%A3%E7%90%86)
+    - [2.13 应用守护进程范围的自定义`seccomp`配置文件](#213-%E5%BA%94%E7%94%A8%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E8%8C%83%E5%9B%B4%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89seccomp%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
     - [2.14 生产环境中避免实验性功能](#214-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E9%81%BF%E5%85%8D%E5%AE%9E%E9%AA%8C%E6%80%A7%E5%8A%9F%E8%83%BD)
     - [2.15 限制容器获取新的权限](#215-%E9%99%90%E5%88%B6%E5%AE%B9%E5%99%A8%E8%8E%B7%E5%8F%96%E6%96%B0%E7%9A%84%E6%9D%83%E9%99%90)
-  - [3.docker守护程序文件配置](#3docker%E5%AE%88%E6%8A%A4%E7%A8%8B%E5%BA%8F%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE)
-    - [3.1 设置docker文件的所有权为`root:root`](#31-%E8%AE%BE%E7%BD%AEdocker%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.2 设置docker.service文件权限为644或更多限制性](#32-%E8%AE%BE%E7%BD%AEdockerservice%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+  - [3.`docker`守护程序文件配置](#3docker%E5%AE%88%E6%8A%A4%E7%A8%8B%E5%BA%8F%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE)
+    - [3.1 设置`docker`文件的所有权为`root:root`](#31-%E8%AE%BE%E7%BD%AEdocker%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
+    - [3.2 设置`docker.service`文件权限为644或更多限制性](#32-%E8%AE%BE%E7%BD%AEdockerservice%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
     - [3.3 设置`docker.socket`文件的所有权为`root:root`](#33-%E8%AE%BE%E7%BD%AEdockersocket%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.4 设置docker.socket文件权限为644或更多限制性](#34-%E8%AE%BE%E7%BD%AEdockersocket%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.4 设置`docker.socket`文件权限为`644`或更多限制性](#34-%E8%AE%BE%E7%BD%AEdockersocket%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
     - [3.5 设置`/etc/docker`目录所有权为`root:root`](#35-%E8%AE%BE%E7%BD%AEetcdocker%E7%9B%AE%E5%BD%95%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.6 设置/etc/docker目录权限为755或更多限制性](#36-%E8%AE%BE%E7%BD%AEetcdocker%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%BA755%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.6 设置`/etc/docker`目录权限为`755`或更多限制性](#36-%E8%AE%BE%E7%BD%AEetcdocker%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%BA755%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
     - [3.7 设置仓库证书文件所有权为`root:root`](#37-%E8%AE%BE%E7%BD%AE%E4%BB%93%E5%BA%93%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.8 设置仓库证书文件权限为444或更多限制性](#38-%E8%AE%BE%E7%BD%AE%E4%BB%93%E5%BA%93%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.8 设置仓库证书文件权限为`444`或更多限制性](#38-%E8%AE%BE%E7%BD%AE%E4%BB%93%E5%BA%93%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
     - [3.9 设置`TLS CA`证书文件所有权为`root:root`](#39-%E8%AE%BE%E7%BD%AEtls-ca%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.10 设置TLS CA证书文件权限为444或更多限制性](#310-%E8%AE%BE%E7%BD%AEtls-ca%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.11 设置docker服务器证书文件所有权为`root:root`](#311-%E8%AE%BE%E7%BD%AEdocker%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
+    - [3.10 设置`TLS CA`证书文件权限为`444`或更多限制性](#310-%E8%AE%BE%E7%BD%AEtls-ca%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.11 设置`docker`服务器证书文件所有权为`root:root`](#311-%E8%AE%BE%E7%BD%AEdocker%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
     - [3.12 设置`Docker`服务器证书文件权限为`400`或更多限制](#312-%E8%AE%BE%E7%BD%AEdocker%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA400%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6)
-    - [3.13 设置docker.sock文件所有权为`root:docker`](#313-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootdocker)
-    - [3.14 设置docker.sock文件权限为660或更多限制性](#314-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA660%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.13 设置`docker.sock`文件所有权为`root:docker`](#313-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootdocker)
+    - [3.14 设置`docker.sock`文件权限为`660`或更多限制性](#314-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA660%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
     - [3.15 设置`docker.json`文件所有权为`root:root`](#315-%E8%AE%BE%E7%BD%AEdockerjson%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.16 设置`docker.json`文件权限为644或更多限制性](#316-%E8%AE%BE%E7%BD%AEdockerjson%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
+    - [3.16 设置`docker.json`文件权限为`644`或更多限制性](#316-%E8%AE%BE%E7%BD%AEdockerjson%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
   - [4.容器镜像和构建文件](#4%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E5%92%8C%E6%9E%84%E5%BB%BA%E6%96%87%E4%BB%B6)
     - [4.1 创建容器的用户](#41-%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E7%9A%84%E7%94%A8%E6%88%B7)
     - [4.2 容器使用可信的基础镜像](#42-%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8F%AF%E4%BF%A1%E7%9A%84%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F)
     - [4.3 容器中不安装没有必要的软件包](#43-%E5%AE%B9%E5%99%A8%E4%B8%AD%E4%B8%8D%E5%AE%89%E8%A3%85%E6%B2%A1%E6%9C%89%E5%BF%85%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85)
     - [4.4 扫描镜像漏洞并且构建包含安全补丁的镜像](#44-%E6%89%AB%E6%8F%8F%E9%95%9C%E5%83%8F%E6%BC%8F%E6%B4%9E%E5%B9%B6%E4%B8%94%E6%9E%84%E5%BB%BA%E5%8C%85%E5%90%AB%E5%AE%89%E5%85%A8%E8%A1%A5%E4%B8%81%E7%9A%84%E9%95%9C%E5%83%8F)
-    - [4.5 启用docker内容信任](#45-%E5%90%AF%E7%94%A8docker%E5%86%85%E5%AE%B9%E4%BF%A1%E4%BB%BB)
-    - [4.6 将HEALTHCHECK说明添加到容器镜像](#46-%E5%B0%86healthcheck%E8%AF%B4%E6%98%8E%E6%B7%BB%E5%8A%A0%E5%88%B0%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F)
-    - [4.7 在dockerfile中使用copy而不是add](#47-%E5%9C%A8dockerfile%E4%B8%AD%E4%BD%BF%E7%94%A8copy%E8%80%8C%E4%B8%8D%E6%98%AFadd)
-    - [4.8 涉密信息不存储在dockerfile](#48-%E6%B6%89%E5%AF%86%E4%BF%A1%E6%81%AF%E4%B8%8D%E5%AD%98%E5%82%A8%E5%9C%A8dockerfile)
+    - [4.5 启用`docker`内容信任](#45-%E5%90%AF%E7%94%A8docker%E5%86%85%E5%AE%B9%E4%BF%A1%E4%BB%BB)
+    - [4.6 将`HEALTHCHECK`说明添加到容器镜像](#46-%E5%B0%86healthcheck%E8%AF%B4%E6%98%8E%E6%B7%BB%E5%8A%A0%E5%88%B0%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F)
+    - [4.7 在`dockerfile`中使用`copy`而不是`add`](#47-%E5%9C%A8dockerfile%E4%B8%AD%E4%BD%BF%E7%94%A8copy%E8%80%8C%E4%B8%8D%E6%98%AFadd)
+    - [4.8 涉密信息不存储在`dockerfile`](#48-%E6%B6%89%E5%AF%86%E4%BF%A1%E6%81%AF%E4%B8%8D%E5%AD%98%E5%82%A8%E5%9C%A8dockerfile)
     - [4.9 仅安装已经验证的软件包](#49-%E4%BB%85%E5%AE%89%E8%A3%85%E5%B7%B2%E7%BB%8F%E9%AA%8C%E8%AF%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85)
-    - [4.10 正确设置容器上的CPU优先级](#410-%E6%AD%A3%E7%A1%AE%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E4%B8%8A%E7%9A%84cpu%E4%BC%98%E5%85%88%E7%BA%A7)
-    - [4.11 Linux内核功能在容器内受限](#411-linux%E5%86%85%E6%A0%B8%E5%8A%9F%E8%83%BD%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%86%85%E5%8F%97%E9%99%90)
+    - [4.10 正确设置容器上的`CPU`优先级](#410-%E6%AD%A3%E7%A1%AE%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E4%B8%8A%E7%9A%84cpu%E4%BC%98%E5%85%88%E7%BA%A7)
+    - [4.11 `Linux`内核功能在容器内受限](#411-linux%E5%86%85%E6%A0%B8%E5%8A%9F%E8%83%BD%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%86%85%E5%8F%97%E9%99%90)
     - [4.12 不使用特权容器](#412-%E4%B8%8D%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E5%AE%B9%E5%99%A8)
     - [4.13 敏感的主机系统目录未挂载在容器上](#413-%E6%95%8F%E6%84%9F%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%9B%AE%E5%BD%95%E6%9C%AA%E6%8C%82%E8%BD%BD%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%8A)
-    - [4.14 SSH不在容器中运行](#414-ssh%E4%B8%8D%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8C)
+    - [4.14 `SSH`不在容器中运行](#414-ssh%E4%B8%8D%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8C)
     - [4.15 特权端口禁止映射到容器内](#415-%E7%89%B9%E6%9D%83%E7%AB%AF%E5%8F%A3%E7%A6%81%E6%AD%A2%E6%98%A0%E5%B0%84%E5%88%B0%E5%AE%B9%E5%99%A8%E5%86%85)
     - [4.16 只映射必要的端口](#416-%E5%8F%AA%E6%98%A0%E5%B0%84%E5%BF%85%E8%A6%81%E7%9A%84%E7%AB%AF%E5%8F%A3)
     - [4.17 确保容器的内存使用合理](#417-%E7%A1%AE%E4%BF%9D%E5%AE%B9%E5%99%A8%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E5%90%88%E7%90%86)
     - [4.18 设置容器的根文件系统为只读](#418-%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E7%9A%84%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%BA%E5%8F%AA%E8%AF%BB)
     - [4.19 确保进入容器的流量绑定到特定的主机接口](#419-%E7%A1%AE%E4%BF%9D%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8%E7%9A%84%E6%B5%81%E9%87%8F%E7%BB%91%E5%AE%9A%E5%88%B0%E7%89%B9%E5%AE%9A%E7%9A%84%E4%B8%BB%E6%9C%BA%E6%8E%A5%E5%8F%A3)
-    - [4.20 容器重启策略on-failure设置为 5](#420-%E5%AE%B9%E5%99%A8%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5on-failure%E8%AE%BE%E7%BD%AE%E4%B8%BA-5)
+    - [4.20 容器重启策略`on-failure`设置为`5`](#420-%E5%AE%B9%E5%99%A8%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5on-failure%E8%AE%BE%E7%BD%AE%E4%B8%BA5)
     - [4.21 确保主机的进程命名空间不共享](#421-%E7%A1%AE%E4%BF%9D%E4%B8%BB%E6%9C%BA%E7%9A%84%E8%BF%9B%E7%A8%8B%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E4%B8%8D%E5%85%B1%E4%BA%AB)
-    - [4.22 主机的IPC命令空间不共享](#422-%E4%B8%BB%E6%9C%BA%E7%9A%84ipc%E5%91%BD%E4%BB%A4%E7%A9%BA%E9%97%B4%E4%B8%8D%E5%85%B1%E4%BA%AB)
+    - [4.22 主机的`IPC`命令空间不共享](#422-%E4%B8%BB%E6%9C%BA%E7%9A%84ipc%E5%91%BD%E4%BB%A4%E7%A9%BA%E9%97%B4%E4%B8%8D%E5%85%B1%E4%BA%AB)
     - [4.23 主机设备不直接共享给容器](#423-%E4%B8%BB%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%85%B1%E4%BA%AB%E7%BB%99%E5%AE%B9%E5%99%A8)
     - [4.24 设置装载传播模式不共享](#424-%E8%AE%BE%E7%BD%AE%E8%A3%85%E8%BD%BD%E4%BC%A0%E6%92%AD%E6%A8%A1%E5%BC%8F%E4%B8%8D%E5%85%B1%E4%BA%AB)
-    - [4.25 设置主机的UTS命令空间不共享](#425-%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E7%9A%84uts%E5%91%BD%E4%BB%A4%E7%A9%BA%E9%97%B4%E4%B8%8D%E5%85%B1%E4%BA%AB)
-    - [4.26 docker exec命令不能使用特权选项](#426-docker-exec%E5%91%BD%E4%BB%A4%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E9%80%89%E9%A1%B9)
-    - [4.27 docker exec命令不能与user选项一起使用](#427-docker-exec%E5%91%BD%E4%BB%A4%E4%B8%8D%E8%83%BD%E4%B8%8Euser%E9%80%89%E9%A1%B9%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8)
+    - [4.25 设置主机的`UTS`命令空间不共享](#425-%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E7%9A%84uts%E5%91%BD%E4%BB%A4%E7%A9%BA%E9%97%B4%E4%B8%8D%E5%85%B1%E4%BA%AB)
+    - [4.26 `docker exec`命令不能使用特权选项](#426-docker-exec%E5%91%BD%E4%BB%A4%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E9%80%89%E9%A1%B9)
+    - [4.27 `docker exec`命令不能与`user`选项一起使用](#427-docker-exec%E5%91%BD%E4%BB%A4%E4%B8%8D%E8%83%BD%E4%B8%8Euser%E9%80%89%E9%A1%B9%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8)
     - [4.28 检查容器运行时状态](#428-%E6%A3%80%E6%9F%A5%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E7%8A%B6%E6%80%81)
-    - [4.29 限制使用PID cgroup](#429-%E9%99%90%E5%88%B6%E4%BD%BF%E7%94%A8pid-cgroup)
-    - [4.30 不要使用Docker的默认网桥docker0](#430-%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8docker%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BD%91%E6%A1%A5docker0)
-    - [4.31 任何容器内不能安装Docker套接字](#431-%E4%BB%BB%E4%BD%95%E5%AE%B9%E5%99%A8%E5%86%85%E4%B8%8D%E8%83%BD%E5%AE%89%E8%A3%85docker%E5%A5%97%E6%8E%A5%E5%AD%97)
-  - [5.Docker安全操作](#5docker%E5%AE%89%E5%85%A8%E6%93%8D%E4%BD%9C)
+    - [4.29 限制使用`PID cgroup`](#429-%E9%99%90%E5%88%B6%E4%BD%BF%E7%94%A8pid-cgroup)
+    - [4.30 不要使用`Docker`的默认网桥`docker0`](#430-%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8docker%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BD%91%E6%A1%A5docker0)
+    - [4.31 任何容器内不能安装`Docker`套接字](#431-%E4%BB%BB%E4%BD%95%E5%AE%B9%E5%99%A8%E5%86%85%E4%B8%8D%E8%83%BD%E5%AE%89%E8%A3%85docker%E5%A5%97%E6%8E%A5%E5%AD%97)
+  - [5.`Docker`安全操作](#5docker%E5%AE%89%E5%85%A8%E6%93%8D%E4%BD%9C)
     - [5.1 避免镜像泛滥](#51-%E9%81%BF%E5%85%8D%E9%95%9C%E5%83%8F%E6%B3%9B%E6%BB%A5)
     - [5.2 避免容器泛滥](#52-%E9%81%BF%E5%85%8D%E5%AE%B9%E5%99%A8%E6%B3%9B%E6%BB%A5)
   - [最佳实践](#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5)
@@ -91,6 +91,9 @@
 
 ## 概述
 
+云原生时代下，容器广受欢迎，因为它能简化应用或服务及其所有依赖项的构建、封装与推进，而且这种简化涵盖整个生命周期，并且跨越不同的环境和部署目标。
+然而，容器安全依然面临着一些挑战。本文从几个角度切入，剖析容器加固常用方式方法。
+
 在审查`Docker`安全性时，有四个主要方面需要考虑:
 
 - 内核的内在安全性及其对名称空间和`cgroup`的支持
@@ -100,7 +103,7 @@
 
 ## 1 主机安全配置
 
-### 1.1 为docker挂载单独存储目录
+### 1.1 为`docker`挂载单独存储目录
 
 - 描述
 
@@ -197,7 +200,7 @@ harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
 
 参考`Linux`主机安全加固规范。
 
-### 1.3 更新Docker到最新版本
+### 1.3 更新`Docker`到最新版本
 
 - 描述
 
@@ -233,7 +236,7 @@ yum -y install docker-ce
 yum -y update docker-ce
 ```
 
-### 1.4 只有受信任的用户才能控制Docker守护进程
+### 1.4 只有受信任的用户才能控制`Docker`守护进程
 
 - 描述
 
@@ -262,7 +265,7 @@ docker:x:994:
 
 从`docker`组中删除任何不受信任的用户。另外，请勿在主机上创建敏感目录到容器卷的映射
 
-## 2.docker守护进程配置
+## 2.`docker`守护进程配置
 
 ### 2.1 不适用不安全的镜像仓库
 
@@ -289,7 +292,7 @@ docker:x:994:
 
 使用`ssl`签名的镜像仓库（如配置`ssl`证书的`harbor`）
 
-### 2.2 不使用aufs存储驱动程序
+### 2.2 不使用`aufs`存储驱动程序
 
 - 描述
 
@@ -308,7 +311,7 @@ docker:x:994:
 
 默认安装情况下存储驱动为`overlay2`，避免使用`aufs`作为存储驱动
 
-### 2.3 Docker守护进程配置TLS身份认证
+### 2.3 `Docker`守护进程配置`TLS`身份认证
 
 - 描述
 
@@ -418,7 +421,7 @@ systemctl start docker
 docker --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/cert.pem --tlskey=/root/docker/key.pem -H=192.168.235.128:2375 version
 ```
 
-### 2.4 配置合适的ulimit
+### 2.4 配置合适的`ulimit`
 
 - 描述
 
@@ -568,7 +571,7 @@ systemctl restart docker
   2535 100000
 ```
 
-### 2.6 使用默认cgroup
+### 2.6 使用默认`cgroup`
 
 - 描述
 
@@ -614,7 +617,7 @@ ps -ef|grep dockerd
 
 如无特殊需求，默认值即可
 
-### 2.8 启用docker客户端命令的授权
+### 2.8 启用`docker`客户端命令的授权
 
 - 描述
 
@@ -760,7 +763,7 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-### 2.12 禁用userland代理 
+### 2.12 禁用`userland`代理 
 
 - 描述
 
@@ -804,7 +807,7 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-### 2.13 应用守护进程范围的自定义seccomp配置文件
+### 2.13 应用守护进程范围的自定义`seccomp`配置文件
 
 - 描述
 
@@ -895,9 +898,9 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-## 3.docker守护程序文件配置
+## 3.`docker`守护程序文件配置
 
-### 3.1 设置docker文件的所有权为`root:root`
+### 3.1 设置`docker`文件的所有权为`root:root`
 
 - 描述
 
@@ -925,7 +928,7 @@ systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 
 systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chown root:root
 ```
 
-### 3.2 设置docker.service文件权限为644或更多限制性
+### 3.2 设置`docker.service`文件权限为644或更多限制性
 
 - 描述
 
@@ -980,7 +983,7 @@ systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 l
 systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chown root:root
 ```
 
-### 3.4 设置docker.socket文件权限为644或更多限制性
+### 3.4 设置`docker.socket`文件权限为`644`或更多限制性
 
 - 描述
 
@@ -1030,7 +1033,7 @@ root:root
 chown root:root /etc/docker
 ```
 
-### 3.6 设置/etc/docker目录权限为755或更多限制性
+### 3.6 设置`/etc/docker`目录权限为`755`或更多限制性
 
 - 描述
 
@@ -1080,7 +1083,7 @@ root:root
 chown root:root /etc/docker/certs.d/*
 ```
 
-### 3.8 设置仓库证书文件权限为444或更多限制性 
+### 3.8 设置仓库证书文件权限为`444`或更多限制性 
 
 - 描述
 
@@ -1132,7 +1135,7 @@ root:root
 chown root:root /etc/docker/certs.d/*/*
 ```
 
-### 3.10 设置TLS CA证书文件权限为444或更多限制性
+### 3.10 设置`TLS CA`证书文件权限为`444`或更多限制性
 
 - 描述
 
@@ -1159,7 +1162,7 @@ chown root:root /etc/docker/certs.d/*/*
 chmod 444 /etc/docker/certs.d/*/*
 ```
 
-### 3.11 设置docker服务器证书文件所有权为`root:root`
+### 3.11 设置`docker`服务器证书文件所有权为`root:root`
 
 - 描述
 
@@ -1237,7 +1240,7 @@ total 44
 chmod 400 /root/docker/*
 ```
 
-### 3.13 设置docker.sock文件所有权为`root:docker`
+### 3.13 设置`docker.sock`文件所有权为`root:docker`
 
 - 描述
 
@@ -1267,7 +1270,7 @@ root:docker
 chown root:docker /var/run/docker.sock
 ```
 
-### 3.14 设置docker.sock文件权限为660或更多限制性
+### 3.14 设置`docker.sock`文件权限为`660`或更多限制性
 
 - 描述
 
@@ -1317,7 +1320,7 @@ root:root
 chown root:root /etc/docker/daemon.json
 ```
 
-### 3.16 设置`docker.json`文件权限为644或更多限制性
+### 3.16 设置`docker.json`文件权限为`644`或更多限制性
 
 - 描述
 
@@ -1473,7 +1476,7 @@ docker exec <container-id> rpm -qa
 
 定期更新基础镜像版本`tag`（或使用`latest`版本镜像，每日执行构建）及镜像内必须软件版本
 
-### 4.5 启用docker内容信任
+### 4.5 启用`docker`内容信任
 
 - 描述
 
@@ -1486,7 +1489,7 @@ docker exec <container-id> rpm -qa
 
 - 审计方式
 
-### 4.6 将HEALTHCHECK说明添加到容器镜像
+### 4.6 将`HEALTHCHECK`说明添加到容器镜像
 
 - 描述
 
@@ -1512,7 +1515,7 @@ docker exec <container-id> rpm -qa
 
 按照`Docker`文档，并使用`HEALTHCHECK`指令重建容器镜像。
 
-### 4.7 在dockerfile中使用copy而不是add 
+### 4.7 在`dockerfile`中使用`copy`而不是`add` 
 
 - 描述
 
@@ -1547,7 +1550,7 @@ done
 
 在`Dockerfile`中使用`COPY`指令
 
-### 4.8 涉密信息不存储在dockerfile
+### 4.8 涉密信息不存储在`dockerfile`
 
 - 描述
 
@@ -1607,7 +1610,7 @@ docker history <imageID>
 
 使用`GPG`密钥下载和验证您所选择的软件包或任何其他安全软件包分发机制
 
-### 4.10 正确设置容器上的CPU优先级
+### 4.10 正确设置容器上的`CPU`优先级
 
 - 描述
 
@@ -1637,7 +1640,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
 
 管理容器之间的`CPU`份额。为此，请使用`--cpu-shares`参数启动容器
 
-### 4.11 Linux内核功能在容器内受限
+### 4.11 `Linux`内核功能在容器内受限
 
 - 描述
 
@@ -1772,7 +1775,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[De
 
 不要将主机敏感目录挂载在容器上，尤其是在读写模式下
 
-### 4.14 SSH不在容器中运行
+### 4.14 `SSH`不在容器中运行
 
 - 描述
 
@@ -1995,7 +1998,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 ```
 
-### 4.20 容器重启策略on-failure设置为 5
+### 4.20 容器重启策略`on-failure`设置为`5`
 
 - 描述
 
@@ -2063,7 +2066,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidMode=
 docker run -idt --pid=host centos
 ````
 
-### 4.22 主机的IPC命令空间不共享
+### 4.22 主机的`IPC`命令空间不共享
 
 - 描述
 
@@ -2179,7 +2182,7 @@ docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image Name or ID> <Command>
 ```
 
-### 4.25 设置主机的UTS命令空间不共享
+### 4.25 设置主机的`UTS`命令空间不共享
 
 - 描述
 
@@ -2212,7 +2215,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:UTSMode=
 docker run -idt --uts=host alpine
 ```
 
-### 4.26 docker exec命令不能使用特权选项
+### 4.26 `docker exec`命令不能使用特权选项
 
 - 描述
 
@@ -2226,7 +2229,7 @@ docker run -idt --uts=host alpine
 
 在`docker exec`命令中不要使用`--privileged`选项
 
-### 4.27 docker exec命令不能与user选项一起使用
+### 4.27 `docker exec`命令不能与`user`选项一起使用
 
 - 描述
 
@@ -2285,7 +2288,7 @@ unhealthy
 ```
 
 
-### 4.29 限制使用PID cgroup
+### 4.29 限制使用`PID cgroup`
 
 - 描述
 
@@ -2316,7 +2319,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidsLimit=<no v
 docker run -idt --name=box --pids-limit=100 busybox:1.31.1
 ```
 
-### 4.30 不要使用Docker的默认网桥docker0
+### 4.30 不要使用`Docker`的默认网桥`docker0`
 
 - 描述
 
@@ -2378,7 +2381,7 @@ Connecting to nginx (172.18.0.2:80)
   Accept-Ranges: bytes
 ```
 
-### 4.31 任何容器内不能安装Docker套接字
+### 4.31 任何容器内不能安装`Docker`套接字
 
 - 描述
 
@@ -2400,7 +2403,7 @@ Connecting to nginx (172.18.0.2:80)
 
 确保没有容器将`docker.sock`作为卷
 
-## 5.Docker安全操作
+## 5.`Docker`安全操作
 
 ### 5.1 避免镜像泛滥
 
