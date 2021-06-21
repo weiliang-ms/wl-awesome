@@ -11,6 +11,13 @@
 
 # 安全加固
 
+## 漏洞扫描
+
+- [nessus下载地址](https://www.tenable.com/products/nessus/select-your-operating-system)
+- [nessus注册地址](https://www.tenable.com/products/nessus-home)
+
+
+
 ## 禁Ping、Traceroute配置
 
 	echo "net.ipv4.icmp_echo_ignore_all=1"  >> /etc/sysctl.conf
