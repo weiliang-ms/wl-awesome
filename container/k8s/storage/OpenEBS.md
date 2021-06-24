@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [OpenEBS](#openebs)
+  - [简介](#%E7%AE%80%E4%BB%8B)
+    - [`OpenEBS`是什么？](#openebs%E6%98%AF%E4%BB%80%E4%B9%88)
+    - [`OpenEBS`能做什么？](#openebs%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88)
+    - [对比传统分布式存储](#%E5%AF%B9%E6%AF%94%E4%BC%A0%E7%BB%9F%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8)
+    - [存储引擎建议](#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%BB%BA%E8%AE%AE)
+    - [OpenEBS特性](#openebs%E7%89%B9%E6%80%A7)
+    - [CAS介绍](#cas%E4%BB%8B%E7%BB%8D)
+  - [OpenESB架构介绍](#openesb%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D)
+    - [控制面](#%E6%8E%A7%E5%88%B6%E9%9D%A2)
+    - [数据面](#%E6%95%B0%E6%8D%AE%E9%9D%A2)
+  - [CAS引擎](#cas%E5%BC%95%E6%93%8E)
+    - [存储引擎概述](#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%A6%82%E8%BF%B0)
+    - [存储引擎类型](#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B)
+    - [存储引擎声明](#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%A3%B0%E6%98%8E)
+    - [CAS引擎使用场景](#cas%E5%BC%95%E6%93%8E%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
+    - [节点磁盘管理器（`NDM`）](#%E8%8A%82%E7%82%B9%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%99%A8ndm)
+  - [落地实践](#%E8%90%BD%E5%9C%B0%E5%AE%9E%E8%B7%B5)
+    - [Local PV Hostpath实践](#local-pv-hostpath%E5%AE%9E%E8%B7%B5)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # OpenEBS
 
 ![](images/open-ebs.svg)
@@ -601,5 +627,271 @@
     - 如果`OpenEBS`是使用`helm`安装的，更新`values.yaml`中的`configmap`并使用`helm`进行升级
     - 或者，使用`kubectl`编辑`NDM configmap`，更新过滤器
       
+## 落地实践
+
+### Local PV Hostpath实践
+
+对比`Kubernetes Hostpath`卷相比，`OpenEBS本地PV Hostpath`卷具有以下优势:
+
+- `OpenEBS`本地`PV Hostpath`允许您的应用程序通过`StorageClass`、`PVC`和`PV`访问`Hostpath`。
+这为您提供了更改`PV`提供者的灵活性，而无需重新设计应用程序`YAML`
+
+- 使用`Velero`备份和恢复进行数据保护
+  
+- 通过对应用程序`YAML`和`pod`完全屏蔽主机路径来防范主机路径安全漏洞
+
+**环境依赖:**
+
+- `k8s 1.12`以上
+- `OpenEBS 1.0`以上
+
+**实践环境:**
+
+- `docker 19.03.8`
+- `k8s 1.18.6`
+- `CentOS7`
 
 
+    [root@localhost ~]# kubectl get node
+    NAME    STATUS   ROLES           AGE     VERSION
+    node1   Ready    master,worker   8m8s    v1.18.6
+    node2   Ready    master,worker   7m15s   v1.18.6
+    node3   Ready    master,worker   7m15s   v1.18.6
+
+
+> 创建数据目录
+
+在将要创建`Local PV Hostpaths`的节点上设置目录。这个目录将被称为`BasePath`。默认位置是`/var/openebs/local`
+
+节点`node1`、`node2`、`node3`创建`/data/openebs/local`目录
+（/data可以预先挂载数据盘，如未挂载额外数据盘，则使用操作系统'/'挂载点存储空间）
+
+    mkdir -p /data/openebs/local
+   
+> 下载应用描述文件
+
+[yaml文件](https://openebs.github.io/charts/openebs-operator.yaml)
+
+> 发布`openebs`应用
+
+根据上述配置文件，保证`k8s`集群可访问到如下镜像（建议导入本地私有镜像库，如: `harbor`）
+
+    openebs/node-disk-manager:1.5.0
+    openebs/node-disk-operator:1.5.0
+    openebs/provisioner-localpv:2.10.0
+    
+
+更新`openebs-operator.yaml`中镜像`tag`为实际`tag`
+
+    image: openebs/node-disk-manager:1.5.0
+    image: openebs/node-disk-operator:1.5.0
+    image: openebs/provisioner-localpv:2.10.0
+    
+发布
+
+    kubectl apply -f openebs-operator.yaml
+    
+查看发布状态
+
+    [root@localhost openebs]# kubectl get pod -n openebs -w
+    NAME                                           READY   STATUS    RESTARTS   AGE
+    openebs-localpv-provisioner-6d6d9cfc99-4sltp   1/1     Running   0          10s
+    openebs-ndm-85rng                              1/1     Running   0          10s
+    openebs-ndm-operator-7df6668998-ptnlq          0/1     Running   0          10s
+    openebs-ndm-qgqm9                              1/1     Running   0          10s
+    openebs-ndm-zz7ps                              1/1     Running   0          10s
+    
+> 创建存储类
+
+更改配置文件中的内容
+
+    value: "/var/openebs/local/"
+    
+发布创建存储类
+
+    cat > openebs-hostpath-sc.yaml <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: openebs-hostpath
+      annotations:
+        openebs.io/cas-type: local
+        cas.openebs.io/config: |
+          #hostpath type will create a PV by
+          # creating a sub-directory under the
+          # BASEPATH provided below.
+          - name: StorageType
+            value: "hostpath"
+          #Specify the location (directory) where
+          # where PV(volume) data will be saved.
+          # A sub-directory with pv-name will be
+          # created. When the volume is deleted,
+          # the PV sub-directory will be deleted.
+          #Default value is /var/openebs/local
+          - name: BasePath
+            value: "/data/openebs/local/"
+    provisioner: openebs.io/local
+    volumeBindingMode: WaitForFirstConsumer
+    reclaimPolicy: Delete
+    EOF
+    
+    kubectl apply -f openebs-hostpath-sc.yaml
+    
+> 创建`pvc`验证可用性
+
+    cat > local-hostpath-pvc.yaml <<EOF
+    kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: local-hostpath-pvc
+    spec:
+      storageClassName: openebs-hostpath
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5G
+    EOF
+    
+    kubectl apply -f local-hostpath-pvc.yaml
+    
+查看`pvc`状态
+
+    [root@localhost openebs]# kubectl get pvc
+    NAME                 STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS       AGE
+    local-hostpath-pvc   Pending                                      openebs-hostpath   2m15s
+
+输出显示`STATUS`为`Pending`。这意味着`PVC`还没有被应用程序使用。
+
+> 创建`pod`
+
+    cat > local-hostpath-pod.yaml <<EOF
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: hello-local-hostpath-pod
+    spec:
+      volumes:
+      - name: local-storage
+        persistentVolumeClaim:
+          claimName: local-hostpath-pvc
+      containers:
+      - name: hello-container
+        image: busybox
+        command:
+           - sh
+           - -c
+           - 'while true; do echo "`date` [`hostname`] Hello from OpenEBS Local PV." >> /mnt/store/greet.txt; sleep $(($RANDOM % 5 + 300)); done'
+        volumeMounts:
+        - mountPath: /mnt/store
+          name: local-storage
+    EOF
+    
+发布创建
+
+    kubectl apply -f local-hostpath-pod.yaml
+    
+> 验证数据是否写入卷
+
+    [root@localhost openebs]# kubectl exec hello-local-hostpath-pod -- cat /mnt/store/greet.txt
+    Thu Jun 24 15:10:45 CST 2021 [node1] Hello from OpenEBS Local PV.
+    
+> 验证容器是否使用`Local PV Hostpath`卷
+
+    [root@localhost openebs]# kubectl describe pod hello-local-hostpath-pod
+    Name:         hello-local-hostpath-pod
+    Namespace:    default
+    Priority:     0
+    ...
+    Volumes:
+      local-storage:
+        Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+        ClaimName:  local-hostpath-pvc
+        ReadOnly:   false
+      default-token-98scc:
+        Type:        Secret (a volume populated by a Secret)
+        SecretName:  default-token-98scc
+        Optional:    false
+    ...
+    
+> 查看`pvc`状态
+
+    [root@localhost openebs]# kubectl get pvc local-hostpath-pvc
+    NAME                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS       AGE
+    local-hostpath-pvc   Bound    pvc-6eac3773-49ef-47af-a475-acb57ed15cf6   5G         RWO            openebs-hostpath   10m
+
+> 查看该`pv`卷数据存储目录为
+
+    [root@localhost openebs]# kubectl get -o yaml pv pvc-6eac3773-49ef-47af-a475-acb57ed15cf6|grep 'path:'
+              f:path: {}
+        path: /data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6
+
+并且`pv`配置了亲和性，制定了调度节点为`node2`
+
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      capacity:
+        storage: 5G
+      claimRef:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        name: local-hostpath-pvc
+        namespace: default
+        resourceVersion: "9034"
+        uid: 6eac3773-49ef-47af-a475-acb57ed15cf6
+      local:
+        fsType: ""
+        path: /data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6
+      nodeAffinity:
+        required:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+              - node2
+      persistentVolumeReclaimPolicy: Delete
+      storageClassName: openebs-hostpath
+      volumeMode: Filesystem
+      
+验证三个节点存储目录下
+
+![](images/node2-scheduler.png)
+
+结果证明数据仅存在于`node2`下
+
+> 模拟磁盘损坏
+
+删除`node2`节点`pvc`持久化目录
+
+    rm -rf /data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6  
+
+验证数据是否存在
+
+    [root@localhost local]# kubectl exec hello-local-hostpath-pod -- cat /mnt/store/greet.txt
+    cat: can't open '/mnt/store/greet.txt': No such file or directory
+    
+重建`pod`
+
+    [root@localhost openebs]# kubectl delete -f local-hostpath-pod.yaml
+    [root@localhost openebs]# kubectl apply -f local-hostpath-pod.yaml
+    
+查看`pod`状态
+
+    [root@localhost openebs]# kubectl describe pod hello-local-hostpath-pod
+    ...
+    Normal   Scheduled    <unknown>           default-scheduler  Successfully assigned default/hello-local-hostpath-pod to node2
+      Warning  FailedMount  46s (x8 over 110s)  kubelet, node2     MountVolume.NewMounter initialization failed for volume "pvc-6eac3773-49ef-47af-a475-acb57ed15cf6" : path "/data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6" does not exist
+
+重建`pvc`
+
+    kubectl delete -f local-hostpath-pvc.yaml
+    kubectl apply -f local-hostpath-pvc.yaml
+    
+> 总结
+
+    `localpv hostpath`利用亲和性实现节点调度，存储无副本。
+ 
+    
+    
