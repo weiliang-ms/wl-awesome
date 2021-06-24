@@ -51,6 +51,8 @@
     - [常用指令](/container/docker/cmd.md)
     - [容器安全](/container/docker/security.md)
   - [k8s](#k8s)
+  - [k8s存储]()
+    - [OpenEBS](/container/k8s/storage/OpenEBS.md)
 - [编程]()
   - [golang](/program/golang.md)
 - [源码分析]()
