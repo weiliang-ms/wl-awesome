@@ -7,7 +7,7 @@
     - [`OpenEBS`是什么？](#openebs%E6%98%AF%E4%BB%80%E4%B9%88)
     - [`OpenEBS`能做什么？](#openebs%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88)
     - [对比传统分布式存储](#%E5%AF%B9%E6%AF%94%E4%BC%A0%E7%BB%9F%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8)
-    - [存储引擎建议](#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%BB%BA%E8%AE%AE)
+    - [OpenEBS存储引擎建议](#openebs%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%BB%BA%E8%AE%AE)
     - [OpenEBS特性](#openebs%E7%89%B9%E6%80%A7)
     - [CAS介绍](#cas%E4%BB%8B%E7%BB%8D)
   - [OpenESB架构介绍](#openesb%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D)
@@ -22,6 +22,7 @@
   - [落地实践](#%E8%90%BD%E5%9C%B0%E5%AE%9E%E8%B7%B5)
     - [Local PV Hostpath实践](#local-pv-hostpath%E5%AE%9E%E8%B7%B5)
     - [Local PV Device实践](#local-pv-device%E5%AE%9E%E8%B7%B5)
+    - [总结](#%E6%80%BB%E7%BB%93)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -630,6 +631,10 @@
       
 ## 落地实践
 
+`OpenEBS`的`cStor`与`Jiva`引擎由于组件过多，配置相较其他存储方案繁琐，生产环境不建议使用，这里我们仅论述`Local PV`引擎。
+
+`Local PV`引擎不具备存储级复制能力，适用于`k8s`有状态服务的后端存储（如: `es`、`redis`等）
+
 ### Local PV Hostpath实践
 
 对比`Kubernetes Hostpath`卷相比，`OpenEBS本地PV Hostpath`卷具有以下优势:
@@ -1161,3 +1166,18 @@
     Mixed Random Read/Write IOPS: 3496/1171
     
 从结果来看，相较`Local PV HostPath`模式性能翻倍
+
+### 总结
+
+在整个测试验证过程，`OpenEBS`给我的感觉是：极简的操作，尤其`Local PV`引擎的部署使用。
+
+但`OpenEBS`现阶段也存在一些不足：
+
+- `cStor`与`Jiva`数据面组件较多，配置较为繁琐（第一感觉概念性的组件过多，）
+- `cStor`与`Jiva`部分组件创建依赖内部定义的镜像`tag`，在离线环境下无法通过调整为私有库`tag`导致组件无法成功运行
+- 存储类型单一，多个引擎仅支持块存储类型，不支持原生多节点读写（需结合`NFS`实现），对比`ceph`等稍显逊色
+
+建议以下场景使用`OpenEBS`作为后端存储：
+
+- 单机测试环境
+- 多机实验/演示环境
