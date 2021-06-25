@@ -21,6 +21,7 @@
     - [节点磁盘管理器（`NDM`）](#%E8%8A%82%E7%82%B9%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%99%A8ndm)
   - [落地实践](#%E8%90%BD%E5%9C%B0%E5%AE%9E%E8%B7%B5)
     - [Local PV Hostpath实践](#local-pv-hostpath%E5%AE%9E%E8%B7%B5)
+    - [Local PV Device实践](#local-pv-device%E5%AE%9E%E8%B7%B5)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -108,7 +109,7 @@
 
 根据附加到`Kubernetes`工作节点的存储类型和应用程序性能需求，您可以从`Jiva、cStor`或`Mayastor`中进行选择
 
-### 存储引擎建议
+### OpenEBS存储引擎建议
 
 | 应用需求 | 存储类型 | OpenEBS卷类型 |
 | :-----:| :----: | :----: |
@@ -504,17 +505,17 @@
 | 特性 | Jiva | cStor | Local PV |
 | :-----:| :----: | :----: | :----: |
 | 轻量级运行于用户空间 | Yes | Yes | Yes |
-| 同步复制 | Yes | Yes | NO |
+| 同步复制 | Yes | Yes | No |
 | 适合低容量工作负载 | Yes | Yes | Yes |
 | 支持快照，克隆 | Basic | Advanced | No |
 | 数据一致性 | Yes | Yes | NA |
 | 使用Velero恢复备份 | Yes | Yes | Yes |
-| 适合高容量工作负载 | NO | Yes | Yes |
-| 自动精简配置 |  | Yes | NO |
-| 磁盘池或聚合支持 |  | Yes | NO |
+| 适合高容量工作负载 | No | Yes | Yes |
+| 自动精简配置 |  | Yes | No |
+| 磁盘池或聚合支持 |  | Yes | No |
 | 动态扩容 |  | Yes | Yes |
-| 数据弹性(RAID支持) | | YES | NO |
-| 接近原生磁盘性能 | NO | NO | YES |
+| 数据弹性(RAID支持) | | Yes | No |
+| 接近原生磁盘性能 | No | No | Yes |
 
 大多数场景推荐`cStor`，因其提供了强大的功能，包括快照/克隆、存储池功能（如精简资源调配、按需扩容等）。
 
@@ -861,37 +862,302 @@
 
 结果证明数据仅存在于`node2`下
 
-> 模拟磁盘损坏
+> 清理`pod`
 
-删除`node2`节点`pvc`持久化目录
-
-    rm -rf /data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6  
-
-验证数据是否存在
-
-    [root@localhost local]# kubectl exec hello-local-hostpath-pod -- cat /mnt/store/greet.txt
-    cat: can't open '/mnt/store/greet.txt': No such file or directory
+    kubectl delete pod hello-local-hostpath-pod
     
-重建`pod`
+> 基准测试
 
-    [root@localhost openebs]# kubectl delete -f local-hostpath-pod.yaml
-    [root@localhost openebs]# kubectl apply -f local-hostpath-pod.yaml
+下载[基准测试Job声明文件](https://github.com/openebs/performance-benchmark/blob/master/fio-benchmarks/fio-deploy.yaml)
+
+调整以下内容
+
+    image: openebs/perf-test:latest # 调整为内网镜像库tag
+    claimName: dbench # 调整为local-hostpath-pvc
+
+发布运行
+
+    kubectl create -f fio-deploy.yaml 
+    
+查看运行状态
+
+    [root@node1 openebs]# kubectl get pod
+    NAME                 READY   STATUS    RESTARTS   AGE
+    dbench-729cw-nqfpt   1/1     Running   0          24s
+    
+查看基准测试结果
+
+    [root@node1 openebs]# kubectl logs -f dbench-729cw-nqfpt
+    ...
+    All tests complete.
+    
+    ==================
+    = Dbench Summary =
+    ==================
+    Random Read/Write IOPS: 2144/6654. BW: 131MiB/s / 403MiB/s
+    Average Latency (usec) Read/Write: 4254.08/3661.59
+    Sequential Read/Write: 1294MiB/s / 157MiB/s
+    Mixed Random Read/Write IOPS: 1350/443
+    
+> 清理
+
+    kubectl delete pvc local-hostpath-pvc
+    kubectl delete sc openebs-hostpath
+   
+### Local PV Device实践
+
+
+对比`Kubernetes`本地持久卷，`OpenEBS`本地`PV`设备卷有以下优点:
+
+- `OpenEBS`本地`PV`设备卷`provider`是动态的，`Kubernetes`设备卷`provider`是静态的
+- `OpenEBS NDM`更好地管理用于创建本地`pv`的块设备。
+`NDM`提供了发现块设备属性、设置设备筛选器、度量集合以及检测块设备是否已经跨节点移动等功能
+   
+**环境依赖:**
+
+- `k8s 1.12`以上
+- `OpenEBS 1.0`以上
+
+**实践环境:**
+
+- `docker 19.03.8`
+- `k8s 1.18.6`
+- `CentOS7`
+
+
+    [root@localhost ~]# kubectl get node
+    NAME    STATUS   ROLES           AGE     VERSION
+    node1   Ready    master,worker   8m8s    v1.18.6
+    node2   Ready    master,worker   7m15s   v1.18.6
+    node3   Ready    master,worker   7m15s   v1.18.6
+    
+三个节点上的`/dev/sdb`作为块设备存储
+
+
+    [root@node1 ~]# lsblk
+    NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    sda               8:0    0  400G  0 disk
+    ├─sda1            8:1    0    1G  0 part /boot
+    └─sda2            8:2    0  399G  0 part
+      └─centos-root 253:0    0  399G  0 lvm  /
+    sdb               8:16   0   20G  0 disk
+    sr0              11:0    1  4.4G  0 rom
+    
+    [root@node2 ~]# lsblk
+        NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+        sda               8:0    0  400G  0 disk
+        ├─sda1            8:1    0    1G  0 part /boot
+        └─sda2            8:2    0  399G  0 part
+          └─centos-root 253:0    0  399G  0 lvm  /
+        sdb               8:16   0   20G  0 disk
+        sr0              11:0    1  4.4G  0 rom
+        
+    [root@node3 ~]# lsblk
+        NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+        sda               8:0    0  400G  0 disk
+        ├─sda1            8:1    0    1G  0 part /boot
+        └─sda2            8:2    0  399G  0 part
+          └─centos-root 253:0    0  399G  0 lvm  /
+        sdb               8:16   0   20G  0 disk
+        sr0              11:0    1  4.4G  0 rom
+
+
+> 创建数据目录
+
+在将要创建`Local PV Hostpaths`的节点上设置目录。这个目录将被称为`BasePath`。默认位置是`/var/openebs/local`
+
+节点`node1`、`node2`、`node3`创建`/data/openebs/local`目录
+（/data可以预先挂载数据盘，如未挂载额外数据盘，则使用操作系统'/'挂载点存储空间）
+
+    mkdir -p /data/openebs/local
+   
+> 下载应用描述文件
+
+[yaml文件](https://openebs.github.io/charts/openebs-operator.yaml)
+
+> 发布`openebs`应用
+
+根据上述配置文件，保证`k8s`集群可访问到如下镜像（建议导入本地私有镜像库，如: `harbor`）
+
+    openebs/node-disk-manager:1.5.0
+    openebs/node-disk-operator:1.5.0
+    openebs/provisioner-localpv:2.10.0
+    
+
+更新`openebs-operator.yaml`中镜像`tag`为实际`tag`
+
+    image: openebs/node-disk-manager:1.5.0
+    image: openebs/node-disk-operator:1.5.0
+    image: openebs/provisioner-localpv:2.10.0
+    
+发布
+
+    kubectl apply -f openebs-operator.yaml
+    
+查看发布状态
+
+    [root@localhost openebs]# kubectl get pod -n openebs -w
+    NAME                                           READY   STATUS    RESTARTS   AGE
+    openebs-localpv-provisioner-6d6d9cfc99-4sltp   1/1     Running   0          10s
+    openebs-ndm-85rng                              1/1     Running   0          10s
+    openebs-ndm-operator-7df6668998-ptnlq          0/1     Running   0          10s
+    openebs-ndm-qgqm9                              1/1     Running   0          10s
+    openebs-ndm-zz7ps                              1/1     Running   0          10s
+
+> 创建存储类
+
+    cat > local-device-sc.yaml <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: local-device
+      annotations:
+        openebs.io/cas-type: local
+        cas.openebs.io/config: |
+          - name: StorageType
+            value: device
+    provisioner: openebs.io/local
+    reclaimPolicy: Delete
+    volumeBindingMode: WaitForFirstConsumer
+    EOF
+    
+    kubectl apply -f local-device-sc.yaml
+    
+> 创建`pod`及`pvc`
+
+    cat > local-device-pod.yaml <<EOF
+    ---
+    kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: local-device-pvc
+    spec:
+      storageClassName: local-device
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5G
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: hello-local-device-pod
+    spec:
+      volumes:
+      - name: local-storage
+        persistentVolumeClaim:
+          claimName: local-device-pvc
+      containers:
+      - name: hello-container
+        image: busybox
+        command:
+           - sh
+           - -c
+           - 'while true; do echo "`date` [`hostname`] Hello from OpenEBS Local PV." >> /mnt/store/greet.txt; sleep $(($RANDOM % 5 + 300)); done'
+        volumeMounts:
+        - mountPath: /mnt/store
+          name: local-storage
+    EOF
+    
+发布
+    
+    kubectl apply -f local-device-pod.yaml
     
 查看`pod`状态
 
-    [root@localhost openebs]# kubectl describe pod hello-local-hostpath-pod
+    [root@node1 openebs]# kubectl get pod hello-local-device-pod -w
+    NAME                     READY   STATUS    RESTARTS   AGE
+    hello-local-device-pod   1/1     Running   0          9s
+    
+确认`pod`关联`pvc`是否为`local-device-pvc`
+
+
+    [root@node1 openebs]# kubectl describe pod hello-local-device-pod
+    Name:         hello-local-device-pod
+    Namespace:    default
+    Node:         node2/192.168.1.112
     ...
-    Normal   Scheduled    <unknown>           default-scheduler  Successfully assigned default/hello-local-hostpath-pod to node2
-      Warning  FailedMount  46s (x8 over 110s)  kubelet, node2     MountVolume.NewMounter initialization failed for volume "pvc-6eac3773-49ef-47af-a475-acb57ed15cf6" : path "/data/openebs/local/pvc-6eac3773-49ef-47af-a475-acb57ed15cf6" does not exist
-
-重建`pvc`
-
-    kubectl delete -f local-hostpath-pvc.yaml
-    kubectl apply -f local-hostpath-pvc.yaml
+    Volumes:
+      local-storage:
+        Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+        ClaimName:  local-device-pvc
+        ReadOnly:   false
+    ...
     
-> 总结
+观察到调度的节点为`node2`，确认`node2`节点`/dev/sdb`是否被使用
 
-    `localpv hostpath`利用亲和性实现节点调度，存储无副本。
- 
+    [root@node2 ~]# lsblk
+    NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    sda               8:0    0  400G  0 disk
+    ├─sda1            8:1    0    1G  0 part /boot
+    └─sda2            8:2    0  399G  0 part
+      └─centos-root 253:0    0  399G  0 lvm  /
+    sdb               8:16   0   20G  0 disk
+    sr0              11:0    1  4.4G  0 rom
+    [root@node2 ~]# lsblk
+    NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    sda      8:0    0  400G  0 disk
+    ├─sda1   8:1    0    1G  0 part /boot
+    └─sda2   8:2    0  399G  0 part
+      └─centos-root
+           253:0    0  399G  0 lvm  /
+    sdb      8:16   0   20G  0 disk /var/lib/kubelet/pods/266b7b14-5eb7-40ec-bccb-3ac189acf939/volumes/kubernetes.io~local-volume/pvc-9bd89019-13dc-4
+    sr0     11:0    1  4.4G  0 rom
+
+确实被使用，`OpenEBS`强大之处则在于此，极致的简洁。
+如上文我们讨论的那样，`NDM`负责发现块设备并过滤掉不应该被`OpenEBS`使用的设备，例如，检测有`OS`文件系统的磁盘。
+
+> 基准测试
+
+创建基准测试`pvc`
+
+    cat > dbench-pvc.yaml <<EOF
+    ---
+    kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: dbench
+    spec:
+      storageClassName: local-device
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5G
+          
+    EOF
+
+下载[基准测试Job声明文件](https://github.com/openebs/performance-benchmark/blob/master/fio-benchmarks/fio-deploy.yaml)
+
+调整以下内容
+
+    image: openebs/perf-test:latest # 调整为内网镜像库tag    
+
+发布运行
+
+    kubectl create -f dbench-pvc.yaml
+    kubectl create -f fio-deploy.yaml 
     
+查看运行状态
+
+    [root@node1 openebs]# kubectl get pod
+    NAME                 READY   STATUS    RESTARTS   AGE
+    dbench-vqk68-f9877   1/1     Running   0          24s
     
+查看基准测试结果
+
+    [root@node1 openebs]# kubectl logs -f dbench-vqk68-f9877
+    ...
+    
+    All tests complete.
+    
+    ==================
+    = Dbench Summary =
+    ==================
+    Random Read/Write IOPS: 3482/6450. BW: 336MiB/s / 1017MiB/s
+    Average Latency (usec) Read/Write: 2305.77/1508.63
+    Sequential Read/Write: 6683MiB/s / 2312MiB/s
+    Mixed Random Read/Write IOPS: 3496/1171
+    
+从结果来看，相较`Local PV HostPath`模式性能翻倍
