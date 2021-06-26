@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [常用shell语句](#%E5%B8%B8%E7%94%A8shell%E8%AF%AD%E5%8F%A5)
+  - [查询文件内`tab`键](#%E6%9F%A5%E8%AF%A2%E6%96%87%E4%BB%B6%E5%86%85tab%E9%94%AE)
   - [操作用户](#%E6%93%8D%E4%BD%9C%E7%94%A8%E6%88%B7)
   - [vi用法(英文输入法下)](#vi%E7%94%A8%E6%B3%95%E8%8B%B1%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B)
   - [防火墙开放端口](#%E9%98%B2%E7%81%AB%E5%A2%99%E5%BC%80%E6%94%BE%E7%AB%AF%E5%8F%A3)
@@ -18,8 +19,13 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-
 ## 常用shell语句
+
+### 查询文件内`tab`键
+
+适用于`yaml`校验
+
+    grep  $'\t' 文件名
 
 ### 操作用户
 
