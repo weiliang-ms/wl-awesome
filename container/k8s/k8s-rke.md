@@ -15,7 +15,7 @@
 
 > 1、环境准备
 
-- 虚拟机*3
+- 虚拟机 * 3
 
 - 配置[阿里云yum源](https://www.cnblogs.com/-xuan/p/10674562.html)
 
