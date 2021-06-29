@@ -1,4 +1,15 @@
-# cgroup
+# cgroups
+
+## 简介
+
+`Cgroups`用来提供对一组进程以及将来子进程的资源限制，包含三个组件：
+
+- 控制组: 一个`cgroups`包含一组进程，并可以在这个`cgroups`上增加`Linux subsystem`的各种参数配置，
+    将一组进程和一组`subsystem`关联起来
+- `subsystem` 子系统是一组资源控制模块
+- 
+
+> 可以通过`lssubsys -a`命令查看当前内核支持哪些`subsystem`
 
 ## 利用cgroup限制程序资源
 
