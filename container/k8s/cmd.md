@@ -14,6 +14,10 @@
     # kubectl label nodes <node-name> key=value
     kubectl label nodes ceph01 role=storage-node
     
+> 驱逐业务容器
+
+    kubectl drain --ignore-daemonsets --delete-local-data <node name>
+    
 ### 配置
 
 > 修改`kubernetes`限制节点`pod`数量
