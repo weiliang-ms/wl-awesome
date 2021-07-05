@@ -24,8 +24,9 @@
   - [poweradmin](/deploy/README.md#poweradmin)
   - [Python3.6](/deploy/README.md#python36)
   - [trafodion](/deploy/README.md#trafodion)
-- DevOps
+- CICD
   - [jenkins](/cicd/jenkins.md)
+  - [argocd](/cicd/argo.md)
 - [基础设施](#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD)
   - [存储](#%E5%AD%98%E5%82%A8)
     - [ceph](/infrastructure/storage/ceph.md)
