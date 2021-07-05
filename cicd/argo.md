@@ -1,13 +1,13 @@
 - [Argo CD](#argo-cd)
   - [简介](#%E7%AE%80%E4%BB%8B)
   - [核心概念](#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5)
-    - [`Argo CD`中的项目](#argo-cd%E4%B8%AD%E7%9A%84%E9%A1%B9%E7%9B%AE)
-  - [部署](#%E9%83%A8%E7%BD%B2)
+  - [部署argocd](#%E9%83%A8%E7%BD%B2argocd)
   - [实践](#%E5%AE%9E%E8%B7%B5)
     - [流程解析](#%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90)
     - [源码库关键文件](#%E6%BA%90%E7%A0%81%E5%BA%93%E5%85%B3%E9%94%AE%E6%96%87%E4%BB%B6)
     - [配置库关键文件](#%E9%85%8D%E7%BD%AE%E5%BA%93%E5%85%B3%E9%94%AE%E6%96%87%E4%BB%B6)
-    - [配置默认argocd项目](#%E9%85%8D%E7%BD%AE%E9%BB%98%E8%AE%A4argocd%E9%A1%B9%E7%9B%AE)
+    - [harbor库配置信息](#harbor%E5%BA%93%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF)
+    - [argocd配置信息](#argocd%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF)
     - [样例应用](#%E6%A0%B7%E4%BE%8B%E5%BA%94%E7%94%A8)
     - [最佳实践](#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5)
   - [参考文档](#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3)
@@ -85,8 +85,6 @@
 - 刷新: 对比`git`仓库内的应用目标状态与活动状态，指出不同之处
 - 健康状态: 描述应用程序是否运行正常，可以对外提供服务
 - 工具: 创建应用程序清单描述文件的工具（如`helm、Kustomize`）
-   
-### `Argo CD`中的项目
 
 > `Argo CD`中项目是什么？
 
@@ -113,7 +111,7 @@
       - group: '*'
         kind: '*'
 
-## 部署
+## 部署argocd
 
 > 下载声明文件
 
@@ -169,6 +167,15 @@
 通过一个样例来说明，`argocd`是如何结合`gitlab`与`k8s`实现应用的`cicd`流程
 
 关于`argocd`其他部分内容（用户管理、安全审计、自定义`hook`）等内容，这里不做过多讨论
+
+相关技术&工具：
+
+- `gitlab`: 存放源代码与应用清单
+- `docker`: 构建镜像&容器运行时
+- `harbor`: 镜像制品库，管理镜像
+- `jenkins`: `ci`流水线工具
+- `k8s`: 容器编排工具
+- `argocd`: 基于`k8s`的`cd`工具
 
 ### 流程解析
 
@@ -392,8 +399,14 @@
         app: demo-app
       sessionAffinity: None
       type: ClusterIP
+      
+### harbor库配置信息
+
+配置镜像清理策略，以免垃圾镜像过多
+
+![](images/argocd-harbor-clean-policy.png)
         
-### 配置默认argocd项目
+### argocd配置信息
 
 > 配置仓库
 
