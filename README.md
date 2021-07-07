@@ -55,6 +55,7 @@
     - [常用指令](/container/docker/cmd.md)
     - [容器安全](/container/docker/security.md)
   - [k8s](#k8s)
+    - [配额限制](/container/k8s/quota.md)
   - [容器存储方案]()
     - [基于rook管理ceph](/container/k8s/storage/rook.md)
     - [分布式块存储-OpenEBS](/container/k8s/storage/OpenEBS.md)
