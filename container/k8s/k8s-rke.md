@@ -109,7 +109,7 @@
 
 > 10、查看结果
 
-![](../images/rke-finish.png)
+![](../foundation/images/rke-finish.png)
 
 > 11、配置
 
@@ -146,7 +146,7 @@
 
 	kubectl get node
 
-![](../images/k8s-node-info.png)
+![](../foundation/images/k8s-node-info.png)
 
 > 14、发布应用测试
 
@@ -197,13 +197,13 @@
 	
 	kubectl get pod -o wide
 
-![](../images/nginx-pod.png)
+![](../foundation/images/nginx-pod.png)
 
 查看svc，测试
 
 	kubectl get svc
 	
-![](../images/nginx-service.png)
+![](../foundation/images/nginx-service.png)
 
 删除
 
