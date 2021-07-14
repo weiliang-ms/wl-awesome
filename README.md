@@ -36,6 +36,7 @@
   - [驱动管理](/os/driver/README.md)
   - [shell](/os/shell/README.md)
   - [集成部署](/deploy/README.md)
+  - [软件更新](/os/upgrade/README.md)
   - [存储](#%E5%AD%98%E5%82%A8)
     - [ceph](/os/storage/ceph.md)
     - [raid](/os/storage/raid.md)
