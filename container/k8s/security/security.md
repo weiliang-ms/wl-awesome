@@ -4,8 +4,6 @@
 
 本概述定义了一个模型，用于在`Cloud Native`安全性上下文中考虑`Kubernetes`安全性。
 
-
-
 ## 云原生安全的4个`C`
 
 你可以分层去考虑安全性，云原生安全的4个C分别是云（`Cloud`）、集群（`Cluster`）、容器（`Container`）和代码（`Code`）
