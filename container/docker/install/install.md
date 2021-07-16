@@ -253,12 +253,12 @@ EOF
 
 重启
 
+```shell
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+```
 
 ## 启动
-
-> 启动
 
 ```shell script
 systemctl daemon-reload
