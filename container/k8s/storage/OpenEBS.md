@@ -676,7 +676,7 @@
    
 > 下载应用描述文件
 
-[yaml文件](https://openebs.github.io/charts/openebs-operator.yaml)
+[yaml文件](https://openebs.github.io/charts/openebs-operator-lite.yaml)
 
 > 发布`openebs`应用
 

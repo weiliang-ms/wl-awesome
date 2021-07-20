@@ -18,6 +18,16 @@
 
     kubectl drain --ignore-daemonsets --delete-local-data <node name>
     
+> 清理`Evicted`状态`pod`
+
+```shell script
+
+for ns in `kubectl get ns | awk 'NR>1{print $1}'`
+do
+  kubectl get pods -n ${ns} | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n ${ns}
+done
+```
+    
 ### 配置
 
 > 修改`kubernetes`限制节点`pod`数量

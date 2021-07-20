@@ -11,7 +11,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### 单机
+## 单机
 
 [配置yum源](/linux/package/yum.md)
 
@@ -70,24 +70,47 @@
 
     yum install -y epel-release conntrack ipvsadm ipset jq sysstat curl iptables libseccomp yum-utils device-mapper-persistent-data lvm2
 
-安装kubelet等
+### 安装指定版本
 
-    yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+> 查看版本列表
+
+```shell script
+yum list kubeadm --showduplicates|sort -r
+```
+
+> 安装指定版本`kubeadm`
+
+安装`1.18.6`版本
+
+```shell script
+version=1.18.6-0
+yum install -y kubelet-$version kubeadm-$version kubectl-$version --disableexcludes=kubernetes
+```
     
-安装命令补全
+> 安装命令补全
 
-    yum install -y bash-completion
-    source /usr/share/bash-completion/bash_completion
-    source <(kubectl completion bash)
-    echo "source <(kubectl completion bash)" >> ~/.bashrc
+```shell script
+yum install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+```
+    
+> 启动`kubelet`
+
+```shell script
+systemctl enable kubelet --now
+```
     
 下载k8s相关镜像
 
-    for i in `kubeadm config images list 2>/dev/null |sed 's/k8s.gcr.io\///g'`; do
-        docker pull gcr.azk8s.cn/google-containers/${i}
-        docker tag gcr.azk8s.cn/google-containers/${i} k8s.gcr.io/${i}
-        docker rmi gcr.azk8s.cn/google-containers/${i}
-    done
+```shell script
+for i in `kubeadm config images list 2>/dev/null |sed 's/k8s.gcr.io\///g'`; do
+    docker pull registry.aliyuncs.com/google-containers/${i}
+    docker tag registry.aliyuncs.com/google-containers/${i} k8s.gcr.io/${i}
+    docker rmi registry.aliyuncs.com/google-containers/${i}
+done
+```
     
 修改kubelet配置
 

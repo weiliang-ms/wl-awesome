@@ -18,7 +18,6 @@
 安装新版本工具包
 
     yum --disablerepo=\* --enablerepo=elrepo-kernel install -y kernel-lt-tools.x86_64
-   
     
 查看内核列表
 
@@ -30,7 +29,7 @@
 
 配置新版内核
 
-    grub2-set-default 0
+    sed -i "s/GRUB_DEFAULT=saved/GRUB_DEFAULT=0/g" /etc/default/grub
 
 重启
 
