@@ -63,6 +63,10 @@ ceph-csi注意替换
 
       kubeadm alpha certs check-expiration
       
+或
+
+    openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text |grep ' Not '
+      
 ![](images/outofdate.jpg)
 
 - 手动更新证书
