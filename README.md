@@ -26,6 +26,7 @@
     - [应用路由](container/k8s/ingress/ingress.md)
     - [sidecar设计模式](container/k8s/sidecar/sidecar.md)
     - [源码分析](https://github.com/weiliang-ms/kubernetes)
+    - [异常处理](container/k8s/issue/issue.md)
   - [云原生应用](https://www.cncf.io/services-for-projects/)
     - [argocd](/cicd/argo.md)
     - [kubevirt](cncf/kubevirt.md)
