@@ -1,31 +1,38 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [常用shell语句](#%E5%B8%B8%E7%94%A8shell%E8%AF%AD%E5%8F%A5)
-  - [查询文件内`tab`键](#%E6%9F%A5%E8%AF%A2%E6%96%87%E4%BB%B6%E5%86%85tab%E9%94%AE)
-  - [操作用户](#%E6%93%8D%E4%BD%9C%E7%94%A8%E6%88%B7)
-  - [vi用法(英文输入法下)](#vi%E7%94%A8%E6%B3%95%E8%8B%B1%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B)
-  - [防火墙开放端口](#%E9%98%B2%E7%81%AB%E5%A2%99%E5%BC%80%E6%94%BE%E7%AB%AF%E5%8F%A3)
-  - [关闭selinux](#%E5%85%B3%E9%97%ADselinux)
-  - [开启tcp端口监听（测试网络连通性）](#%E5%BC%80%E5%90%AFtcp%E7%AB%AF%E5%8F%A3%E7%9B%91%E5%90%AC%E6%B5%8B%E8%AF%95%E7%BD%91%E7%BB%9C%E8%BF%9E%E9%80%9A%E6%80%A7)
-  - [文件切割](#%E6%96%87%E4%BB%B6%E5%88%87%E5%89%B2)
-  - [磁盘占用异常排查](#%E7%A3%81%E7%9B%98%E5%8D%A0%E7%94%A8%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5)
-  - [查看tcp连接状态](#%E6%9F%A5%E7%9C%8Btcp%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81)
-  - [打包iso](#%E6%89%93%E5%8C%85iso)
-  - [创建大文件](#%E5%88%9B%E5%BB%BA%E5%A4%A7%E6%96%87%E4%BB%B6)
-- [磁盘监控脚本](#%E7%A3%81%E7%9B%98%E7%9B%91%E6%8E%A7%E8%84%9A%E6%9C%AC)
-- [ssl生成脚本](#ssl%E7%94%9F%E6%88%90%E8%84%9A%E6%9C%AC)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## 常用shell语句
 
 ### 查询文件内`tab`键
 
 适用于`yaml`校验(制表符)
 
-    grep  $'\t' 文件名
+```shell script
+grep  $'\t' 文件名
+```
+    
+### 查看shell运行时间
+
+> 用`date`相减
+
+```shell script
+startTime=`date +%Y%m%d-%H:%M:%S`
+startTime_s=`date +%s`
+
+endTime=`date +%Y%m%d-%H:%M:%S`
+endTime_s=`date +%s`
+
+sumTime=$[ $endTime_s - $startTime_s ]
+
+echo "$startTime ---> $endTime" "Total:$sumTime seconds"
+```
+
+> `time`
+
+```shell script
+time sh xxx.sh
+# 会返回3个时间数据
+# real 该命令的总耗时, 包括user和sys及io等待, 时间片切换等待等等
+# user 该命令在用户模式下的CPU耗时,也就是内核外的CPU耗时,不含IO等待这些时间
+# sys  该命令在内核中的CPU耗时,不含IO,时间片切换耗时.
+```
 
 ### 操作用户
 

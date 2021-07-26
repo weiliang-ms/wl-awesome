@@ -4,6 +4,8 @@
   - [容器基础](/container/foundation/foundation.md)
      - [cgroup](/container/foundation/cgroup.md)
      - [命名空间](/container/foundation/ns.md)
+  - [构建]()
+     - [skopeo](container/build/skopeo.md)
   - [docker](https://www.docker.com/)
     - [安装](/container/docker/install/install.md)
     - [镜像管理](/container/docker/image/image.md)
