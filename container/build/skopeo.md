@@ -156,6 +156,12 @@ done < $IMAGES_LIST_FILE
 sh download.sh
 ```
 
+> 登录
+
+```shell script
+skopeo login harbor.wl.com --tls-verify=false
+```
+
 > 执行导入
 
 ```shell script
