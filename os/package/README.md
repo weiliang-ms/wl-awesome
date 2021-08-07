@@ -93,19 +93,21 @@ CentOS 7
 
 > 6、新建yum repo文件
 
-	cat >> /etc/yum.repos.d/c7.repo <<EOF
-	[c7repo]
-	
-	name=c7repo
-	
-	baseurl=file:///yum
-	
-	enabled=1
-	
-	gpgcheck=0
-	
-	gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-	EOF
+```shell
+cat >> /etc/yum.repos.d/c7.repo <<EOF
+[c7repo]
+
+name=c7repo
+
+baseurl=file:///media
+
+enabled=1
+
+gpgcheck=0
+
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+EOF
+```
 
 > 7、测试
 

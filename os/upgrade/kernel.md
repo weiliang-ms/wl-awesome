@@ -3,8 +3,10 @@
 
 导入public key,添加扩展源
 
-    rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-    yum install https://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm -y
+```go
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+yum install https://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm -y
+```
     
 
 安装最新稳定版

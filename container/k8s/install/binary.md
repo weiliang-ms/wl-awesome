@@ -35,13 +35,13 @@ make -j4
 
 ```shell script
 tar -zxvf etcd-v3.3.9-linux-amd64.tar.gz
-cp etcd-v3.3.9-linux-amd64/{etcd,etcdctl}  /usr/bin/
+sudo cp etcd-v3.3.9-linux-amd64/{etcd,etcdctl}  /usr/bin/
 ```
 
 > 配置服务
 
 ```shell script
-cat > /usr/lib/systemd/system/etcd.service <<EOF
+sudo tee /usr/lib/systemd/system/etcd.service <<EOF
 [Unit]
 Description=Etcd Server
 After=network.target
@@ -66,8 +66,8 @@ mkdir /var/lib/etcd
 > 启动
 
 ```shell script
-systemctl daemon-reload
-systemctl enable etcd.service --now
+sudo systemctl daemon-reload
+sudo systemctl enable etcd.service --now
 ```
 
 > 查看集群状态

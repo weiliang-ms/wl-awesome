@@ -7,6 +7,16 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 普通用户访问`docker`
+
+
+```shell
+sudo groupadd docker     #添加docker用户组
+usermod -aG docker $USER
+newgrp docker     #更新用户组
+docker ps
+```
+
 ### 清理容器
 
 - 方式一：
