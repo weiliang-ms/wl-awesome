@@ -11,35 +11,51 @@ yum install https://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm -y
 
 安装最新稳定版
 
-    yum -y --enablerepo=elrepo-kernel install kernel-lt.x86_64 kernel-lt-devel.x86_64
+```shell
+yum -y --enablerepo=elrepo-kernel install kernel-lt.x86_64 kernel-lt-devel.x86_64
+```
     
 删除旧版本工具包
 
-    yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64 -y
+```shell
+yum remove kernel-tools-libs.x86_64 kernel-tools.x86_64 -y
+```
     
 安装新版本工具包
 
-    yum --disablerepo=\* --enablerepo=elrepo-kernel install -y kernel-lt-tools.x86_64
+```shell
+yum --disablerepo=\* --enablerepo=elrepo-kernel install -y kernel-lt-tools.x86_64
+```
     
 查看内核列表
 
-    awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+```shell
+awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+```
     
 重建内核
 
-    grub2-mkconfig -o /boot/grub2/grub.cfg
+```shell
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
 
 配置新版内核
 
-    sed -i "s/GRUB_DEFAULT=saved/GRUB_DEFAULT=0/g" /etc/default/grub
+```shell
+sed -i "s/GRUB_DEFAULT=saved/GRUB_DEFAULT=0/g" /etc/default/grub
+```
 
 重启
 
-    reboot
+```shell
+reboot
+```
     
 删除旧版本内核
 
-    oldkernel=`rpm -qa|grep kernel-[0-9]` && yum remove -y $oldkernel
+```shell
+oldkernel=`rpm -qa|grep kernel-[0-9]` && yum remove -y $oldkernel
+```
 
 ### el7在线升级主线版内核
 
