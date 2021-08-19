@@ -21,35 +21,43 @@
 
 关闭防火墙
 
-    systemctl stop firewalld && systemctl disable firewalld
+```shell
+systemctl stop firewalld && systemctl disable firewalld
+```
     iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat && iptables -P FORWARD ACCEPT
     
 关闭swap
 
-    swapoff -a
-    sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-    sysctl -p
+```shell
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sysctl -p
+```
     
 设置内核参数
 
-    modprobe br_netfilter
-    cat << EOF | tee /etc/sysctl.d/k8s.conf
-    net.bridge.bridge-nf-call-iptables=1
-    net.bridge.bridge-nf-call-ip6tables=1
-    EOF
-    
-    sysctl -p /etc/sysctl.d/k8s.conf
+```shell
+modprobe br_netfilter
+cat << EOF | tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables=1
+net.bridge.bridge-nf-call-ip6tables=1
+EOF
+
+sysctl -p /etc/sysctl.d/k8s.conf
+```
     
 修改Linux 资源配置文件,调高ulimit最大打开数和systemctl管理的服务文件最大打开数
 
-    echo "* soft nofile 655360" >> /etc/security/limits.conf
-    echo "* hard nofile 655360" >> /etc/security/limits.conf
-    echo "* soft nproc 655360" >> /etc/security/limits.conf
-    echo "* hard nproc 655360" >> /etc/security/limits.conf
-    echo "* soft memlock unlimited" >> /etc/security/limits.conf
-    echo "* hard memlock unlimited" >> /etc/security/limits.conf
-    echo "DefaultLimitNOFILE=1024000" >> /etc/systemd/system.conf
-    echo "DefaultLimitNPROC=1024000" >> /etc/systemd/system.conf
+```shell
+echo "* soft nofile 655360" >> /etc/security/limits.conf
+echo "* hard nofile 655360" >> /etc/security/limits.conf
+echo "* soft nproc 655360" >> /etc/security/limits.conf
+echo "* hard nproc 655360" >> /etc/security/limits.conf
+echo "* soft memlock unlimited" >> /etc/security/limits.conf
+echo "* hard memlock unlimited" >> /etc/security/limits.conf
+echo "DefaultLimitNOFILE=1024000" >> /etc/systemd/system.conf
+echo "DefaultLimitNPROC=1024000" >> /etc/systemd/system.conf
+```
     
 配置k8s源
 
@@ -512,7 +520,9 @@ node2 node3加入集群成为control-plane
     
 修改时区
 
-    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```shell
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
       
 修改kubelet配置
 
