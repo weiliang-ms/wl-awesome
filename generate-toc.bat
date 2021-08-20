@@ -1,1 +1,1 @@
-book sm
+book sm --disableTitleFormatting
