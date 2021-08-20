@@ -1,6 +1,4 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+{% raw %}
 
 - [容器安全](#%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8)
   - [概述](#%E6%A6%82%E8%BF%B0)
@@ -565,10 +563,10 @@ systemctl restart docker
 
 > 查看容器内进程用户
 
-```shell script
+```
 [root@localhost ~]# ps -p $(docker inspect --format='{{.State.Pid}}' $(docker ps |grep ccc|awk '{print $1}')) -o pid,user
-   PID USER
-  2535 100000
+ PID USER
+2535 100000
 ```
 
 ### 2.6 使用默认`cgroup`
@@ -2591,3 +2589,5 @@ if [ -f /etc/docker/daemon.json ];then chown root:root /etc/docker/daemon.json; 
 
 - Docker容器最佳安全实践白皮书（V1.0）
 - [Docker官方文档](https://docs.docker.com/)
+
+{% endraw %}
