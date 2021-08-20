@@ -4,3 +4,5 @@ npm-debug.log
 *.orig
 package-lock.json
 *.iml
+/_book/
+/node_modules/

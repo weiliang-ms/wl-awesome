@@ -1,0 +1,2383 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Mysql · 工作笔记</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="wei liang">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-code/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-back-to-top-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search-pro/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-tbfed-pagefooter/footer.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-chapter-fold/chapter-fold.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-prism/prism-solarizedlight.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-emphasize/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-advanced-emoji/emoji-website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-multipart/multipart.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-ancre-navigation/style/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-theme-comscore/test.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../nginx/" />
+    
+    
+    <link rel="prev" href="../hadoop/" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="输入并搜索" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" >
+            
+                <span>
+            
+                    
+                    1.Linux基础
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" >
+            
+                <span>
+            
+                    
+                    Trouble Shooting
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1.1" data-path="../../1.Linux基础/trouble shooting/cpu-high.html">
+            
+                <a href="../../1.Linux基础/trouble shooting/cpu-high.html">
+            
+                    
+                    Cpu High
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../../1.Linux基础/包管理器/">
+            
+                <a href="../../1.Linux基础/包管理器/">
+            
+                    
+                    包管理器
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" >
+            
+                <span>
+            
+                    
+                    存储
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.3.1" data-path="../../1.Linux基础/存储/ceph/">
+            
+                <a href="../../1.Linux基础/存储/ceph/">
+            
+                    
+                    Ceph
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.2" data-path="../../1.Linux基础/存储/raid/">
+            
+                <a href="../../1.Linux基础/存储/raid/">
+            
+                    
+                    Raid
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.3" data-path="../../1.Linux基础/存储/fastdfs.html">
+            
+                <a href="../../1.Linux基础/存储/fastdfs.html">
+            
+                    
+                    Fastdfs
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../../1.Linux基础/安全/">
+            
+                <a href="../../1.Linux基础/安全/">
+            
+                    
+                    安全
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../../1.Linux基础/常用shell/">
+            
+                <a href="../../1.Linux基础/常用shell/">
+            
+                    
+                    常用shell
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.6" data-path="../../1.Linux基础/系统设置/">
+            
+                <a href="../../1.Linux基础/系统设置/">
+            
+                    
+                    系统设置
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7" >
+            
+                <span>
+            
+                    
+                    网络
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.7.1" >
+            
+                <span>
+            
+                    
+                    Proxy
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.7.1.1" data-path="../../1.Linux基础/网络/proxy/windows.html">
+            
+                <a href="../../1.Linux基础/网络/proxy/windows.html">
+            
+                    
+                    Windows
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7.2" data-path="../../1.Linux基础/网络/bridge.html">
+            
+                <a href="../../1.Linux基础/网络/bridge.html">
+            
+                    
+                    Bridge
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7.3" data-path="../../1.Linux基础/网络/nat.html">
+            
+                <a href="../../1.Linux基础/网络/nat.html">
+            
+                    
+                    Nat
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7.4" data-path="../../1.Linux基础/网络/route.html">
+            
+                <a href="../../1.Linux基础/网络/route.html">
+            
+                    
+                    Route
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7.5" data-path="../../1.Linux基础/网络/wireshark.html">
+            
+                <a href="../../1.Linux基础/网络/wireshark.html">
+            
+                    
+                    Wireshark
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8" >
+            
+                <span>
+            
+                    
+                    虚拟化相关
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.8.1" data-path="../../1.Linux基础/虚拟化相关/iDRAC.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/iDRAC.html">
+            
+                    
+                    I DRAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8.2" data-path="../../1.Linux基础/虚拟化相关/kvm.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/kvm.html">
+            
+                    
+                    Kvm
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8.3" data-path="../../1.Linux基础/虚拟化相关/migration.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/migration.html">
+            
+                    
+                    Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8.4" data-path="../../1.Linux基础/虚拟化相关/openstack.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/openstack.html">
+            
+                    
+                    Openstack
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8.5" data-path="../../1.Linux基础/虚拟化相关/Ovirt.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/Ovirt.html">
+            
+                    
+                    Ovirt
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8.6" data-path="../../1.Linux基础/虚拟化相关/vsphere.html">
+            
+                <a href="../../1.Linux基础/虚拟化相关/vsphere.html">
+            
+                    
+                    Vsphere
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.9" data-path="../../1.Linux基础/软件更新/">
+            
+                <a href="../../1.Linux基础/软件更新/">
+            
+                    
+                    软件更新
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.9.1" data-path="../../1.Linux基础/软件更新/kernel/">
+            
+                <a href="../../1.Linux基础/软件更新/kernel/">
+            
+                    
+                    Kernel
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.10" data-path="../../1.Linux基础/驱动/">
+            
+                <a href="../../1.Linux基础/驱动/">
+            
+                    
+                    驱动
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.11" data-path="../../1.Linux基础/skill.html">
+            
+                <a href="../../1.Linux基础/skill.html">
+            
+                    
+                    Skill
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" >
+            
+                <span>
+            
+                    
+                    2.容器
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" >
+            
+                <span>
+            
+                    
+                    Docker
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1.1" data-path="../../2.容器/docker/cli/cli.html">
+            
+                <a href="../../2.容器/docker/cli/cli.html">
+            
+                    
+                    Cli
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.2" data-path="../../2.容器/docker/cmd/cmd.html">
+            
+                <a href="../../2.容器/docker/cmd/cmd.html">
+            
+                    
+                    Cmd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.3" data-path="../../2.容器/docker/image/image.html">
+            
+                <a href="../../2.容器/docker/image/image.html">
+            
+                    
+                    Image
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.4" data-path="../../2.容器/docker/install/install.html">
+            
+                <a href="../../2.容器/docker/install/install.html">
+            
+                    
+                    Install
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.5" data-path="../../2.容器/docker/network/network.html">
+            
+                <a href="../../2.容器/docker/network/network.html">
+            
+                    
+                    Network
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.6" data-path="../../2.容器/docker/security/security.html">
+            
+                <a href="../../2.容器/docker/security/security.html">
+            
+                    
+                    Security
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.7" data-path="../../2.容器/docker/storage/storage.html">
+            
+                <a href="../../2.容器/docker/storage/storage.html">
+            
+                    
+                    Storage
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.1.8" data-path="../../2.容器/docker/thin/thin.html">
+            
+                <a href="../../2.容器/docker/thin/thin.html">
+            
+                    
+                    Thin
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" >
+            
+                <span>
+            
+                    
+                    K 8 S
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.1" data-path="../../2.容器/k8s/addons/addons.html">
+            
+                <a href="../../2.容器/k8s/addons/addons.html">
+            
+                    
+                    Addons
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.2" >
+            
+                <span>
+            
+                    
+                    Application
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.2.1" data-path="../../2.容器/k8s/application/helm.html">
+            
+                <a href="../../2.容器/k8s/application/helm.html">
+            
+                    
+                    Helm
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.3" >
+            
+                <span>
+            
+                    
+                    Base
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.3.1" data-path="../../2.容器/k8s/base/intro.html">
+            
+                <a href="../../2.容器/k8s/base/intro.html">
+            
+                    
+                    Intro
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.4" data-path="../../2.容器/k8s/changelog/changelog.html">
+            
+                <a href="../../2.容器/k8s/changelog/changelog.html">
+            
+                    
+                    Changelog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.5" data-path="../../2.容器/k8s/cmd/cmd.html">
+            
+                <a href="../../2.容器/k8s/cmd/cmd.html">
+            
+                    
+                    Cmd
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.6" data-path="../../2.容器/k8s/faq/faq.html">
+            
+                <a href="../../2.容器/k8s/faq/faq.html">
+            
+                    
+                    Faq
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.7" data-path="../../2.容器/k8s/ingress/ingress.html">
+            
+                <a href="../../2.容器/k8s/ingress/ingress.html">
+            
+                    
+                    Ingress
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.8" data-path="../../2.容器/k8s/install/">
+            
+                <a href="../../2.容器/k8s/install/">
+            
+                    
+                    Install
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.8.1" data-path="../../2.容器/k8s/install/binary.html">
+            
+                <a href="../../2.容器/k8s/install/binary.html">
+            
+                    
+                    Binary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.8.2" data-path="../../2.容器/k8s/install/k8s-kubeadm.html">
+            
+                <a href="../../2.容器/k8s/install/k8s-kubeadm.html">
+            
+                    
+                    K 8 S Kubeadm
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.8.3" data-path="../../2.容器/k8s/install/k8s-rke.html">
+            
+                <a href="../../2.容器/k8s/install/k8s-rke.html">
+            
+                    
+                    K 8 S Rke
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.8.4" data-path="../../2.容器/k8s/install/kubeadm-offline.html">
+            
+                <a href="../../2.容器/k8s/install/kubeadm-offline.html">
+            
+                    
+                    Kubeadm Offline
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.9" data-path="../../2.容器/k8s/issue/issue.html">
+            
+                <a href="../../2.容器/k8s/issue/issue.html">
+            
+                    
+                    Issue
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.10" data-path="../../2.容器/k8s/monitor/">
+            
+                <a href="../../2.容器/k8s/monitor/">
+            
+                    
+                    Monitor
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.10.1" data-path="../../2.容器/k8s/monitor/weavescope.html">
+            
+                <a href="../../2.容器/k8s/monitor/weavescope.html">
+            
+                    
+                    Weavescope
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.11" data-path="../../2.容器/k8s/network/">
+            
+                <a href="../../2.容器/k8s/network/">
+            
+                    
+                    Network
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.11.1" data-path="../../2.容器/k8s/network/calico.html">
+            
+                <a href="../../2.容器/k8s/network/calico.html">
+            
+                    
+                    Calico
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.11.2" data-path="../../2.容器/k8s/network/dns.html">
+            
+                <a href="../../2.容器/k8s/network/dns.html">
+            
+                    
+                    Dns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.12" data-path="../../2.容器/k8s/quota/quota.html">
+            
+                <a href="../../2.容器/k8s/quota/quota.html">
+            
+                    
+                    Quota
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.13" data-path="../../2.容器/k8s/security/security.html">
+            
+                <a href="../../2.容器/k8s/security/security.html">
+            
+                    
+                    Security
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.14" data-path="../../2.容器/k8s/sidecar/sidecar.html">
+            
+                <a href="../../2.容器/k8s/sidecar/sidecar.html">
+            
+                    
+                    Sidecar
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.15" data-path="../../2.容器/k8s/storage/">
+            
+                <a href="../../2.容器/k8s/storage/">
+            
+                    
+                    Storage
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.15.1" data-path="../../2.容器/k8s/storage/OpenEBS.html">
+            
+                <a href="../../2.容器/k8s/storage/OpenEBS.html">
+            
+                    
+                    Open EBS
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.15.2" data-path="../../2.容器/k8s/storage/rook.html">
+            
+                <a href="../../2.容器/k8s/storage/rook.html">
+            
+                    
+                    Rook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.15.3" data-path="../../2.容器/k8s/storage/Velero.html">
+            
+                <a href="../../2.容器/k8s/storage/Velero.html">
+            
+                    
+                    Velero
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.16" >
+            
+                <span>
+            
+                    
+                    Workload
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.2.16.1" data-path="../../2.容器/k8s/workload/endpoint.html">
+            
+                <a href="../../2.容器/k8s/workload/endpoint.html">
+            
+                    
+                    Endpoint
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.16.2" data-path="../../2.容器/k8s/workload/job.html">
+            
+                <a href="../../2.容器/k8s/workload/job.html">
+            
+                    
+                    Job
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2.16.3" data-path="../../2.容器/k8s/workload/pod.html">
+            
+                <a href="../../2.容器/k8s/workload/pod.html">
+            
+                    
+                    Pod
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../../2.容器/kubesphere/">
+            
+                <a href="../../2.容器/kubesphere/">
+            
+                    
+                    Kubesphere
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" >
+            
+                <span>
+            
+                    
+                    容器原理
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.4.1" data-path="../../2.容器/容器原理/cgroup.html">
+            
+                <a href="../../2.容器/容器原理/cgroup.html">
+            
+                    
+                    Cgroup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.2" data-path="../../2.容器/容器原理/foundation.html">
+            
+                <a href="../../2.容器/容器原理/foundation.html">
+            
+                    
+                    Foundation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.3" data-path="../../2.容器/容器原理/ns-ipc.html">
+            
+                <a href="../../2.容器/容器原理/ns-ipc.html">
+            
+                    
+                    Ns Ipc
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.4" data-path="../../2.容器/容器原理/ns-mnt.html">
+            
+                <a href="../../2.容器/容器原理/ns-mnt.html">
+            
+                    
+                    Ns Mnt
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.5" data-path="../../2.容器/容器原理/ns-net.html">
+            
+                <a href="../../2.容器/容器原理/ns-net.html">
+            
+                    
+                    Ns Net
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.6" data-path="../../2.容器/容器原理/ns-user.html">
+            
+                <a href="../../2.容器/容器原理/ns-user.html">
+            
+                    
+                    Ns User
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.7" data-path="../../2.容器/容器原理/ns-uts.html">
+            
+                <a href="../../2.容器/容器原理/ns-uts.html">
+            
+                    
+                    Ns Uts
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4.8" data-path="../../2.容器/容器原理/ns.html">
+            
+                <a href="../../2.容器/容器原理/ns.html">
+            
+                    
+                    Ns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" >
+            
+                <span>
+            
+                    
+                    镜像构建
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.5.1" data-path="../../2.容器/镜像构建/buildah.html">
+            
+                <a href="../../2.容器/镜像构建/buildah.html">
+            
+                    
+                    Buildah
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5.2" data-path="../../2.容器/镜像构建/podman.html">
+            
+                <a href="../../2.容器/镜像构建/podman.html">
+            
+                    
+                    Podman
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5.3" data-path="../../2.容器/镜像构建/skopeo.html">
+            
+                <a href="../../2.容器/镜像构建/skopeo.html">
+            
+                    
+                    Skopeo
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    3.集成部署
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../ftp/">
+            
+                <a href="../ftp/">
+            
+                    
+                    Ftp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../git/">
+            
+                <a href="../git/">
+            
+                    
+                    Git
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../hadoop/">
+            
+                <a href="../hadoop/">
+            
+                    
+                    Hadoop
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Mysql
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../nginx/">
+            
+                <a href="../nginx/">
+            
+                    
+                    Nginx
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../nodejs/">
+            
+                <a href="../nodejs/">
+            
+                    
+                    Nodejs
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="../ntp/">
+            
+                <a href="../ntp/">
+            
+                    
+                    Ntp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="../openjdk/">
+            
+                <a href="../openjdk/">
+            
+                    
+                    Openjdk
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="../oracle/">
+            
+                <a href="../oracle/">
+            
+                    
+                    Oracle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.10" data-path="../pdns/">
+            
+                <a href="../pdns/">
+            
+                    
+                    Pdns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.11" data-path="../poweradmin/">
+            
+                <a href="../poweradmin/">
+            
+                    
+                    Poweradmin
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.12" data-path="../python/">
+            
+                <a href="../python/">
+            
+                    
+                    Python
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.13" data-path="../tomcat/">
+            
+                <a href="../tomcat/">
+            
+                    
+                    Tomcat
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.14" data-path="../trafodion/">
+            
+                <a href="../trafodion/">
+            
+                    
+                    Trafodion
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" >
+            
+                <span>
+            
+                    
+                    4.持续集成&交付
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../../4.持续集成&交付/argo/">
+            
+                <a href="../../4.持续集成&交付/argo/">
+            
+                    
+                    Argo
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../../4.持续集成&交付/jenkins/">
+            
+                <a href="../../4.持续集成&交付/jenkins/">
+            
+                    
+                    Jenkins
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" >
+            
+                <span>
+            
+                    
+                    5.cncf
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.6.1" data-path="../../5.cncf/cncf.html">
+            
+                <a href="../../5.cncf/cncf.html">
+            
+                    
+                    Cncf
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.2" data-path="../../5.cncf/kubevirt.html">
+            
+                <a href="../../5.cncf/kubevirt.html">
+            
+                    
+                    Kubevirt
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" >
+            
+                <span>
+            
+                    
+                    6.编程
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="../../6.编程/golang/">
+            
+                <a href="../../6.编程/golang/">
+            
+                    
+                    Golang
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="../../6.编程/letcode/letcode.html">
+            
+                <a href="../../6.编程/letcode/letcode.html">
+            
+                    
+                    Letcode
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../../7.FAQ/">
+            
+                <a href="../../7.FAQ/">
+            
+                    
+                    7.FAQ
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.8.1" data-path="../../7.FAQ/sre.html">
+            
+                <a href="../../7.FAQ/sre.html">
+            
+                    
+                    Sre
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../../vocabulary.html">
+            
+                <a href="../../vocabulary.html">
+            
+                    
+                    Vocabulary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Mysql</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <ul>
+<li><a href="#%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2">&#x96C6;&#x6210;&#x90E8;&#x7F72;</a><ul>
+<li><a href="#%E5%8D%95%E6%9C%BA%E9%9B%86%E6%88%90%E9%83%A8%E7%BD%B2">&#x5355;&#x673A;&#x96C6;&#x6210;&#x90E8;&#x7F72;</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%BB%E5%8A%A0slave%E8%8A%82%E7%82%B9">&#x6DFB;&#x52A0;slave&#x8282;&#x70B9;</a></li>
+<li><a href="#cli%E5%91%BD%E4%BB%A4">cli&#x547D;&#x4EE4;</a><ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5">&#x67E5;&#x770B;&#x8FDE;&#x63A5;</a></li>
+</ul>
+</li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96">&#x914D;&#x7F6E;&#x4F18;&#x5316;</a><ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E6%95%B0">&#x8FDE;&#x63A5;&#x6570;</a></li>
+<li><a href="#%E6%9A%82%E5%AD%98%E8%BF%9E%E6%8E%A5%E6%95%B0">&#x6682;&#x5B58;&#x8FDE;&#x63A5;&#x6570;</a></li>
+<li><a href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E5%8F%98%E9%87%8F">&#x7F13;&#x51B2;&#x533A;&#x53D8;&#x91CF;</a></li>
+<li><a href="#%E9%98%B2%E6%AD%A2%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3">&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;</a></li>
+<li><a href="#%E9%99%90%E5%88%B6%E6%95%B0%E6%8D%AE%E5%8C%85%E5%A4%A7%E5%B0%8F">&#x9650;&#x5236;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B">&#x4F7F;&#x7528;&#x6559;&#x7A0B;</a><ul>
+<li><a href="#%E6%85%A2%E6%9F%A5%E8%AF%A2">&#x6162;&#x67E5;&#x8BE2;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%8F%98%E9%87%8F">&#x67E5;&#x770B;&#x53D8;&#x91CF;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E9%94%81%E6%80%A7%E8%83%BD">&#x67E5;&#x770B;&#x9501;&#x6027;&#x80FD;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E6%95%B0">&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x6570;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%9B%9E%E6%BB%9A%E6%95%B0%E9%87%8F">&#x67E5;&#x770B;&#x56DE;&#x6EDA;&#x6570;&#x91CF;</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E8%BF%90%E8%A1%8C%E6%97%B6%E9%97%B4">&#x67E5;&#x8BE2;&#x8FD0;&#x884C;&#x65F6;&#x95F4;</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%E7%8A%B6%E6%80%81">&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x72B6;&#x6001;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF">&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x4FE1;&#x606F;</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E8%A1%A8%E4%BD%BF%E7%94%A8%E7%8A%B6%E6%80%81">&#x67E5;&#x8BE2;&#x8868;&#x4F7F;&#x7528;&#x72B6;&#x6001;</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%95%B0%E9%87%8F">&#x67E5;&#x770B;&#x589E;&#x5220;&#x6539;&#x6570;&#x91CF;</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81">&#x4FEE;&#x6539;&#x5BC6;&#x7801;</a></li>
+<li><a href="#binlog">binlog</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="&#x96C6;&#x6210;&#x90E8;&#x7F72;"><a name="&#x96C6;&#x6210;&#x90E8;&#x7F72;" class="anchor-navigation-ex-anchor" href="#&#x96C6;&#x6210;&#x90E8;&#x7F72;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x96C6;&#x6210;&#x90E8;&#x7F72;</h2>
+<p><a href="https://github.com/judasn/Linux-Tutorial/blob/master/markdown-file/Mysql-Install-And-Settings.md" target="_blank">&#x8F83;&#x5168;&#x7684;&#x6559;&#x7A0B;</a></p>
+<h3 id="&#x5355;&#x673A;&#x96C6;&#x6210;&#x90E8;&#x7F72;"><a name="&#x5355;&#x673A;&#x96C6;&#x6210;&#x90E8;&#x7F72;" class="anchor-navigation-ex-anchor" href="#&#x5355;&#x673A;&#x96C6;&#x6210;&#x90E8;&#x7F72;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x5355;&#x673A;&#x96C6;&#x6210;&#x90E8;&#x7F72;</h3>
+<p><code>&#x9002;&#x7528;&#x4E8E;CentOS Red Hat</code></p>
+<p><a href="http://dev.mysql.com/downloads/mysql/5.5.html#downloads" target="_blank">&#x5B98;&#x7F51; 5.5 &#x4E0B;&#x8F7D;</a></p>
+<p><a href="http://dev.mysql.com/downloads/mysql/5.6.html#downloads" target="_blank">&#x5B98;&#x7F51; 5.6 &#x4E0B;&#x8F7D;</a></p>
+<p><a href="http://dev.mysql.com/downloads/mysql/5.7.html#downloads" target="_blank">&#x5B98;&#x7F51; 5.7 &#x4E0B;&#x8F7D;</a></p>
+<blockquote>
+<p>&#x7248;&#x672C;&#x4FE1;&#x606F;</p>
+</blockquote>
+<pre class="language-"><code>5.7.27&#x793E;&#x533A;&#x7248;
+</code></pre><blockquote>
+<p>&#x914D;&#x7F6E;yum&#x6E90;</p>
+</blockquote>
+<pre class="language-"><code>&#x914D;&#x7F6E;&#x57FA;&#x7840;yum&#x6E90;&#x5373;&#x53EF;&#x65E0;&#x9700;epel&#x6E90;
+</code></pre><p>&#x914D;&#x7F6E;&#x963F;&#x91CC;&#x4E91;&#x6E90;&#xFF08;&#x4FDD;&#x8BC1;&#x7F51;&#x7EDC;&#x53EF;&#x8FBE;&#xFF09;</p>
+<p><a href="http://mirrors.aliyun.com/repo/Centos-5.repo" target="_blank">Centos-5.repo</a></p>
+<p><a href="http://mirrors.aliyun.com/repo/Centos-6.repo" target="_blank">Centos-6.repo</a></p>
+<p><a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank">Centos-7.repo</a></p>
+<blockquote>
+<p>&#x5B89;&#x88C5;&#x5378;&#x8F7D;&#x4F9D;&#x8D56;</p>
+</blockquote>
+<pre class="language-"><code class="lang-bash">yum <span class="token function">install</span> net-tools -y
+yum remove mysql* -y
+</code></pre>
+<p>centos7&#x9700;&#x8981;&#x5378;&#x8F7D;mariadb</p>
+<pre class="language-"><code class="lang-bash">yum remove -y mariadb-libs
+</code></pre>
+<blockquote>
+<p>&#x4E0A;&#x4F20;&#x5B89;&#x88C5;&#x5305;&#x81F3;/tmp&#x4E0B;&#xFF0C;&#x8FDB;&#x884C;&#x5B89;&#x88C5;</p>
+</blockquote>
+<pre class="language-"><code class="lang-bash"><span class="token builtin class-name">cd</span> /tmp
+<span class="token function">rpm</span> -ivh mysql-community-common-*.el7.x86_64.rpm
+<span class="token function">rpm</span> -ivh mysql-community-libs-*.el7.x86_64.rpm
+<span class="token function">rpm</span> -ivh mysql-community-client-*.el7.x86_64.rpm
+<span class="token function">rpm</span> -ivh mysql-community-server-*.el7.x86_64.rpm
+</code></pre>
+<blockquote>
+<p>&#x914D;&#x7F6E;</p>
+</blockquote>
+<pre class="language-"><code class="lang-bash"><span class="token builtin class-name">echo</span> <span class="token string">&quot;default-storage-engine=INNODB&quot;</span> <span class="token operator">&gt;&gt;</span>/etc/my.cnf
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;character-set-server=utf8&quot;</span>  <span class="token operator">&gt;&gt;</span>/etc/my.cnf
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;collation-server=utf8_general_ci&quot;</span>  <span class="token operator">&gt;&gt;</span>/etc/my.cnf
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;lower_case_table_names=1&quot;</span> <span class="token operator">&gt;&gt;</span>/etc/my.cnf
+</code></pre>
+<blockquote>
+<p>&#x542F;&#x52A8;</p>
+</blockquote>
+<p>centos7</p>
+<pre class="language-"><code class="lang-bash">systemctl daemon-reload
+systemctl <span class="token builtin class-name">enable</span> mysqld --now
+</code></pre>
+<p>centos6</p>
+<pre class="language-"><code class="lang-bash"><span class="token function">service</span> mysqld start
+<span class="token function">chkconfig</span> mysqld on
+</code></pre>
+<blockquote>
+<p>&#x4FEE;&#x6539;&#x9632;&#x706B;&#x5899;&#x3001;SElinux&#x7B56;&#x7565;</p>
+</blockquote>
+<pre class="language-"><code class="lang-bash">firewall-cmd --permanent --zone<span class="token operator">=</span>public --add-port<span class="token operator">=</span><span class="token number">3306</span>/tcp
+firewall-cmd --reload
+setenforce <span class="token number">0</span>
+</code></pre>
+<blockquote>
+<p>&#x4FEE;&#x6539;root&#x5BC6;&#x7801;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql">password<span class="token operator">=</span><span class="token punctuation">`</span>grep <span class="token string">&apos;temporary password&apos;</span> <span class="token operator">/</span>var<span class="token operator">/</span>log<span class="token operator">/</span>mysqld<span class="token punctuation">.</span>log<span class="token operator">|</span>awk <span class="token string">&apos;{print $NF}&apos;</span><span class="token operator">|</span>awk <span class="token string">&apos;END {print}&apos;</span><span class="token punctuation">`</span>
+mysql <span class="token operator">-</span>uroot <span class="token operator">-</span>p$password <span class="token comment">--connect-expired-password &lt;&lt;EOF</span>
+<span class="token keyword">set</span> <span class="token keyword">global</span> validate_password_policy<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">set</span> <span class="token keyword">global</span> validate_password_length<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">set</span> password<span class="token operator">=</span>passworD<span class="token punctuation">(</span><span class="token string">&quot;root&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+FLUSH <span class="token keyword">PRIVILEGES</span><span class="token punctuation">;</span>
+quit
+EOF
+</code></pre>
+<h2 id="&#x6DFB;&#x52A0;slave&#x8282;&#x70B9;"><a name="&#x6DFB;&#x52A0;slave&#x8282;&#x70B9;" class="anchor-navigation-ex-anchor" href="#&#x6DFB;&#x52A0;slave&#x8282;&#x70B9;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x6DFB;&#x52A0;slave&#x8282;&#x70B9;</h2>
+<p>1&#x3001;&#x786E;&#x8BA4;&#x4E3B;&#x8282;&#x70B9;&#x7248;&#x672C;</p>
+<p>2&#x3001;&#x4ECE;&#x8282;&#x70B9;&#x5B89;&#x88C5;&#x76F8;&#x540C;&#x7248;&#x672C;mysql</p>
+<p>3&#x3001;&#x66F4;&#x6362;&#x9ED8;&#x8BA4;&#x5B58;&#x50A8;&#x76EE;&#x5F55;&#xFF08;&#x53EF;&#x9009;&#xFF09;</p>
+<pre class="language-"><code class="lang-bash">systemctl stop mysqld.service
+<span class="token function">mkdir</span> -p /data/mysql
+<span class="token function">chown</span> -R mysql.mysql /data/mysql
+<span class="token function">cp</span> -a /var/lib/mysql/* /data/mysql/
+<span class="token function">sed</span> -i <span class="token string">&quot;s#/var/lib/mysql#/data/mysql#g&quot;</span> /etc/my.cnf
+<span class="token function">cat</span> <span class="token operator">&gt;&gt;</span> /etc/my.cnf <span class="token operator">&lt;&lt;</span> <span class="token string">EOF
+[client]
+port=3306
+socket=/data/mysql/mysql.sock
+EOF</span>
+systemctl start mysqld.service
+</code></pre>
+<p>4&#x3001;&#x521D;&#x59CB;&#x5316;&#x5BC6;&#x7801;</p>
+<pre class="language-"><code class="lang-bash"><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">grep</span> <span class="token string">&apos;temporary password&apos;</span> /var/log/mysqld.log<span class="token operator">|</span><span class="token function">awk</span> <span class="token string">&apos;{print $NF}&apos;</span><span class="token operator">|</span><span class="token function">awk</span> <span class="token string">&apos;END {print}&apos;</span><span class="token variable">`</span></span>
+    mysql -uroot -p<span class="token variable">$password</span> --connect-expired-password <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+    set global validate_password_policy=0;
+    set global validate_password_length=1;
+    set password=passworD(&quot;root&quot;);
+    FLUSH PRIVILEGES;
+    quit
+EOF</span>
+</code></pre>
+<p>5&#x3001;&#x8C03;&#x6574;&#x4E3B;&#x5E93;&#x53C2;&#x6570;</p>
+<p>&#x539F;&#x6709;&#x4E3B;&#x5E93;&#x914D;&#x7F6E;&#x53C2;&#x6570;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-"><code class="lang-bash">server-id <span class="token operator">=</span> <span class="token number">1</span>             <span class="token comment">#id&#x8981;&#x552F;&#x4E00;</span>
+log-bin <span class="token operator">=</span> mysql-bin         <span class="token comment">#&#x5F00;&#x542F;binlog&#x65E5;&#x5FD7;</span>
+auto-increment-increment <span class="token operator">=</span> <span class="token number">1</span>   <span class="token comment">#&#x5728;Ubuntu&#x7CFB;&#x7EDF;&#x4E2D;MySQL5.5&#x4EE5;&#x540E;&#x5DF2;&#x7ECF;&#x9ED8;&#x8BA4;&#x662F;1</span>
+auto-increment-offset <span class="token operator">=</span> <span class="token number">1</span> 
+slave-skip-errors <span class="token operator">=</span> all      <span class="token comment">#&#x8DF3;&#x8FC7;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x51FA;&#x73B0;&#x7684;&#x9519;&#x8BEF;</span>
+</code></pre>
+<p>&#x4E3B;&#x5E93;&#x521B;&#x5EFA;&#x540C;&#x6B65;&#x8D26;&#x53F7;</p>
+<pre class="language-"><code class="lang-bash">grant all on *.* to <span class="token string">&apos;sync&apos;</span>@<span class="token string">&apos;192.168.%.%&apos;</span> identified by <span class="token string">&apos;sync&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<p>6&#x3001;&#x4ECE;&#x5E93;&#x914D;&#x7F6E;MySQL</p>
+<pre class="language-"><code class="lang-bash">server-id <span class="token operator">=</span> <span class="token number">3</span>             <span class="token comment">#&#x8FD9;&#x4E2A;&#x8BBE;&#x7F6E;3</span>
+log-bin <span class="token operator">=</span> mysql-bin        <span class="token comment">#&#x5F00;&#x542F;binlog&#x65E5;&#x5FD7;</span>
+auto-increment-increment <span class="token operator">=</span> <span class="token number">1</span>   <span class="token comment">#&#x8FD9;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x5728;Ubuntu&#x7CFB;&#x7EDF;&#x4E2D;MySQL5.5&#x4EE5;&#x540E;&#x90FD;&#x5DF2;&#x7ECF;&#x9ED8;&#x8BA4;&#x662F;1</span>
+auto-increment-offset <span class="token operator">=</span> <span class="token number">1</span> 
+slave-skip-errors <span class="token operator">=</span> all      <span class="token comment">#&#x8DF3;&#x8FC7;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x51FA;&#x73B0;&#x7684;&#x9519;&#x8BEF;</span>
+</code></pre>
+<p>update mysql.user set authentication_string=password(&apos;1qaz#EDC&apos;) where user=&apos;root&apos;;</p>
+<p>mysqldump -h 192.168.174.30 -p3306 -uroot -p1qaz#EDC --all-databases &gt; /root/all_db.sql</p>
+<h2 id="cli&#x547D;&#x4EE4;"><a name="cli&#x547D;&#x4EE4;" class="anchor-navigation-ex-anchor" href="#cli&#x547D;&#x4EE4;"><i class="fa fa-link" aria-hidden="true"></i></a>cli&#x547D;&#x4EE4;</h2>
+<h3 id="&#x67E5;&#x770B;&#x8FDE;&#x63A5;"><a name="&#x67E5;&#x770B;&#x8FDE;&#x63A5;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x8FDE;&#x63A5;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x8FDE;&#x63A5;</h3>
+<blockquote>
+<p>&#x67E5;&#x770B;&#x5F53;&#x524D;&#x8FDE;&#x63A5;&#x6570;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">show</span> <span class="token keyword">status</span> <span class="token operator">like</span> <span class="token string">&apos;Threads%&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x67E5;&#x770B;&#x6700;&#x5927;&#x8FDE;&#x63A5;&#x6570;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">show</span> variables <span class="token operator">like</span> <span class="token string">&apos;%max_connections%&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x67E5;&#x770B;&#x663E;&#x793A;&#x8FDE;&#x63A5;&#x72B6;&#x6001;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">SHOW</span> <span class="token keyword">STATUS</span> <span class="token operator">LIKE</span> <span class="token string">&apos;%connect%&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x67E5;&#x770B;&#x5F53;&#x524D;&#x6240;&#x6709;&#x8FDE;&#x63A5;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">show</span> <span class="token keyword">full</span> processlist<span class="token punctuation">;</span>
+</code></pre>
+<h2 id="&#x914D;&#x7F6E;&#x4F18;&#x5316;"><a name="&#x914D;&#x7F6E;&#x4F18;&#x5316;" class="anchor-navigation-ex-anchor" href="#&#x914D;&#x7F6E;&#x4F18;&#x5316;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x914D;&#x7F6E;&#x4F18;&#x5316;</h2>
+<p><a href="https://www.jb51.net/article/144039.htm#_lab2_2_0" target="_blank">&#x53C2;&#x8003;&#x5730;&#x5740;</a></p>
+<h3 id="&#x8FDE;&#x63A5;&#x6570;"><a name="&#x8FDE;&#x63A5;&#x6570;" class="anchor-navigation-ex-anchor" href="#&#x8FDE;&#x63A5;&#x6570;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x8FDE;&#x63A5;&#x6570;</h3>
+<p>&#x67E5;&#x770B;&#x6700;&#x5927;&#x8FDE;&#x63A5;&#x6570;&#xFF0C;&#x9ED8;&#x8BA4;151</p>
+<pre class="language-"><code>show VARIABLES like &apos;max_connections&apos;;
+
++-----------------+-------+
+| Variable_name   | Value |
++-----------------+-------+
+| max_connections | 151   |
++-----------------+-------+
+1 row in set (0.00 sec)
+</code></pre><p>&#x67E5;&#x770B;&#x5F53;&#x524D;&#x8FDE;&#x63A5;&#x6570;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;max_used_connections&apos;;
+
+# &#x7406;&#x60F3;&#x503C;&#x7EA6;&#x7B49;&#x4E8E;85%
+max_used_connections/max_connections*100% 
+</code></pre><p>&#x914D;&#x7F6E;&#x65B9;&#x5F0F;</p>
+<pre class="language-"><code>#&#x5BA2;&#x6237;&#x7AEF;&#x547D;&#x4EE4;&#x884C;
+set GLOBAL max_connections=2000;
+set GLOBAL max_user_connections=1500;
+
+#&#x914D;&#x7F6E;&#x6587;&#x4EF6;
+[mysqld]
+max_connections = 1000
+max_user_connections=1500
+</code></pre><h3 id="&#x6682;&#x5B58;&#x8FDE;&#x63A5;&#x6570;"><a name="&#x6682;&#x5B58;&#x8FDE;&#x63A5;&#x6570;" class="anchor-navigation-ex-anchor" href="#&#x6682;&#x5B58;&#x8FDE;&#x63A5;&#x6570;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x6682;&#x5B58;&#x8FDE;&#x63A5;&#x6570;</h3>
+<p>MySQL&#x80FD;&#x591F;&#x6682;&#x5B58;&#x7684;&#x8FDE;&#x63A5;&#x6570;&#x91CF;&#x3002;</p>
+<p>&#x5F53;&#x4E3B;&#x8981;MySQL&#x7EBF;&#x7A0B;&#x5728;&#x4E00;&#x4E2A;&#x5F88;&#x77ED;&#x65F6;&#x95F4;&#x5185;&#x5F97;&#x5230;&#x975E;&#x5E38;&#x591A;&#x7684;&#x8FDE;&#x63A5;&#x8BF7;&#x6C42;&#xFF0C;&#x4ED6;&#x5C31;&#x4F1A;&#x8D77;&#x4F5C;&#x7528;&#x3002;
+&#x5982;&#x679C;MySQL&#x7684;&#x8FDE;&#x63A5;&#x6570;&#x636E;&#x8FBE;&#x5230;max_connections&#x65F6;&#xFF0C;&#x65B0;&#x7684;&#x8BF7;&#x6C42;&#x5C06;&#x4F1A;&#x88AB;&#x5B58;&#x5728;&#x5806;&#x6808;&#x4E2D;&#xFF0C;&#x4EE5;&#x7B49;&#x5F85;&#x67D0;&#x4E00;&#x8FDE;&#x63A5;&#x91CA;&#x653E;&#x8D44;&#x6E90;&#xFF0C;&#x8BE5;&#x5806;&#x6808;&#x6570;&#x91CF;&#x5373;back_log&#xFF0C;&#x5982;&#x679C;&#x7B49;&#x5F85;&#x8FDE;&#x63A5;&#x7684;&#x6570;&#x91CF;&#x8D85;&#x8FC7;back_log&#xFF0C;&#x5C06;&#x4E0D;&#x88AB;&#x63A5;&#x53D7;&#x8FDE;&#x63A5;&#x8D44;&#x6E90;&#x3002;</p>
+<pre class="language-"><code>show VARIABLES like &apos;back_log&apos;;
+
+mysql&gt; show VARIABLES like &apos;back_log&apos;;
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| back_log      | 80    |
++---------------+-------+
+1 row in set (0.00 sec)
+</code></pre><p>back_log&#x503C;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;TCP/IP&#x8FDE;&#x63A5;&#x7684;&#x4FA6;&#x542C;&#x961F;&#x5217;&#x7684;&#x5927;&#x5C0F;&#x3002;&#x82E5;&#x8D85;&#x8FC7;&#x5219;&#x65E0;&#x6548;&#xFF0C;&#x67E5;&#x770B;&#x5F53;&#x524D;&#x7CFB;&#x7EDF;&#x7684;TCP/IP&#x8FDE;&#x63A5;&#x7684;&#x4FA6;&#x542C;&#x961F;&#x5217;&#x7684;&#x5927;&#x5C0F;&#x547D;&#x4EE4;&#xFF08;&#x9ED8;&#x8BA4;128&#xFF09;</p>
+<pre class="language-"><code>cat /proc/sys/net/ipv4/tcp_max_syn_backlog
+</code></pre><p>&#x914D;&#x7F6E;&#x65B9;&#x5F0F;</p>
+<pre class="language-"><code>echo &quot;net.ipv4.tcp_max_syn_backlog = 8192&quot; &gt;&gt; /etc/sysctl.conf
+sysctl -p
+
+#&#x914D;&#x7F6E;&#x6587;&#x4EF6;
+[mysqld]
+back_log=128
+</code></pre><h3 id="&#x7F13;&#x51B2;&#x533A;&#x53D8;&#x91CF;"><a name="&#x7F13;&#x51B2;&#x533A;&#x53D8;&#x91CF;" class="anchor-navigation-ex-anchor" href="#&#x7F13;&#x51B2;&#x533A;&#x53D8;&#x91CF;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x7F13;&#x51B2;&#x533A;&#x53D8;&#x91CF;</h3>
+<p><strong>1&#x3001;key_buffer_size</strong></p>
+<p>&#x9ED8;&#x8BA4;&#x7684;&#x914D;&#x7F6E;&#x6570;&#x65F6;8388608&#xFF08;8M&#xFF09;&#xFF0C;&#x4E3B;&#x673A;&#x6709;4G&#x5185;&#x5B58;&#x53EF;&#x4EE5;&#x8C03;&#x4F18;&#x503C;&#x4E3A;268435456&#xFF08;256M&#xFF09;</p>
+<p>&#x901A;&#x8FC7;&#x68C0;&#x67E5;&#x72B6;&#x6001;&#x503C; key_read_requests&#x548C;key_reads&#xFF0C;&#x53EF;&#x4EE5;&#x77E5;&#x9053;key_buffer_size&#x8BBE;&#x7F6E;&#x662F;&#x5426;&#x5408;&#x7406;&#x3002;</p>
+<p>&#x6BD4;&#x4F8B;key_reads/key_read_requests&#x5E94;&#x8BE5;&#x5C3D;&#x53EF;&#x80FD;&#x7684;&#x4F4E;&#xFF0C;&#x81F3;&#x5C11;&#x662F;1&#xFF1A;100&#xFF0C;1&#xFF1A;1000&#x66F4;&#x597D;&#xFF08;&#x4E0A;&#x8FF0;&#x72B6;&#x6001;&#x503C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;show status like &#x2018;key_read%&apos;&#x83B7;&#x5F97;&#xFF09;</p>
+<pre class="language-"><code>mysql&gt; show variables like &apos;key_buffer_size&apos;;
++-----------------+---------+
+| Variable_name   | Value   |
++-----------------+---------+
+| key_buffer_size | 8388608 |
++-----------------+---------+
+1 row in set (0.00 sec)
+
+mysql&gt; show status like &apos;key_read%&apos;;
++-------------------+-------+
+| Variable_name     | Value |
++-------------------+-------+
+| Key_read_requests | 33    |
+| Key_reads         | 8     |
++-------------------+-------+
+2 rows in set (0.00 sec)
+
+set global key_buffer_size = 256*1024*1024;
+</code></pre><p><strong>2&#x3001;query_cache_size</strong></p>
+<p>&#x4F7F;&#x7528;&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#xFF0C;MySQL&#x5C06;&#x67E5;&#x8BE2;&#x7ED3;&#x679C;&#x5B58;&#x653E;&#x5728;&#x7F13;&#x51B2;&#x533A;&#x4E2D;&#xFF0C;&#x4ECA;&#x540E;&#x5BF9;&#x540C;&#x6837;&#x7684;select&#x8BED;&#x53E5;&#xFF08;&#x533A;&#x5206;&#x5927;&#x5C0F;&#x5199;&#xFF09;&#xFF0C;&#x5C06;&#x76F4;&#x63A5;&#x4ECE;&#x7F13;&#x51B2;&#x533A;&#x4E2D;&#x8BFB;&#x53D6;&#x7ED3;&#x679C;&#x3002;</p>
+<p>&#x4E00;&#x4E2A;SQL&#x67E5;&#x8BE2;&#x5982;&#x679C;&#x4EE5;select&#x5F00;&#x5934;&#xFF0C;&#x90A3;&#x4E48;MySQL&#x670D;&#x52A1;&#x5668;&#x5C06;&#x5C1D;&#x8BD5;&#x5BF9;&#x5176;&#x4F7F;&#x7528;&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x3002;</p>
+<p>&#x6CE8;&#xFF1A;&#x4E24;&#x4E2A;SQL&#x8BED;&#x53E5;&#xFF0C;&#x53EA;&#x8981;&#x76F8;&#x5DEE;&#x54EA;&#x6015;&#x662F;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#xFF08;&#x4F8B;&#x5982; &#x5927;&#x5C0F;&#x5199;&#x4E0D;&#x4E00;&#x6837;&#xFF1A;&#x591A;&#x4E00;&#x4E2A;&#x7A7A;&#x683C;&#x7B49;&#xFF09;&#xFF0C;&#x90A3;&#x4E48;&#x4E24;&#x4E2A;SQL&#x5C06;&#x4F7F;&#x7528;&#x4E0D;&#x540C;&#x7684;cache</p>
+<p> &#x901A;&#x8FC7; show status like &apos;Qcache%&apos;; &#x53EF;&#x4EE5;&#x77E5;&#x9053;query_cache_size&#x7684;&#x8BBE;&#x7F6E;&#x662F;&#x5426;&#x5408;&#x7406;</p>
+<pre class="language-"><code>mysql&gt; show status like &apos;Qcache%&apos;;
++-------------------------+---------+
+| Variable_name           | Value   |
++-------------------------+---------+
+| Qcache_free_blocks      | 1       |
+| Qcache_free_memory      | 1031832 |
+| Qcache_hits             | 0       |
+| Qcache_inserts          | 0       |
+| Qcache_lowmem_prunes    | 0       |
+| Qcache_not_cached       | 9       |
+| Qcache_queries_in_cache | 0       |
+| Qcache_total_blocks     | 1       |
++-------------------------+---------+
+8 rows in set (0.00 sec)
+</code></pre><p><strong>3&#x3001;sort_buffer_size</strong></p>
+<p>&#x6BCF;&#x4E2A;&#x9700;&#x8981;&#x6392;&#x5E8F;&#x7684;&#x7EBF;&#x7A0B;&#x5206;&#x914D;&#x8BE5;&#x5927;&#x5C0F;&#x7684;&#x4E00;&#x4E2A;&#x7F13;&#x51B2;&#x533A;&#x3002;&#x589E;&#x52A0;&#x8FD9;&#x503C;&#x52A0;&#x901F;ORDER BY &#x6216; GROUP BY&#x64CD;&#x4F5C;</p>
+<p><code>sort_buffer_size</code>&#x662F;&#x4E00;&#x4E2A;connection&#x7EA7;&#x7684;&#x53C2;&#x6570;&#xFF0C;&#x5728;&#x6BCF;&#x4E2A;connection&#xFF08;session&#xFF09;&#x7B2C;&#x4E00;&#x6B21;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x8FD9;&#x4E2A;buffer&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E00;&#x6B21;&#x6027;&#x5206;&#x914D;&#x8BBE;&#x7F6E;&#x7684;&#x5185;&#x5B58;&#x3002;</p>
+<p><code>sort_buffer_size</code>&#x5E76;&#x4E0D;&#x662F;&#x8D8A;&#x5927;&#x8D8A;&#x597D;&#xFF0C;&#x7531;&#x4E8E;&#x662F;connection&#x7EA7;&#x7684;&#x53C2;&#x6570;&#xFF0C;&#x8FC7;&#x5927;&#x7684;&#x8BBE;&#x7F6E;+&#x9AD8;&#x5E76;&#x53D1;&#x53EF;&#x80FD;&#x4F1A;&#x8017;&#x5C3D;&#x7CFB;&#x7EDF;&#x7684;&#x5185;&#x5B58;&#x8D44;&#x6E90;&#x3002;&#x4F8B;&#x5982;&#xFF1A;500&#x4E2A;&#x8FDE;&#x63A5;&#x5C06;&#x4F1A;&#x6D88;&#x8017;500*sort_buffer_size(2M)=1G</p>
+<p><strong>&#x9ED8;&#x8BA4;0.25M</strong></p>
+<pre class="language-"><code>set global sort_buffer_size = 1 *1024 * 1024;
+</code></pre><p><code>join_buffer_size</code></p>
+<p>&#x7528;&#x4E8E;&#x8868;&#x793A;&#x5173;&#x8054;&#x7F13;&#x5B58;&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x548C;sort_buffer_size&#x4E00;&#x6837;&#xFF0C;&#x8BE5;&#x53C2;&#x6570;&#x5BF9;&#x5E94;&#x7684;&#x5206;&#x914D;&#x5185;&#x5B58;&#x4E5F;&#x662F;&#x6BCF;&#x4E2A;&#x8FDE;&#x63A5;&#x72EC;&#x4EAB;&#x3002;</p>
+<pre class="language-"><code>set global join_buffer_size = 1 *1024 * 1024;
+</code></pre><p><strong>4&#x3001;thread_cache_size</strong></p>
+<p>&#x670D;&#x52A1;&#x5668;&#x7EBF;&#x7A0B;&#x7F13;&#x5B58;&#xFF0C;&#x8FD9;&#x4E2A;&#x503C;&#x8868;&#x793A;&#x53EF;&#x4EE5;&#x91CD;&#x65B0;&#x5229;&#x7528;&#x4FDD;&#x5B58;&#x5728;&#x7F13;&#x5B58;&#x4E2D;&#x7684;&#x7EBF;&#x7A0B;&#x6570;&#x91CF;&#xFF0C;
+&#x5F53;&#x65AD;&#x5F00;&#x8FDE;&#x63A5;&#x65F6;&#xFF0C;&#x90A3;&#x4E48;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x7EBF;&#x7A0B;&#x5C06;&#x88AB;&#x653E;&#x5230;&#x7F13;&#x5B58;&#x4E2D;&#x4EE5;&#x54CD;&#x5E94;&#x4E0B;&#x4E00;&#x4E2A;&#x5BA2;&#x6237;&#x800C;&#x4E0D;&#x662F;&#x9500;&#x6BC1;&#xFF08;&#x524D;&#x63D0;&#x65F6;&#x7F13;&#x5B58;&#x6570;&#x672A;&#x8FBE;&#x4E0A;&#x9650;&#xFF09;&#xFF0C;&#x5982;&#x679C;&#x7EBF;&#x7A0B;&#x91CD;&#x65B0;&#x88AB;&#x8BF7;&#x6C42;&#xFF0C;&#x90A3;&#x4E48;&#x8BF7;&#x6C42;&#x5C06;&#x4ECE;&#x7F13;&#x5B58;&#x4E2D;&#x8BFB;&#x53D6;&#xFF0C;&#x5982;&#x679C;&#x7F13;&#x5B58;&#x4E2D;&#x662F;&#x7A7A;&#x7684;&#x6216;&#x8005;&#x662F;&#x65B0;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#x5C06;&#x88AB;&#x91CD;&#x65B0;&#x8BF7;&#x6C42;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#x5C06;&#x88AB;&#x91CD;&#x65B0;&#x521B;&#x5EFA;&#xFF0C;&#x5982;&#x679C;&#x6709;&#x5F88;&#x591A;&#x65B0;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x589E;&#x52A0;&#x8FD9;&#x4E2A;&#x503C;&#x53EF;&#x4EE5;&#x6539;&#x5584;&#x7CFB;&#x7EDF;&#x6027;&#x80FD;&#xFF0C;&#x901A;&#x8FC7;&#x6BD4;&#x8F83;Connections&#x548C;Threads_created&#x72B6;&#x6001;&#x7684;&#x53D8;&#x91CF;&#xFF0C;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x8FD9;&#x4E2A;&#x53D8;&#x91CF;&#x7684;&#x4F5C;&#x7528;&#x3002;</p>
+<p><strong>&#x9ED8;&#x8BA4;9</strong></p>
+<pre class="language-"><code>set global thread_cache_size = 100;
+</code></pre><p>&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x5982;&#x4E0B;&#x51E0;&#x4E2A;MySQL&#x72B6;&#x6001;&#x503C;&#x6765;&#x9002;&#x5F53;&#x8C03;&#x6574;&#x7EBF;&#x7A0B;&#x6C60;&#x7684;&#x5927;&#x5C0F;</p>
+<pre class="language-"><code>Threads_cached    : &#x5F53;&#x524D;&#x7EBF;&#x7A0B;&#x6C60;&#x4E2D;&#x7F13;&#x5B58;&#x6709;&#x591A;&#x5C11;&#x7A7A;&#x95F2;&#x7EBF;&#x7A0B;
+Threads_connected : &#x5F53;&#x524D;&#x7684;&#x8FDE;&#x63A5;&#x6570; ( &#x4E5F;&#x5C31;&#x662F;&#x7EBF;&#x7A0B;&#x6570; )
+Threads_created   : &#x5DF2;&#x7ECF;&#x521B;&#x5EFA;&#x7684;&#x7EBF;&#x7A0B;&#x603B;&#x6570;
+Threads_running   : &#x5F53;&#x524D;&#x6FC0;&#x6D3B;&#x7684;&#x7EBF;&#x7A0B;&#x6570; ( Threads_connected &#x4E2D;&#x7684;&#x7EBF;&#x7A0B;&#x6709;&#x4E9B;&#x53EF;&#x80FD;&#x5904;&#x4E8E;&#x4F11;&#x7720;&#x72B6;&#x6001; )
+</code></pre><p>&#x53EF;&#x4EE5;&#x901A;&#x8FC7; <code>show global status like &apos;Threads_%&apos;;</code> &#x547D;&#x4EE4;&#x67E5;&#x770B;&#x4EE5;&#x4E0A;4&#x4E2A;&#x72B6;&#x6001;&#x503C;</p>
+<h3 id="&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;"><a name="&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;" class="anchor-navigation-ex-anchor" href="#&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;</h3>
+<p><code>max_connect_errors</code></p>
+<p>&#x662F;&#x4E00;&#x4E2A;MySQL&#x4E2D;&#x4E0E;&#x5B89;&#x5168;&#x6709;&#x5173;&#x7684;&#x8BA1;&#x6570;&#x5668;&#x503C;&#xFF0C;&#x4ED6;&#x8D1F;&#x8D23;&#x963B;&#x6B62;&#x8FC7;&#x591A;&#x5C1D;&#x8BD5;&#x5931;&#x8D25;&#x7684;&#x5BA2;&#x6237;&#x7AEF;&#x4EE5;&#x9632;&#x6B62;&#x66B4;&#x529B;&#x7834;&#x89E3;&#x5BC6;&#x7801;&#x7684;&#x60C5;&#x51B5;&#xFF0C;
+&#x5F53;&#x8D85;&#x8FC7;&#x6307;&#x5B9A;&#x6B21;&#x6570;&#xFF0C;MySQL&#x670D;&#x52A1;&#x5668;&#x5C06;&#x7981;&#x6B62;host&#x7684;&#x8FDE;&#x63A5;&#x8BF7;&#x6C42;&#xFF0C;&#x76F4;&#x5230;mysql&#x670D;&#x52A1;&#x5668;&#x91CD;&#x542F;&#x6216;&#x901A;&#x8FC7;flush hosts&#x547D;&#x4EE4;&#x6E05;&#x7A7A;&#x6B64;host&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#x3002;</p>
+<pre class="language-"><code>set global max_connect_errors = 20;
+</code></pre><h3 id="&#x9650;&#x5236;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;"><a name="&#x9650;&#x5236;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;" class="anchor-navigation-ex-anchor" href="#&#x9650;&#x5236;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x9650;&#x5236;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;</h3>
+<p>&#x9650;&#x5236;server&#x63A5;&#x53D7;&#x7684;&#x6570;&#x636E;&#x5305;&#x5927;&#x5C0F;&#xFF0C;&#x9ED8;&#x8BA4;4M&#x3002;</p>
+<pre class="language-"><code>mysql&gt; show VARIABLES like &apos;max_allowed_packet&apos;;
++--------------------+---------+
+| Variable_name      | Value   |
++--------------------+---------+
+| max_allowed_packet | 4194304 |
++--------------------+---------+
+1 row in set (0.00 sec)
+
+set global max_allowed_packet = 32*1024*1024;
+</code></pre><h2 id="&#x4F7F;&#x7528;&#x6559;&#x7A0B;"><a name="&#x4F7F;&#x7528;&#x6559;&#x7A0B;" class="anchor-navigation-ex-anchor" href="#&#x4F7F;&#x7528;&#x6559;&#x7A0B;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x4F7F;&#x7528;&#x6559;&#x7A0B;</h2>
+<p><a href="http://www.tutorialspoint.com/mysql/" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;1</a></p>
+<p><a href="http://www.mysqltutorial.org/" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;2</a></p>
+<p><a href="http://zetcode.com/databases/mysqltutorial/" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;3</a></p>
+<p><a href="http://www.runoob.com/mysql/mysql-connection.html" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;4</a></p>
+<p><a href="http://www.w3school.com.cn/sql/" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;5</a></p>
+<p><a href="https://wizardforcel.gitbooks.io/w3school-sql/content/part7.html" target="_blank">&#x4F7F;&#x7528;&#x6559;&#x7A0B;6</a></p>
+<h3 id="&#x6162;&#x67E5;&#x8BE2;"><a name="&#x6162;&#x67E5;&#x8BE2;" class="anchor-navigation-ex-anchor" href="#&#x6162;&#x67E5;&#x8BE2;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x6162;&#x67E5;&#x8BE2;</h3>
+<p>&#x67E5;&#x770B;<code>&#x67E5;&#x8BE2;&#x6162;sql</code>&#x914D;&#x7F6E;</p>
+<pre class="language-"><code>show variables like &apos;slow%&apos;;
+</code></pre><p>&#x5F00;&#x542F;&#x6162;sql</p>
+<pre class="language-"><code>set global slow_query_log=&apos;ON&apos;
+</code></pre><p>&#x67E5;&#x8BE2;&#x6162; SQL &#x79D2;&#x6570;&#x503C;</p>
+<pre class="language-"><code>show variables like &apos;long%&apos;;
+</code></pre><h3 id="&#x67E5;&#x770B;&#x53D8;&#x91CF;"><a name="&#x67E5;&#x770B;&#x53D8;&#x91CF;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x53D8;&#x91CF;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x53D8;&#x91CF;</h3>
+<pre class="language-"><code>#&#x8BE5;&#x8BED;&#x53E5;&#x8F93;&#x51FA;&#x8F83;&#x591A;
+SHOW VARIABLES;
+
+SHOW VARIABLES like &apos;version&apos;;
+</code></pre><h3 id="&#x67E5;&#x770B;&#x9501;&#x6027;&#x80FD;"><a name="&#x67E5;&#x770B;&#x9501;&#x6027;&#x80FD;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x9501;&#x6027;&#x80FD;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x9501;&#x6027;&#x80FD;</h3>
+<p>&#x9501;&#x6027;&#x80FD;&#x72B6;&#x6001;&#xFF1A;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;innodb_row_lock_%&apos;;
+
+mysql&gt; SHOW STATUS LIKE &apos;innodb_row_lock_%&apos;;
++-------------------------------+--------+
+| Variable_name                 | Value  |
++-------------------------------+--------+
+| Innodb_row_lock_current_waits | 0      |
+| Innodb_row_lock_time          | 497180 |
+| Innodb_row_lock_time_avg      | 4075   |
+| Innodb_row_lock_time_max      | 51006  |
+| Innodb_row_lock_waits         | 122    |
++-------------------------------+--------+
+5 rows in set (0.00 sec)
+</code></pre><p><code>Innodb_row_lock_current_waits</code>&#xFF1A;&#x5F53;&#x524D;&#x7B49;&#x5F85;&#x9501;&#x7684;&#x6570;&#x91CF;</p>
+<p><code>Innodb_row_lock_time</code>&#xFF1A;&#x7CFB;&#x7EDF;&#x542F;&#x52A8;&#x5230;&#x73B0;&#x5728;&#x3001;&#x9501;&#x5B9A;&#x7684;&#x603B;&#x65F6;&#x95F4;&#x957F;&#x5EA6;</p>
+<p><code>Innodb_row_lock_time_avg</code>&#xFF1A;&#x6BCF;&#x6B21;&#x5E73;&#x5747;&#x9501;&#x5B9A;&#x7684;&#x65F6;&#x95F4;</p>
+<p><code>Innodb_row_lock_time_max</code>&#xFF1A;&#x6700;&#x957F;&#x4E00;&#x6B21;&#x9501;&#x5B9A;&#x65F6;&#x95F4;</p>
+<p><code>Innodb_row_lock_waits</code>&#xFF1A;&#x7CFB;&#x7EDF;&#x542F;&#x52A8;&#x5230;&#x73B0;&#x5728;&#x3001;&#x603B;&#x5171;&#x9501;&#x5B9A;&#x6B21;&#x6570;</p>
+<h3 id="&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x6570;"><a name="&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x6570;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x6570;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x6570;</h3>
+<pre class="language-"><code>mysql&gt; SHOW STATUS LIKE &apos;max_used_connections&apos;;
++----------------------+-------+
+| Variable_name        | Value |
++----------------------+-------+
+| Max_used_connections | 86    |
++----------------------+-------+
+1 row in set (0.02 sec)
+
+mysql&gt;
+</code></pre><h3 id="&#x67E5;&#x770B;&#x56DE;&#x6EDA;&#x6570;&#x91CF;"><a name="&#x67E5;&#x770B;&#x56DE;&#x6EDA;&#x6570;&#x91CF;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x56DE;&#x6EDA;&#x6570;&#x91CF;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x56DE;&#x6EDA;&#x6570;&#x91CF;</h3>
+<p>&#x5982;&#x679C; rollback &#x8FC7;&#x591A;&#xFF0C;&#x8BF4;&#x660E;&#x7A0B;&#x5E8F;&#x80AF;&#x5B9A;&#x54EA;&#x91CC;&#x5B58;&#x5728;&#x95EE;&#x9898;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;%Com_rollback%&apos;;
+</code></pre><h3 id="&#x67E5;&#x8BE2;&#x8FD0;&#x884C;&#x65F6;&#x95F4;"><a name="&#x67E5;&#x8BE2;&#x8FD0;&#x884C;&#x65F6;&#x95F4;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x8BE2;&#x8FD0;&#x884C;&#x65F6;&#x95F4;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x8BE2;&#x8FD0;&#x884C;&#x65F6;&#x95F4;</h3>
+<p>&#x663E;&#x793A;MySQL&#x670D;&#x52A1;&#x542F;&#x52A8;&#x8FD0;&#x884C;&#x4E86;&#x591A;&#x5C11;&#x65F6;&#x95F4;&#xFF0C;&#x5982;&#x679C;MySQL&#x670D;&#x52A1;&#x91CD;&#x542F;&#xFF0C;&#x8BE5;&#x65F6;&#x95F4;&#x91CD;&#x65B0;&#x8BA1;&#x7B97;&#xFF0C;&#x5355;&#x4F4D;&#x79D2;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;uptime&apos;;
+</code></pre><h3 id="&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x72B6;&#x6001;"><a name="&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x72B6;&#x6001;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x72B6;&#x6001;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x72B6;&#x6001;</h3>
+<p>&#x663E;&#x793A;&#x67E5;&#x8BE2;&#x7F13;&#x5B58;&#x7684;&#x72B6;&#x6001;&#x60C5;&#x51B5;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;qcache%&apos;;
+</code></pre><h3 id="&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x4FE1;&#x606F;"><a name="&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x4FE1;&#x606F;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x4FE1;&#x606F;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x8FDE;&#x63A5;&#x4FE1;&#x606F;</h3>
+<p><a href="http://www.ibloger.net/article/2519.html" target="_blank">&#x4F8B;&#x5B50;&#x51FA;&#x5904;</a></p>
+<pre class="language-"><code>SHOW FULL PROCESSLIST;
+
+#&#x8F93;&#x51FA;&#x5982;&#x4E0B;
+mysql&gt; show processlist;
++----+------+----------------------+---------+---------+------+-------+------------------+
+| Id | User | Host                 | db      | Command | Time | State | Info             |
++----+------+----------------------+---------+---------+------+-------+------------------+
+|  1 | root | 192.168.20.160:53417 | firefly | Sleep   |   50 |       | NULL             |
+|  2 | root | localhost            | NULL    | Query   |    0 | init  | show processlist |
++----+------+----------------------+---------+---------+------+-------+------------------+
+2 rows in set (0.00 sec)
+
+mysql&gt; show processlist;
++----+------+----------------------+---------+---------+------+--------------+---------------------+
+| Id | User | Host                 | db      | Command | Time | State        | Info                                                                                                 |
++----+------+----------------------+---------+---------+------+--------------+---------------------+
+|  1 | root | 192.168.20.160:53417 | firefly | Query   |  125 | Sending data | SELECT
+    o.order_id,
+    creator_id,
+    &apos;&apos;,
+    city_name,
+    order_address,
+    city_id,
+    order_type_description, |
+|  2 | root | localhost            | NULL    | Query   |    0 | init         | show processlist                                                                                     |
++----+------+----------------------+---------+---------+------+--------------+-------------------+
+2 rows in set (0.00 sec)
+</code></pre><p><code>id</code>&#xFF1A;&#x6807;&#x8BC6;</p>
+<p><code>user</code>&#xFF1A;&#x5F53;&#x524D;&#x7528;&#x6237;&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x662F;root&#xFF0C;&#x8FD9;&#x4E2A;&#x547D;&#x4EE4;&#x5C31;&#x53EA;&#x663E;&#x793A;&#x4F60;&#x6743;&#x9650;&#x8303;&#x56F4;&#x5185;&#x7684;sql&#x8BED;&#x53E5;</p>
+<p><code>host</code>&#xFF1A;&#x663E;&#x793A;&#x6267;&#x884C;sql&#x8BED;&#x53E5;&#x7684;ip&#x5730;&#x5740;&#x548C;&#x7AEF;&#x53E3;&#x53F7;&#xFF0C;&#x8FFD;&#x8E2A;&#x51FA;&#x95EE;&#x9898;&#x8BED;&#x53E5;&#x7684;&#x7528;&#x6237;</p>
+<p><code>db</code>&#xFF1A;&#x663E;&#x793A;&#x8FD9;&#x4E2A;&#x8FDB;&#x7A0B;&#x76EE;&#x524D;&#x8FDE;&#x63A5;&#x7684;&#x662F;&#x54EA;&#x4E2A;&#x6570;&#x636E;&#x5E93;</p>
+<p><code>command</code>&#xFF1A;&#x663E;&#x793A;&#x5F53;&#x524D;&#x8FDE;&#x63A5;&#x7684;&#x6267;&#x884C;&#x7684;&#x547D;&#x4EE4;&#xFF0C;&#x4E00;&#x822C;&#x5C31;&#x662F;&#x4F11;&#x7720;&#xFF08;sleep&#xFF09;&#xFF0C;&#x67E5;&#x8BE2;&#xFF08;query&#xFF09;&#xFF0C;&#x8FDE;&#x63A5;&#xFF08;connect&#xFF09;</p>
+<p><code>time</code>&#xFF1A;&#x72B6;&#x6001;&#x6301;&#x7EED;&#x7684;&#x65F6;&#x95F4;&#xFF0C;&#x5355;&#x4F4D;&#x662F;&#x79D2;&#x3002;</p>
+<p><code>state</code>&#xFF0C;&#x4F7F;&#x7528;&#x5F53;&#x524D;&#x8FDE;&#x63A5;&#x7684;sql&#x8BED;&#x53E5;&#x7684;&#x72B6;&#x6001;&#xFF0C;&#x5F88;&#x91CD;&#x8981;&#x7684;&#x5217;&#x3002;</p>
+<p><strong>&#x6CE8;&#x610F;&#xFF0C;state&#x53EA;&#x662F;&#x8BED;&#x53E5;&#x6267;&#x884C;&#x4E2D;&#x7684;&#x67D0;&#x4E00;&#x4E2A;&#x72B6;&#x6001;&#xFF0C;&#x4E00;&#x4E2A;sql&#x8BED;&#x53E5;&#xFF0C;&#x5DF2;&#x67E5;&#x8BE2;&#x4E3A;&#x4F8B;&#xFF0C;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x7ECF;&#x8FC7;copying to tmp table&#xFF0C;Sorting result&#xFF0C;Sending data&#x7B49;&#x72B6;&#x6001;&#x624D;&#x53EF;&#x4EE5;&#x5B8C;&#x6210;</strong></p>
+<p><code>info</code>&#xFF1A;&#x663E;&#x793A;&#x6267;&#x884C;&#x7684;sql&#x8BED;&#x53E5;&#xFF0C;&#x56E0;&#x4E3A;&#x957F;&#x5EA6;&#x6709;&#x9650;&#xFF0C;&#x6240;&#x4EE5;&#x957F;&#x7684;sql&#x8BED;&#x53E5;&#x5C31;&#x663E;&#x793A;&#x4E0D;&#x5168;&#xFF0C;&#x4F46;&#x662F;&#xFF0C;&#x662F;&#x4E00;&#x4E2A;&#x5224;&#x65AD;&#x95EE;&#x9898;&#x8BED;&#x53E5;&#x7684;&#x91CD;&#x8981;&#x4F9D;&#x636E;&#x3002;</p>
+<p><strong>state&#x5217;</strong></p>
+<p>&#x8FD9;&#x4E2A;&#x547D;&#x4EE4;&#x4E2D;&#x6700;&#x5173;&#x952E;&#x7684;&#x5C31;&#x662F;state&#x5217;&#xFF0C;mysql&#x5217;&#x51FA;&#x7684;&#x72B6;&#x6001;&#x4E3B;&#x8981;&#x6709;&#x4EE5;&#x4E0B;&#x51E0;&#x79CD;&#xFF0C;&#x6240;&#x6709;&#x72B6;&#x6001;&#x53C2;&#x8003;&#x4E0B;&#x9762;&#x5B98;&#x65B9;&#x624B;&#x518C;&#xFF1A;</p>
+<p><code>Checking table</code></p>
+<p>&#x6B63;&#x5728;&#x68C0;&#x67E5;&#x6570;&#x636E;&#x8868;&#xFF08;&#x8FD9;&#x662F;&#x81EA;&#x52A8;&#x7684;&#xFF09;&#x3002;</p>
+<p><code>Closing tables</code></p>
+<p>&#x6B63;&#x5728;&#x5C06;&#x8868;&#x4E2D;&#x4FEE;&#x6539;&#x7684;&#x6570;&#x636E;&#x5237;&#x65B0;&#x5230;&#x78C1;&#x76D8;&#x4E2D;&#xFF0C;&#x540C;&#x65F6;&#x6B63;&#x5728;&#x5173;&#x95ED;&#x5DF2;&#x7ECF;&#x7528;&#x5B8C;&#x7684;&#x8868;&#x3002;&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x5F88;&#x5FEB;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x662F;&#x8FD9;&#x6837;&#x7684;&#x8BDD;&#xFF0C;&#x5C31;&#x5E94;&#x8BE5;&#x786E;&#x8BA4;&#x78C1;&#x76D8;&#x7A7A;&#x95F4;&#x662F;&#x5426;&#x5DF2;&#x7ECF;&#x6EE1;&#x4E86;&#x6216;&#x8005;&#x78C1;&#x76D8;&#x662F;&#x5426;&#x6B63;&#x5904;&#x4E8E;&#x91CD;&#x8D1F;&#x4E2D;&#x3002;</p>
+<p><code>Connect Out</code></p>
+<p>&#x590D;&#x5236;&#x4ECE;&#x670D;&#x52A1;&#x5668;&#x6B63;&#x5728;&#x8FDE;&#x63A5;&#x4E3B;&#x670D;&#x52A1;&#x5668;&#x3002;</p>
+<p><code>Copying to tmp table on disk</code></p>
+<p>&#x7531;&#x4E8E;&#x4E34;&#x65F6;&#x7ED3;&#x679C;&#x96C6;&#x5927;&#x4E8E;tmp_table_size&#xFF0C;&#x6B63;&#x5728;&#x5C06;&#x4E34;&#x65F6;&#x8868;&#x4ECE;&#x5185;&#x5B58;&#x5B58;&#x50A8;&#x8F6C;&#x4E3A;&#x78C1;&#x76D8;&#x5B58;&#x50A8;&#x4EE5;&#x6B64;&#x8282;&#x7701;&#x5185;&#x5B58;&#x3002;</p>
+<p><code>Creating tmp table</code></p>
+<p>&#x6B63;&#x5728;&#x521B;&#x5EFA;&#x4E34;&#x65F6;&#x8868;&#x4EE5;&#x5B58;&#x653E;&#x90E8;&#x5206;&#x67E5;&#x8BE2;&#x7ED3;&#x679C;&#x3002;</p>
+<p><code>deleting from main table</code></p>
+<p>&#x670D;&#x52A1;&#x5668;&#x6B63;&#x5728;&#x6267;&#x884C;&#x591A;&#x8868;&#x5220;&#x9664;&#x4E2D;&#x7684;&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF0C;&#x521A;&#x5220;&#x9664;&#x7B2C;&#x4E00;&#x4E2A;&#x8868;&#x3002;</p>
+<p><code>deleting from reference tables</code></p>
+<p>&#x670D;&#x52A1;&#x5668;&#x6B63;&#x5728;&#x6267;&#x884C;&#x591A;&#x8868;&#x5220;&#x9664;&#x4E2D;&#x7684;&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF0C;&#x6B63;&#x5728;&#x5220;&#x9664;&#x5176;&#x4ED6;&#x8868;&#x7684;&#x8BB0;&#x5F55;&#x3002;</p>
+<p><code>Flushing tables</code></p>
+<p>&#x6B63;&#x5728;&#x6267;&#x884C;FLUSH TABLES&#xFF0C;&#x7B49;&#x5F85;&#x5176;&#x4ED6;&#x7EBF;&#x7A0B;&#x5173;&#x95ED;&#x6570;&#x636E;&#x8868;&#x3002;</p>
+<p><code>Killed</code></p>
+<p>&#x53D1;&#x9001;&#x4E86;&#x4E00;&#x4E2A;kill&#x8BF7;&#x6C42;&#x7ED9;&#x67D0;&#x7EBF;&#x7A0B;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#x5C06;&#x4F1A;&#x68C0;&#x67E5;kill&#x6807;&#x5FD7;&#x4F4D;&#xFF0C;&#x540C;&#x65F6;&#x4F1A;&#x653E;&#x5F03;&#x4E0B;&#x4E00;&#x4E2A;kill&#x8BF7;&#x6C42;&#x3002;MySQL&#x4F1A;&#x5728;&#x6BCF;&#x6B21;&#x7684;&#x4E3B;&#x5FAA;&#x73AF;&#x4E2D;&#x68C0;&#x67E5;kill&#x6807;&#x5FD7;&#x4F4D;&#xFF0C;&#x4E0D;&#x8FC7;&#x6709;&#x4E9B;&#x60C5;&#x51B5;&#x4E0B;&#x8BE5;&#x7EBF;&#x7A0B;&#x53EF;&#x80FD;&#x4F1A;&#x8FC7;&#x4E00;&#x5C0F;&#x6BB5;&#x624D;&#x80FD;&#x6B7B;&#x6389;&#x3002;&#x5982;&#x679C;&#x8BE5;&#x7EBF;&#x7A0B;&#x7A0B;&#x88AB;&#x5176;&#x4ED6;&#x7EBF;&#x7A0B;&#x9501;&#x4F4F;&#x4E86;&#xFF0C;&#x90A3;&#x4E48;kill&#x8BF7;&#x6C42;&#x4F1A;&#x5728;&#x9501;&#x91CA;&#x653E;&#x65F6;&#x9A6C;&#x4E0A;&#x751F;&#x6548;&#x3002;</p>
+<p><code>Locked</code></p>
+<p>&#x88AB;&#x5176;&#x4ED6;&#x67E5;&#x8BE2;&#x9501;&#x4F4F;&#x4E86;&#x3002;</p>
+<p><code>Sending data</code></p>
+<p>&#x6B63;&#x5728;&#x5904;&#x7406;Select&#x67E5;&#x8BE2;&#x7684;&#x8BB0;&#x5F55;&#xFF0C;&#x540C;&#x65F6;&#x6B63;&#x5728;&#x628A;&#x7ED3;&#x679C;&#x53D1;&#x9001;&#x7ED9;&#x5BA2;&#x6237;&#x7AEF;&#x3002;</p>
+<p><code>Sorting for group</code></p>
+<p>&#x6B63;&#x5728;&#x4E3A;GROUP BY&#x505A;&#x6392;&#x5E8F;&#x3002;</p>
+<p><code>Sorting for order</code></p>
+<p>&#x6B63;&#x5728;&#x4E3A;ORDER BY&#x505A;&#x6392;&#x5E8F;&#x3002;</p>
+<p><code>Opening tables</code></p>
+<p>&#x8FD9;&#x4E2A;&#x8FC7;&#x7A0B;&#x5E94;&#x8BE5;&#x4F1A;&#x5F88;&#x5FEB;&#xFF0C;&#x9664;&#x975E;&#x53D7;&#x5230;&#x5176;&#x4ED6;&#x56E0;&#x7D20;&#x7684;&#x5E72;&#x6270;&#x3002;&#x4F8B;&#x5982;&#xFF0C;&#x5728;&#x6267;Alter TABLE&#x6216;LOCK TABLE&#x8BED;&#x53E5;&#x884C;&#x5B8C;&#x4EE5;&#x524D;&#xFF0C;&#x6570;&#x636E;&#x8868;&#x65E0;&#x6CD5;&#x88AB;&#x5176;&#x4ED6;&#x7EBF;&#x7A0B;&#x6253;&#x5F00;&#x3002;&#x6B63;&#x5C1D;&#x8BD5;&#x6253;&#x5F00;&#x4E00;&#x4E2A;&#x8868;&#x3002;</p>
+<p><code>Removing duplicates</code></p>
+<p>&#x6B63;&#x5728;&#x6267;&#x884C;&#x4E00;&#x4E2A;Select DISTINCT&#x65B9;&#x5F0F;&#x7684;&#x67E5;&#x8BE2;&#xFF0C;&#x4F46;&#x662F;MySQL&#x65E0;&#x6CD5;&#x5728;&#x524D;&#x4E00;&#x4E2A;&#x9636;&#x6BB5;&#x4F18;&#x5316;&#x6389;&#x90A3;&#x4E9B;&#x91CD;&#x590D;&#x7684;&#x8BB0;&#x5F55;&#x3002;&#x56E0;&#x6B64;&#xFF0C;MySQL&#x9700;&#x8981;&#x518D;&#x6B21;&#x53BB;&#x6389;&#x91CD;&#x590D;&#x7684;&#x8BB0;&#x5F55;&#xFF0C;&#x7136;&#x540E;&#x518D;&#x628A;&#x7ED3;&#x679C;&#x53D1;&#x9001;&#x7ED9;&#x5BA2;&#x6237;&#x7AEF;&#x3002;</p>
+<p><code>Reopen table</code></p>
+<p>&#x83B7;&#x5F97;&#x4E86;&#x5BF9;&#x4E00;&#x4E2A;&#x8868;&#x7684;&#x9501;&#xFF0C;&#x4F46;&#x662F;&#x5FC5;&#x987B;&#x5728;&#x8868;&#x7ED3;&#x6784;&#x4FEE;&#x6539;&#x4E4B;&#x540E;&#x624D;&#x80FD;&#x83B7;&#x5F97;&#x8FD9;&#x4E2A;&#x9501;&#x3002;&#x5DF2;&#x7ECF;&#x91CA;&#x653E;&#x9501;&#xFF0C;&#x5173;&#x95ED;&#x6570;&#x636E;&#x8868;&#xFF0C;&#x6B63;&#x5C1D;&#x8BD5;&#x91CD;&#x65B0;&#x6253;&#x5F00;&#x6570;&#x636E;&#x8868;&#x3002;</p>
+<p><code>Repair by sorting</code></p>
+<p>&#x4FEE;&#x590D;&#x6307;&#x4EE4;&#x6B63;&#x5728;&#x6392;&#x5E8F;&#x4EE5;&#x521B;&#x5EFA;&#x7D22;&#x5F15;&#x3002;</p>
+<p><code>Repair with keycache</code></p>
+<p>&#x4FEE;&#x590D;&#x6307;&#x4EE4;&#x6B63;&#x5728;&#x5229;&#x7528;&#x7D22;&#x5F15;&#x7F13;&#x5B58;&#x4E00;&#x4E2A;&#x4E00;&#x4E2A;&#x5730;&#x521B;&#x5EFA;&#x65B0;&#x7D22;&#x5F15;&#x3002;&#x5B83;&#x4F1A;&#x6BD4;Repair by sorting&#x6162;&#x4E9B;&#x3002;</p>
+<p><code>Searching rows for update</code></p>
+<p>&#x6B63;&#x5728;&#x8BB2;&#x7B26;&#x5408;&#x6761;&#x4EF6;&#x7684;&#x8BB0;&#x5F55;&#x627E;&#x51FA;&#x6765;&#x4EE5;&#x5907;&#x66F4;&#x65B0;&#x3002;&#x5B83;&#x5FC5;&#x987B;&#x5728;Update&#x8981;&#x4FEE;&#x6539;&#x76F8;&#x5173;&#x7684;&#x8BB0;&#x5F55;&#x4E4B;&#x524D;&#x5C31;&#x5B8C;&#x6210;&#x4E86;&#x3002;</p>
+<p><code>Sleeping</code></p>
+<p>&#x6B63;&#x5728;&#x7B49;&#x5F85;&#x5BA2;&#x6237;&#x7AEF;&#x53D1;&#x9001;&#x65B0;&#x8BF7;&#x6C42;.</p>
+<p><code>System lock</code></p>
+<p>&#x6B63;&#x5728;&#x7B49;&#x5F85;&#x53D6;&#x5F97;&#x4E00;&#x4E2A;&#x5916;&#x90E8;&#x7684;&#x7CFB;&#x7EDF;&#x9501;&#x3002;&#x5982;&#x679C;&#x5F53;&#x524D;&#x6CA1;&#x6709;&#x8FD0;&#x884C;&#x591A;&#x4E2A;mysqld&#x670D;&#x52A1;&#x5668;&#x540C;&#x65F6;&#x8BF7;&#x6C42;&#x540C;&#x4E00;&#x4E2A;&#x8868;&#xFF0C;&#x90A3;&#x4E48;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x589E;&#x52A0;--skip-external-locking&#x53C2;&#x6570;&#x6765;&#x7981;&#x6B62;&#x5916;&#x90E8;&#x7CFB;&#x7EDF;&#x9501;&#x3002;</p>
+<p><code>Upgrading lock</code></p>
+<p>Insert DELAYED&#x6B63;&#x5728;&#x5C1D;&#x8BD5;&#x53D6;&#x5F97;&#x4E00;&#x4E2A;&#x9501;&#x8868;&#x4EE5;&#x63D2;&#x5165;&#x65B0;&#x8BB0;&#x5F55;&#x3002;</p>
+<p><code>Updating</code></p>
+<p>&#x6B63;&#x5728;&#x641C;&#x7D22;&#x5339;&#x914D;&#x7684;&#x8BB0;&#x5F55;&#xFF0C;&#x5E76;&#x4E14;&#x4FEE;&#x6539;&#x5B83;&#x4EEC;&#x3002;</p>
+<p><code>User Lock</code></p>
+<p>&#x6B63;&#x5728;&#x7B49;&#x5F85;GET_LOCK()&#x3002;</p>
+<p><code>Waiting for tables</code></p>
+<p>&#x8BE5;&#x7EBF;&#x7A0B;&#x5F97;&#x5230;&#x901A;&#x77E5;&#xFF0C;&#x6570;&#x636E;&#x8868;&#x7ED3;&#x6784;&#x5DF2;&#x7ECF;&#x88AB;&#x4FEE;&#x6539;&#x4E86;&#xFF0C;&#x9700;&#x8981;&#x91CD;&#x65B0;&#x6253;&#x5F00;&#x6570;&#x636E;&#x8868;&#x4EE5;&#x53D6;&#x5F97;&#x65B0;&#x7684;&#x7ED3;&#x6784;&#x3002;&#x7136;&#x540E;&#xFF0C;&#x4E3A;&#x4E86;&#x80FD;&#x7684;&#x91CD;&#x65B0;&#x6253;&#x5F00;&#x6570;&#x636E;&#x8868;&#xFF0C;&#x5FC5;&#x987B;&#x7B49;&#x5230;&#x6240;&#x6709;&#x5176;&#x4ED6;&#x7EBF;&#x7A0B;&#x5173;&#x95ED;&#x8FD9;&#x4E2A;&#x8868;&#x3002;&#x4EE5;&#x4E0B;&#x51E0;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;&#x4F1A;&#x4EA7;&#x751F;&#x8FD9;&#x4E2A;&#x901A;&#x77E5;&#xFF1A;FLUSH TABLES tbl_name, Alter TABLE, RENAME TABLE, REPAIR TABLE, ANALYZE TABLE,&#x6216;OPTIMIZE TABLE&#x3002;</p>
+<p><code>waiting for handler insert</code></p>
+<p>Insert DELAYED&#x5DF2;&#x7ECF;&#x5904;&#x7406;&#x5B8C;&#x4E86;&#x6240;&#x6709;&#x5F85;&#x5904;&#x7406;&#x7684;&#x63D2;&#x5165;&#x64CD;&#x4F5C;&#xFF0C;&#x6B63;&#x5728;&#x7B49;&#x5F85;&#x65B0;&#x7684;&#x8BF7;&#x6C42;&#x3002;</p>
+<p>&#x5927;&#x90E8;&#x5206;&#x72B6;&#x6001;&#x5BF9;&#x5E94;&#x5F88;&#x5FEB;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x53EA;&#x8981;&#x6709;&#x4E00;&#x4E2A;&#x7EBF;&#x7A0B;&#x4FDD;&#x6301;&#x540C;&#x4E00;&#x4E2A;&#x72B6;&#x6001;&#x597D;&#x51E0;&#x79D2;&#x949F;&#xFF0C;&#x90A3;&#x4E48;&#x53EF;&#x80FD;&#x662F;&#x6709;&#x95EE;&#x9898;&#x53D1;&#x751F;&#x4E86;&#xFF0C;&#x9700;&#x8981;&#x68C0;&#x67E5;&#x4E00;&#x4E0B;&#x3002;</p>
+<p>&#x8FD8;&#x6709;&#x5176;&#x4ED6;&#x7684;&#x72B6;&#x6001;&#x6CA1;&#x5728;&#x4E0A;&#x9762;&#x4E2D;&#x5217;&#x51FA;&#x6765;&#xFF0C;&#x4E0D;&#x8FC7;&#x5B83;&#x4EEC;&#x5927;&#x90E8;&#x5206;&#x53EA;&#x662F;&#x5728;&#x67E5;&#x770B;&#x670D;&#x52A1;&#x5668;&#x662F;&#x5426;&#x6709;&#x5B58;&#x5728;&#x9519;&#x8BEF;&#x662F;&#x624D;&#x7528;&#x5F97;&#x7740;</p>
+<h3 id="&#x67E5;&#x8BE2;&#x8868;&#x4F7F;&#x7528;&#x72B6;&#x6001;"><a name="&#x67E5;&#x8BE2;&#x8868;&#x4F7F;&#x7528;&#x72B6;&#x6001;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x8BE2;&#x8868;&#x4F7F;&#x7528;&#x72B6;&#x6001;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x8BE2;&#x8868;&#x4F7F;&#x7528;&#x72B6;&#x6001;</h3>
+<p>&#x67E5;&#x8BE2;&#x54EA;&#x4E9B;&#x8868;&#x5728;&#x88AB;&#x4F7F;&#x7528;&#xFF0C;&#x662F;&#x5426;&#x6709;&#x9501;&#x8868;&#xFF1A;</p>
+<pre class="language-"><code>SHOW OPEN TABLES WHERE In_use &gt; 0;
+</code></pre><h3 id="&#x67E5;&#x770B;&#x589E;&#x5220;&#x6539;&#x6570;&#x91CF;"><a name="&#x67E5;&#x770B;&#x589E;&#x5220;&#x6539;&#x6570;&#x91CF;" class="anchor-navigation-ex-anchor" href="#&#x67E5;&#x770B;&#x589E;&#x5220;&#x6539;&#x6570;&#x91CF;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x67E5;&#x770B;&#x589E;&#x5220;&#x6539;&#x6570;&#x91CF;</h3>
+<p>&#x67E5;&#x8BE2;&#x5F53;&#x524D;MySQL&#x4E2D;&#x67E5;&#x8BE2;&#x3001;&#x66F4;&#x65B0;&#x3001;&#x5220;&#x9664;&#x6267;&#x884C;&#x591A;&#x5C11;&#x6761;&#x4E86;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x8FD9;&#x4E2A;&#x6765;&#x5224;&#x65AD;&#x7CFB;&#x7EDF;&#x662F;&#x4FA7;&#x91CD;&#x4E8E;&#x8BFB;&#x8FD8;&#x662F;&#x4FA7;&#x91CD;&#x4E8E;&#x5199;&#xFF0C;&#x5982;&#x679C;&#x662F;&#x5199;&#x8981;&#x8003;&#x8651;&#x4F7F;&#x7528;&#x8BFB;&#x5199;&#x5206;&#x79BB;&#x3002;</p>
+<pre class="language-"><code>SHOW STATUS LIKE &apos;%Com_select%&apos;;
+SHOW STATUS LIKE &apos;%Com_insert%&apos;;
+SHOW STATUS LIKE &apos;%Com_update%&apos;;
+SHOW STATUS LIKE &apos;%Com_delete%&apos;;
+</code></pre><h3 id="&#x4FEE;&#x6539;&#x5BC6;&#x7801;"><a name="&#x4FEE;&#x6539;&#x5BC6;&#x7801;" class="anchor-navigation-ex-anchor" href="#&#x4FEE;&#x6539;&#x5BC6;&#x7801;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x4FEE;&#x6539;&#x5BC6;&#x7801;</h3>
+<pre class="language-"><code>use mysql
+update user set authentication_string=password(&apos;1qaz#EDC&apos;) where user=&apos;root&apos;;
+flush privileges;
+</code></pre><h3 id="binlog"><a name="binlog" class="anchor-navigation-ex-anchor" href="#binlog"><i class="fa fa-link" aria-hidden="true"></i></a>binlog</h3>
+<blockquote>
+<p>&#x67E5;&#x770B;binlog&#x4FDD;&#x5B58;&#x5929;&#x6570;</p>
+</blockquote>
+<p>&#x9ED8;&#x8BA4;&#x503C;&#x4E3A;0&#xFF0C;&#x5373;&#x6C38;&#x4E45;&#x4FDD;&#x5B58;</p>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">show</span> variables <span class="token operator">like</span> <span class="token string">&apos;expire_logs_days&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x914D;&#x7F6E;binlog&#x5931;&#x6548;&#x65F6;&#x95F4;</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">set</span> <span class="token keyword">global</span> expire_logs_days<span class="token operator">=</span><span class="token number">7</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x6E05;&#x7406;binlog</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql">flush logs<span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x6E05;&#x9664;&#x6307;&#x5B9A;&#x65F6;&#x95F4;&#x7684;binlog</p>
+</blockquote>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">purge</span> <span class="token keyword">binary</span> logs before <span class="token string">&apos;2017-05-01 13:09:51&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<footer class="page-footer"><span class="copyright">Copyright &#xA9; ren_jw 2021 all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x672C;&#x4E66;&#x53D1;&#x5E03;&#x65F6;&#x95F4;&#xFF1A;
+2021-08-20 23:01:53
+</span></footer>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../hadoop/" class="navigation navigation-prev " aria-label="Previous page: Hadoop">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../nginx/" class="navigation navigation-next " aria-label="Next page: Nginx">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Mysql","level":"1.4.4","depth":2,"next":{"title":"Nginx","level":"1.4.5","depth":2,"path":"3.集成部署/nginx/README.md","ref":"3.集成部署/nginx/README.md","articles":[]},"previous":{"title":"Hadoop","level":"1.4.3","depth":2,"path":"3.集成部署/hadoop/README.md","ref":"3.集成部署/hadoop/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["code","back-to-top-button","-search","-lunr","search-pro","github","splitter","expandable-chapters","tbfed-pagefooter","-sharing","expandable-chapters","chapter-fold","theme-comscore","sharing-plus","prism","emphasize","advanced-emoji","-highlight","styles-less","multipart","ancre-navigation"],"ignores":["_book","node_modules","style","docs"],"root":".","styles":{"website":"styles/website.css","ebook":"styles/ebook.css","pdf":"styles/pdf.css","mobi":"styles/mobi.css","epub":"styles/epub.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright © ren_jw 2021","modify_label":"本书发布时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"chapter-fold":{},"prism":{"css":["prismjs/themes/prism-solarizedlight.css"],"lang":{"flow":"typescript"}},"emphasize":{},"github":{"url":"https://github.com/lijiam"},"styles-less":{},"splitter":{},"search-pro":{},"sharing-plus":{"qq":false,"all":["facebook","google","twitter","instapaper","linkedin","pocket","stumbleupon"],"douban":false,"facebook":true,"weibo":false,"instapaper":false,"whatsapp":false,"hatenaBookmark":false,"twitter":true,"messenger":false,"line":false,"vk":false,"pocket":true,"google":false,"viber":false,"stumbleupon":false,"qzone":false,"linkedin":false},"multipart":{},"code":{"copyButtons":true},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-comscore":{},"back-to-top-button":{},"ancre-navigation":{"associatedWithSummary":true,"float":{"level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"mode":"float","multipleH1":true,"pageTop":{"level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"printLog":false,"showLevel":true},"advanced-emoji":{"embedEmojis":false},"sharing":{"facebook":true,"twitter":true,"weibo":true,"qq":true,"all":["douban","google","qzone","linkedin"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"expandable-chapters":{}},"theme":"default","author":"wei liang","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"variables":{},"title":"工作笔记","language":"zh-hans","output.name":"site","gitbook":"3.2.3","description":""},"file":{"path":"3.集成部署/mysql/README.md","mtime":"2021-08-20T15:01:53.867Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-08-20T15:23:39.525Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-code/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-back-to-top-button/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search-pro/jquery.mark.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search-pro/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-chapter-fold/chapter-fold.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing-plus/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-theme-comscore/test.js"></script>
+        
+    
+
+    </body>
+</html>
+
