@@ -1,0 +1,6 @@
+.idea
+.DS_Store
+npm-debug.log
+*.orig
+package-lock.json
+*.iml
