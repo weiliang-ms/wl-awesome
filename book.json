@@ -1,7 +1,7 @@
 {
   "title": "工作笔记",
   "description": "",
-  "author": "wei liang",
+  "author": "weiliang",
   "output.name": "site",
   "language": "zh-hans",
   "gitbook": "3.2.3",
@@ -32,13 +32,13 @@
   ],
   "pluginsConfig": {
     "github": {
-      "url": "https://github.com/lijiam"
+      "url": "https://github.com/weiliang-ms"
     },
     "code": {
       "copyButtons": true
     },
     "tbfed-pagefooter": {
-      "copyright": "Copyright © ren_jw 2021",
+      "copyright": "Copyright © weiliang 2021",
       "modify_label": "本书发布时间：",
       "modify_format": "YYYY-MM-DD HH:mm:ss"
     },
