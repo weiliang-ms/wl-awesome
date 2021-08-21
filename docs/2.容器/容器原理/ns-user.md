@@ -1,0 +1,107 @@
+{% raw %}
+# USER命名空间
+
+> `USER namespace`有什么能力？
+
+提供用户隔离能力，隔离用户的用户`ID`与用户组`ID`
+
+> 使用场景
+
+在宿主机上以一个非`root`用户运行创建一个`User namespace`，然后在`User namespace`里面却映射成`root`用户
+
+这样意味着，这个进程在`User namespace`里面有`root`权限，但是在`User namespace`外面却没有`root`的权限
+
+## 重映射容器内用户Uid至宿主机
+
+> 启动`nginx`
+
+    docker run -itd --name  nginx nginx
+    
+> 获取`nginx`容器`pid`
+
+    [root@localhost 4609]# ps -ef|grep nginx
+    root      46991  46971  0 07:58 pts/0    00:00:00 nginx: master process nginx -g daemon off;
+    101       47051  46991  0 07:58 pts/0    00:00:00 nginx: worker process
+    101       47052  46991  0 07:58 pts/0    00:00:00 nginx: worker process
+    101       47053  46991  0 07:58 pts/0    00:00:00 nginx: worker process
+    101       47054  46991  0 07:58 pts/0    00:00:00 nginx: worker process
+    root      48582   4609  0 07:59 pts/0    00:00:00 grep --color=auto nginx
+
+> 进入`nginx`容器进程空间
+
+    cd /proc/46991
+
+> 查看`uid_map`属性
+
+    [root@localhost 46991]# cat uid_map
+             0          0 4294967295
+             
+- 第一列字段表示在容器显示的`UID`或`GID`
+- 第二列字段表示容器外映射的真实的`UID`或`GID`
+- 第三个字段表示映射的范围
+    - 如果为`1`，表示一一对应（内部与外部`uid`一一对应）
+    - 如果为`4294967295`，表示把`namespace`内部从`0`开始的`uid`映射到外部从`0`开始的`uid`，
+     其最大范围是无符号`32`位整形
+             
+上述`nginx`进程表示，容器内的`nginx: master`用户为`root`权限，即在容器外部也有`root`权限
+
+## docker启用用户命名空间
+
+由上述步骤我们可知，默认`docker`未启用用户命名空间，容器内的`uid`与宿主机一致
+
+如容器内使用`root`（uid=0）启动服务，有安全风险（宿主机视角也是root用户）
+
+> 修改系统参数
+
+```shell script
+sed -i "/user.max_user_namespaces/d" /etc/sysctl.conf
+echo "user.max_user_namespaces=15511" >> /etc/sysctl.conf
+sysctl -p
+```
+
+> 编辑配置文件
+
+```shell script
+vi /etc/docker/daemon.json
+```
+
+添加参数`"userns-remap": "default",`
+
+参考配置：
+
+    {
+      "log-opts": {
+        "max-size": "5m",
+        "max-file":"3"
+      },
+      "userns-remap": "default",
+      "exec-opts": ["native.cgroupdriver=systemd"]
+    }
+
+> 重载服务
+
+```shell script
+systemctl daemon-reload
+systemctl restart docker
+```
+
+> 启动一个容器
+
+```shell script
+docker rm -f nginx
+docker run -itd --name nginx nginx
+```
+
+> 查看容器内进程用户
+
+```shell script
+[root@localhost ~]# ps -p $(docker inspect --format='{{.State.Pid}}' $(docker ps |grep ccc|awk '{print $1}')) -o pid,user
+   PID USER
+  2535 100000
+```
+
+## 参考文献
+
+- [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
+
+{% endraw %}
