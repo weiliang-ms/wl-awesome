@@ -93,17 +93,24 @@
       * [03-raid01](1.Linux基础/1.7存储/raid/03-raid01.md)
       * [04-raid5](1.Linux基础/1.7存储/raid/04-raid5.md)
       * [05-raid10](1.Linux基础/1.7存储/raid/05-raid10.md)
-  - trouble shooting
+  - 1.8网络
+    * [01-nat](1.Linux基础/1.8网络/01-nat.md)
+    * [02-路由配置](1.Linux基础/1.8网络/02-路由配置.md)
+    * [03-wireshark](1.Linux基础/1.8网络/03-wireshark.md)
+    * [04-shadows](1.Linux基础/1.8网络/04-shadows.md)
+  - [1.9安全](1.Linux基础/1.9安全/README.md)
+    * [01-禁ping](1.Linux基础/1.9安全/01-禁ping.md)
+    * [02-关闭ICMP_TIMESTAMP应答](1.Linux基础/1.9安全/02-关闭ICMP_TIMESTAMP应答.md)
+    * [03-锁定系统关键文件](1.Linux基础/1.9安全/03-锁定系统关键文件.md)
+    * [04-ssh加固](1.Linux基础/1.9安全/04-ssh加固.md)
+    * [05-升级sudo版本](1.Linux基础/1.9安全/05-升级sudo版本.md)
+    * [06-设置会话超时](1.Linux基础/1.9安全/06-设置会话超时.md)
+    * [07-隐藏系统版本信息](1.Linux基础/1.9安全/07-隐藏系统版本信息.md)
+    * [08-禁止Control-Alt-Delete键盘重启系统命令](1.Linux基础/1.9安全/08-禁止Control-Alt-Delete键盘重启系统命令.md)
+    * [09-密码加固](1.Linux基础/1.9安全/09-密码加固.md)
+  - 111.trouble shooting
     - cpu
-      * [cpu占用过高](1.Linux基础/trouble shooting/cpu/cpu占用过高.md)
-  - [安全](1.Linux基础/安全/README.md)
-  - 网络
-    - proxy
-      * [windows](1.Linux基础/网络/proxy/windows.md)
-    * [bridge](1.Linux基础/网络/bridge.md)
-    * [nat](1.Linux基础/网络/nat.md)
-    * [route](1.Linux基础/网络/route.md)
-    * [wireshark](1.Linux基础/网络/wireshark.md)
+      * [cpu占用过高](1.Linux基础/111.trouble shooting/cpu/cpu占用过高.md)
   * [skill](1.Linux基础/skill.md)
 - 2.容器
   - docker
@@ -178,13 +185,27 @@
   - [trafodion](3.集成部署/trafodion/README.md)
 - 4.持续集成&交付
   - [argo](4.持续集成&交付/argo/README.md)
-  - [jenkins](4.持续集成&交付/jenkins/README.md)
+    * [01-核心概念](4.持续集成&交付/argo/01-核心概念.md)
+    * [02-部署argocd](4.持续集成&交付/argo/02-部署argocd.md)
+    * [03-使用argocd](4.持续集成&交付/argo/03-使用argocd.md)
+    * [04-最佳实践](4.持续集成&交付/argo/04-最佳实践.md)
+  - jenkins
+    * [01-jenkins安装](4.持续集成&交付/jenkins/01-jenkins安装.md)
+    * [02-插件管理](4.持续集成&交付/jenkins/02-插件管理.md)
+    * [03-github配置webhook](4.持续集成&交付/jenkins/03-github配置webhook.md)
+    * [04-github生成Tocken](4.持续集成&交付/jenkins/04-github生成Tocken.md)
+    * [111-trouble-shooting](4.持续集成&交付/jenkins/111-trouble-shooting.md)
 - 5.cncf
   * [cncf](5.cncf/cncf.md)
   * [kubevirt](5.cncf/kubevirt.md)
 - 6.编程
   - [golang](6.编程/golang/README.md)
+    - 01-安装配置
+      * [01-golang安装配置](6.编程/golang/01-安装配置/01-golang安装配置.md)
+      * [02-配置代理](6.编程/golang/01-安装配置/02-配置代理.md)
+    - 111-开源库
+      * [01-logrus](6.编程/golang/111-开源库/01-logrus.md)
   - [letcode](6.编程/letcode/letcode.md)
-- [7.FAQ](7.FAQ/README.md)
+- 7.FAQ
   * [sre](7.FAQ/sre.md)
 * [vocabulary](vocabulary.md)
