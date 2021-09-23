@@ -15,6 +15,55 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 配置为系统服务
+
+> 生成文件
+
+```shell
+tee /usr/lib/systemd/system/nginx.service <<EOF
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+LimitNOFILE=65535
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPre=/opt/nginx/sbin/nginx -t
+ExecStart=/opt/nginx/sbin/nginx
+ExecReload=/opt/nginx/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+> 启动
+
+```shell
+systemctl daemon-reload
+systemctl enable nginx --now
+```
+
+> 查看nginx最大连接数
+
+```shell
+grep 'open files' /proc/$( cat /var/run/nginx.pid )/limits
+```
+
+> `nginx.conf`最大连接数配置
+
+```shell
+worker_rlimit_nofile 65535;
+events {
+use epoll;
+worker_connections 65535;
+}
+```
+
 ## 安装部署
 ### 使用源码编译安装
 

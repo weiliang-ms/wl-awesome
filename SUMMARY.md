@@ -14,6 +14,7 @@
     * [10创建大文件](1.Linux基础/1.1常用shell/10创建大文件.md)
     * [11磁盘监控脚本](1.Linux基础/1.1常用shell/11磁盘监控脚本.md)
     * [12ssl生成脚本](1.Linux基础/1.1常用shell/12ssl生成脚本.md)
+    * [13批量修改文件格式](1.Linux基础/1.1常用shell/13批量修改文件格式.md)
   - 1.2包管理器
     - [apt](1.Linux基础/1.2包管理器/apt/README.md)
     - [choco](1.Linux基础/1.2包管理器/choco/README.md)
@@ -50,6 +51,8 @@
     * [04Ovirt](1.Linux基础/1.6虚拟化/04Ovirt.md)
     * [05iDRAC](1.Linux基础/1.6虚拟化/05iDRAC.md)
     * [06migration](1.Linux基础/1.6虚拟化/06migration.md)
+    * [07磁盘分区相关](1.Linux基础/1.6虚拟化/07磁盘分区相关.md)
+    * [08网卡bond](1.Linux基础/1.6虚拟化/08网卡bond.md)
   - 1.7存储
     - [ceph](1.Linux基础/1.7存储/ceph/README.md)
       - 01核心概念
@@ -143,6 +146,8 @@
     - [network](2.容器/k8s/network/README.md)
       * [calico](2.容器/k8s/network/calico.md)
       * [dns](2.容器/k8s/network/dns.md)
+    - opterator
+      * [如何写一个operator](2.容器/k8s/opterator/如何写一个operator.md)
     - [quota](2.容器/k8s/quota/quota.md)
     - [security](2.容器/k8s/security/security.md)
     - [sidecar](2.容器/k8s/sidecar/sidecar.md)
@@ -189,12 +194,17 @@
     * [02-部署argocd](4.持续集成&交付/argo/02-部署argocd.md)
     * [03-使用argocd](4.持续集成&交付/argo/03-使用argocd.md)
     * [04-最佳实践](4.持续集成&交付/argo/04-最佳实践.md)
+  - gitlab-ci
+    * [git-runner](4.持续集成&交付/gitlab-ci/git-runner.md)
+    * [yq](4.持续集成&交付/gitlab-ci/yq.md)
+    * [变量定义与引用](4.持续集成&交付/gitlab-ci/变量定义与引用.md)
   - jenkins
     * [01-jenkins安装](4.持续集成&交付/jenkins/01-jenkins安装.md)
     * [02-插件管理](4.持续集成&交付/jenkins/02-插件管理.md)
     * [03-github配置webhook](4.持续集成&交付/jenkins/03-github配置webhook.md)
     * [04-github生成Tocken](4.持续集成&交付/jenkins/04-github生成Tocken.md)
     * [111-trouble-shooting](4.持续集成&交付/jenkins/111-trouble-shooting.md)
+    * [jenkinsfile](4.持续集成&交付/jenkins/jenkinsfile.md)
 - 5.cncf
   * [cncf](5.cncf/cncf.md)
   * [kubevirt](5.cncf/kubevirt.md)
