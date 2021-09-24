@@ -60,7 +60,7 @@ kubectl label my-pod my-label-key=my-label-value
 
 ## 利用Operator SDK构建一个控制器
 
-控制器是一个协调循环，它从`Kubernetes API`中读取期望的资源状态，并采取行动使集群的实际状态达到期望状态
+控制器是一个控制循环，它从`Kubernetes API`中读取期望的资源状态，并采取行动使集群的实际状态达到期望状态
 
 ### 安装配置
 
