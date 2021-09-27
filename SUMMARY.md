@@ -152,6 +152,8 @@
     - [security](2.容器/k8s/security/security.md)
     - [sidecar](2.容器/k8s/sidecar/sidecar.md)
     - [storage](2.容器/k8s/storage/README.md)
+      - pvc
+        * [ReadWriteOncePod访问模式](2.容器/k8s/storage/pvc/ReadWriteOncePod访问模式.md)
       * [OpenEBS](2.容器/k8s/storage/OpenEBS.md)
       * [rook](2.容器/k8s/storage/rook.md)
       * [Velero](2.容器/k8s/storage/Velero.md)
@@ -159,6 +161,10 @@
       * [endpoint](2.容器/k8s/workload/endpoint.md)
       * [job](2.容器/k8s/workload/job.md)
       * [pod](2.容器/k8s/workload/pod.md)
+    - 更新列表
+      - v1.22
+        * [alpha-ReadWriteOncePod访问模式](2.容器/k8s/更新列表/v1.22/alpha-ReadWriteOncePod访问模式.md)
+        * [alpha-支持使用虚拟交换内存](2.容器/k8s/更新列表/v1.22/alpha-支持使用虚拟交换内存.md)
   - [kubesphere](2.容器/kubesphere/README.md)
   - 容器原理
     * [cgroup](2.容器/容器原理/cgroup.md)
@@ -174,6 +180,7 @@
     * [podman](2.容器/镜像构建/podman.md)
     * [skopeo](2.容器/镜像构建/skopeo.md)
 - [3.集成部署](3.集成部署/README.md)
+  - [chrony](3.集成部署/chrony/chrony.md)
   - [ftp](3.集成部署/ftp/README.md)
   - [git](3.集成部署/git/README.md)
   - [hadoop](3.集成部署/hadoop/README.md)

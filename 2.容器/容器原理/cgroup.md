@@ -1,5 +1,15 @@
 # cgroups
 
+## 查看cgroup版本
+
+```shell
+[root@node1 ~]# grep cgroup /proc/filesystems
+nodev   cgroup
+nodev   cgroup2
+```
+
+如果包含有`cgroup2`的就是安装了的
+
 ## 简介
 
 `Cgroups`用来提供对一组进程以及将来子进程的资源限制，包含三个组件：

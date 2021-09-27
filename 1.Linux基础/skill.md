@@ -31,3 +31,15 @@ WARNING: fdisk GPT support is currently new, and therefore in an experimental ph
 mkdir -p /ntfs
 mount -t ntfs-3g /dev/sdl1 /ntfs
 ```
+
+> `windows`任务栏卡死
+
+- [windows任务栏卡死](http://www.winwin7.com/JC/18357.html)
+
+
+1. 在`新建任务`框中，输入`Powershell`，然后选中`以系统管理权限创建此任务`，按`确定`
+2. 
+```shell
+sfc /scannow
+DISM /Online /Cleanup-Image /RestoreHealth
+```

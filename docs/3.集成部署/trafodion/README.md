@@ -125,17 +125,19 @@ hadoop1节点执行：
     service ntpd start
     chkconfig ntpd on
     
-    sed -i "s;restrict default kod nomodify notrap nopeer noquery;#restrict default kod nomodify notrap nopeer noquery;g" /etc/ntp.conf
-    sed -i "s;restrict -6 default kod nomodify notrap nopeer noquery;#restrict -6 default kod nomodify notrap nopeer noquery;g" /etc/ntp.conf
-    sed -i "s#restrict -6 ::1#restrict ::1#g" /etc/ntp.conf
-    sed -i "s;server 0.centos.pool.ntp.org iburst;#server 0.centos.pool.ntp.org iburst;g" /etc/ntp.conf
-    sed -i "s;server 1.centos.pool.ntp.org iburst;#server 1.centos.pool.ntp.org iburst;g" /etc/ntp.conf
-    sed -i "s;server 2.centos.pool.ntp.org iburst;#server 2.centos.pool.ntp.org iburst;g" /etc/ntp.conf
-    sed -i "s;server 3.centos.pool.ntp.org iburst;#server 3.centos.pool.ntp.org iburst;g" /etc/ntp.conf
-    echo "server 127.127.1.0" >> /etc/ntp.conf
-    echo "fudge 127.127.1.0 stratum 10" >> /etc/ntp.conf
-    echo "disable monitor" >> /etc/ntp.conf
-    echo "restrict default nomodify" >> /etc/ntp.conf
+```shell
+sed -i "s;restrict default kod nomodify notrap nopeer noquery;#restrict default kod nomodify notrap nopeer noquery;g" /etc/ntp.conf
+sed -i "s;restrict -6 default kod nomodify notrap nopeer noquery;#restrict -6 default kod nomodify notrap nopeer noquery;g" /etc/ntp.conf
+sed -i "s#restrict -6 ::1#restrict ::1#g" /etc/ntp.conf
+sed -i "s;server 0.centos.pool.ntp.org iburst;#server 0.centos.pool.ntp.org iburst;g" /etc/ntp.conf
+sed -i "s;server 1.centos.pool.ntp.org iburst;#server 1.centos.pool.ntp.org iburst;g" /etc/ntp.conf
+sed -i "s;server 2.centos.pool.ntp.org iburst;#server 2.centos.pool.ntp.org iburst;g" /etc/ntp.conf
+sed -i "s;server 3.centos.pool.ntp.org iburst;#server 3.centos.pool.ntp.org iburst;g" /etc/ntp.conf
+echo "server 127.127.1.0" >> /etc/ntp.conf
+echo "fudge 127.127.1.0 stratum 10" >> /etc/ntp.conf
+echo "disable monitor" >> /etc/ntp.conf
+echo "restrict default nomodify" >> /etc/ntp.conf
+```
     
 hadoop2、hadoop3节点执行：
 
