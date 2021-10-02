@@ -81,3 +81,50 @@ openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text |grep ' Not '
 ```shell
 kubeadm alpha certs renew
 ```
+
+> 删除孤儿`Pod`
+
+```shell
+#!/bin/sh
+
+orphanedPods=`cat /var/log/messages|grep 'orphaned pod'|awk -F '"' '{print $2}'|uniq`;
+orphanedPodsNum=`echo $orphanedPods|awk -F ' ' '{print NF}'`;
+echo -e "orphanedPods: $orphanedPodsNum \n$orphanedPods";
+
+for i in $orphanedPods
+do
+echo "Deleting Orphaned pod id: $i";
+rm -rf /var/lib/kubelet/pods/$i;
+done
+```
+
+```shell
++-----------------------------------------------------------------------+------------------+-------------------+---------------+-----------+
+|                             CONTROL NAME                              | FAILED RESOURCES | WARNING RESOURCES | ALL RESOURCES | % SUCCESS |
++-----------------------------------------------------------------------+------------------+-------------------+---------------+-----------+
+| Allow privilege escalation                                            | 0                | 0                 | 267           | 100%      |
+| Allowed hostPath                                                      | 103              | 0                 | 267           | 61%       |
+| Applications credentials in configuration files                       | 13               | 0                 | 499           | 97%       |
+| Automatic mapping of service account                                  | 72               | 0                 | 72            | 0%        |
+| CVE-2021-25741 - Using symlink for arbitrary host file system access. | 2                | 0                 | 274           | 99%       |
+| Cluster-admin binding                                                 | 12               | 0                 | 851           | 98%       |
+| Container hostPort                                                    | 2                | 0                 | 267           | 99%       |
+| Control plane hardening                                               | 0                | 0                 | 267           | 100%      |
+| Dangerous capabilities                                                | 1                | 0                 | 267           | 99%       |
+| Exec into container                                                   | 13               | 0                 | 851           | 98%       |
+| Exposed dashboard                                                     | 0                | 0                 | 336           | 100%      |
+| Host PID/IPC privileges                                               | 1                | 0                 | 267           | 99%       |
+| Immutable container filesystem                                        | 267              | 0                 | 267           | 0%        |
+| Ingress and Egress blocked                                            | 267              | 0                 | 267           | 0%        |
+| Insecure capabilities                                                 | 0                | 0                 | 267           | 100%      |
+| Linux hardening                                                       | 265              | 0                 | 267           | 0%        |
+| Network policies                                                      | 26               | 0                 | 26            | 0%        |
+| Non-root containers                                                   | 7                | 0                 | 267           | 97%       |
+| Privileged container                                                  | 1                | 0                 | 267           | 99%       |
+| Resource policies                                                     | 189              | 0                 | 267           | 29%       |
+| hostNetwork access                                                    | 3                | 0                 | 267           | 98%       |
++-----------------------------------------------------------------------+------------------+-------------------+---------------+-----------+
+|                                  21                                   |       1244       |         0         |     6647      |    81%    |
++-----------------------------------------------------------------------+------------------+-------------------+---------------+-----------+
+
+```
