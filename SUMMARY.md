@@ -130,6 +130,7 @@
     - application
       * [helm](2.容器/k8s/application/helm.md)
     - base
+      * [finalizers](2.容器/k8s/base/finalizers.md)
       * [intro](2.容器/k8s/base/intro.md)
     - [changelog](2.容器/k8s/changelog/changelog.md)
     - [cmd](2.容器/k8s/cmd/cmd.md)

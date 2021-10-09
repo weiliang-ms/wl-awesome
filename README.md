@@ -1,4 +1,11 @@
-# 工作笔记
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/weiliang-ms/wl-awesome?style=flat-square)
+![GitHub](https://img.shields.io/github/license/weiliang-ms/wl-awesome?style=flat-square)
+
+## 文档集
+
+文档记录了工作中遇到的问题，及相关知识的整理，详情请移步 [文档地址](https://weiliang-ms.github.io/wl-awesome)
+
+整理内容大致如下：
 
 - 1.Linux基础
     - [1.1常用shell](1.Linux基础/1.1常用shell/README.md)
@@ -14,6 +21,7 @@
         * [10创建大文件](1.Linux基础/1.1常用shell/10创建大文件.md)
         * [11磁盘监控脚本](1.Linux基础/1.1常用shell/11磁盘监控脚本.md)
         * [12ssl生成脚本](1.Linux基础/1.1常用shell/12ssl生成脚本.md)
+        * [13批量修改文件格式](1.Linux基础/1.1常用shell/13批量修改文件格式.md)
     - 1.2包管理器
         - [apt](1.Linux基础/1.2包管理器/apt/README.md)
         - [choco](1.Linux基础/1.2包管理器/choco/README.md)
@@ -50,6 +58,8 @@
         * [04Ovirt](1.Linux基础/1.6虚拟化/04Ovirt.md)
         * [05iDRAC](1.Linux基础/1.6虚拟化/05iDRAC.md)
         * [06migration](1.Linux基础/1.6虚拟化/06migration.md)
+        * [07磁盘分区相关](1.Linux基础/1.6虚拟化/07磁盘分区相关.md)
+        * [08网卡bond](1.Linux基础/1.6虚拟化/08网卡bond.md)
     - 1.7存储
         - [ceph](1.Linux基础/1.7存储/ceph/README.md)
             - 01核心概念
@@ -93,17 +103,24 @@
             * [03-raid01](1.Linux基础/1.7存储/raid/03-raid01.md)
             * [04-raid5](1.Linux基础/1.7存储/raid/04-raid5.md)
             * [05-raid10](1.Linux基础/1.7存储/raid/05-raid10.md)
-    - trouble shooting
+    - 1.8网络
+        * [01-nat](1.Linux基础/1.8网络/01-nat.md)
+        * [02-路由配置](1.Linux基础/1.8网络/02-路由配置.md)
+        * [03-wireshark](1.Linux基础/1.8网络/03-wireshark.md)
+        * [04-shadows](1.Linux基础/1.8网络/04-shadows.md)
+    - [1.9安全](1.Linux基础/1.9安全/README.md)
+        * [01-禁ping](1.Linux基础/1.9安全/01-禁ping.md)
+        * [02-关闭ICMP_TIMESTAMP应答](1.Linux基础/1.9安全/02-关闭ICMP_TIMESTAMP应答.md)
+        * [03-锁定系统关键文件](1.Linux基础/1.9安全/03-锁定系统关键文件.md)
+        * [04-ssh加固](1.Linux基础/1.9安全/04-ssh加固.md)
+        * [05-升级sudo版本](1.Linux基础/1.9安全/05-升级sudo版本.md)
+        * [06-设置会话超时](1.Linux基础/1.9安全/06-设置会话超时.md)
+        * [07-隐藏系统版本信息](1.Linux基础/1.9安全/07-隐藏系统版本信息.md)
+        * [08-禁止Control-Alt-Delete键盘重启系统命令](1.Linux基础/1.9安全/08-禁止Control-Alt-Delete键盘重启系统命令.md)
+        * [09-密码加固](1.Linux基础/1.9安全/09-密码加固.md)
+    - 111.trouble shooting
         - cpu
-            * [cpu占用过高](1.Linux基础/trouble shooting/cpu/cpu占用过高.md)
-    - [安全](1.Linux基础/安全/README.md)
-    - 网络
-        - proxy
-            * [windows](1.Linux基础/网络/proxy/windows.md)
-        * [bridge](1.Linux基础/网络/bridge.md)
-        * [nat](1.Linux基础/网络/nat.md)
-        * [route](1.Linux基础/网络/route.md)
-        * [wireshark](1.Linux基础/网络/wireshark.md)
+            * [cpu占用过高](1.Linux基础/111.trouble shooting/cpu/cpu占用过高.md)
     * [skill](1.Linux基础/skill.md)
 - 2.容器
     - docker
@@ -120,6 +137,7 @@
         - application
             * [helm](2.容器/k8s/application/helm.md)
         - base
+            * [finalizers](2.容器/k8s/base/finalizers.md)
             * [intro](2.容器/k8s/base/intro.md)
         - [changelog](2.容器/k8s/changelog/changelog.md)
         - [cmd](2.容器/k8s/cmd/cmd.md)
@@ -136,10 +154,14 @@
         - [network](2.容器/k8s/network/README.md)
             * [calico](2.容器/k8s/network/calico.md)
             * [dns](2.容器/k8s/network/dns.md)
+        - opterator
+            * [01-如何写一个operator](2.容器/k8s/opterator/01-如何写一个operator.md)
         - [quota](2.容器/k8s/quota/quota.md)
         - [security](2.容器/k8s/security/security.md)
         - [sidecar](2.容器/k8s/sidecar/sidecar.md)
         - [storage](2.容器/k8s/storage/README.md)
+            - pvc
+                * [ReadWriteOncePod访问模式](2.容器/k8s/storage/pvc/ReadWriteOncePod访问模式.md)
             * [OpenEBS](2.容器/k8s/storage/OpenEBS.md)
             * [rook](2.容器/k8s/storage/rook.md)
             * [Velero](2.容器/k8s/storage/Velero.md)
@@ -147,6 +169,10 @@
             * [endpoint](2.容器/k8s/workload/endpoint.md)
             * [job](2.容器/k8s/workload/job.md)
             * [pod](2.容器/k8s/workload/pod.md)
+        - 更新列表
+            - v1.22
+                * [alpha-ReadWriteOncePod访问模式](2.容器/k8s/更新列表/v1.22/alpha-ReadWriteOncePod访问模式.md)
+                * [alpha-支持使用虚拟交换内存](2.容器/k8s/更新列表/v1.22/alpha-支持使用虚拟交换内存.md)
     - [kubesphere](2.容器/kubesphere/README.md)
     - 容器原理
         * [cgroup](2.容器/容器原理/cgroup.md)
@@ -162,6 +188,7 @@
         * [podman](2.容器/镜像构建/podman.md)
         * [skopeo](2.容器/镜像构建/skopeo.md)
 - [3.集成部署](3.集成部署/README.md)
+    - [chrony](3.集成部署/chrony/chrony.md)
     - [ftp](3.集成部署/ftp/README.md)
     - [git](3.集成部署/git/README.md)
     - [hadoop](3.集成部署/hadoop/README.md)
@@ -178,13 +205,32 @@
     - [trafodion](3.集成部署/trafodion/README.md)
 - 4.持续集成&交付
     - [argo](4.持续集成&交付/argo/README.md)
-    - [jenkins](4.持续集成&交付/jenkins/README.md)
+        * [01-核心概念](4.持续集成&交付/argo/01-核心概念.md)
+        * [02-部署argocd](4.持续集成&交付/argo/02-部署argocd.md)
+        * [03-使用argocd](4.持续集成&交付/argo/03-使用argocd.md)
+        * [04-最佳实践](4.持续集成&交付/argo/04-最佳实践.md)
+    - gitlab-ci
+        * [git-runner](4.持续集成&交付/gitlab-ci/git-runner.md)
+        * [yq](4.持续集成&交付/gitlab-ci/yq.md)
+        * [变量定义与引用](4.持续集成&交付/gitlab-ci/变量定义与引用.md)
+    - jenkins
+        * [01-jenkins安装](4.持续集成&交付/jenkins/01-jenkins安装.md)
+        * [02-插件管理](4.持续集成&交付/jenkins/02-插件管理.md)
+        * [03-github配置webhook](4.持续集成&交付/jenkins/03-github配置webhook.md)
+        * [04-github生成Tocken](4.持续集成&交付/jenkins/04-github生成Tocken.md)
+        * [111-trouble-shooting](4.持续集成&交付/jenkins/111-trouble-shooting.md)
+        * [jenkinsfile](4.持续集成&交付/jenkins/jenkinsfile.md)
 - 5.cncf
     * [cncf](5.cncf/cncf.md)
     * [kubevirt](5.cncf/kubevirt.md)
 - 6.编程
     - [golang](6.编程/golang/README.md)
+        - 01-安装配置
+            * [01-golang安装配置](6.编程/golang/01-安装配置/01-golang安装配置.md)
+            * [02-配置代理](6.编程/golang/01-安装配置/02-配置代理.md)
+        - 111-开源库
+            * [01-logrus](6.编程/golang/111-开源库/01-logrus.md)
     - [letcode](6.编程/letcode/letcode.md)
-- [7.FAQ](7.FAQ/README.md)
+- 7.FAQ
     * [sre](7.FAQ/sre.md)
 * [vocabulary](vocabulary.md)
