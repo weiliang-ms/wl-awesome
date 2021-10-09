@@ -1,1 +1,0 @@
-- [weavescpoe](weavescope.md)

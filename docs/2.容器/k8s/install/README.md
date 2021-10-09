@@ -1,3 +1,0 @@
-- [kubeadm](k8s-kubeadm.md)
-- [kubeadm](离线)
-- [rke](k8s-rke.md)
