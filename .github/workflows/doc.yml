@@ -21,6 +21,8 @@ jobs:
         run: sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
       - name: install
         run: gitbook install
+      - name: clear README.md
+        run: echo "" > README.md
       - name: generate-toc
         run: book sm --disableTitleFormatting
       - name: build
