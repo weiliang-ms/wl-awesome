@@ -25,7 +25,6 @@ jobs:
         run: book sm --disableTitleFormatting
       - name: build
         run: gitbook build
-        working-directory: book
       - name: install git
         run: sudo apt-get install git -y
       - name: publish
