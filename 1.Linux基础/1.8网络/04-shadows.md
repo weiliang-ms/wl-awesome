@@ -1,3 +1,11 @@
+### 服务端
+
+```shell
+yum -y install wget
+wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/ssr.sh \
+&& chmod +x ssr.sh && bash ssr.sh
+```
+
 ### shadowsocks客户端
 
 [项目地址](https://www.cnblogs.com/milton/p/6366916.html)
