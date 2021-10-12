@@ -17,7 +17,7 @@ cat /etc/system-release
 
 - 2、获取方式二：自己下载，不推荐，文件大小一般`4G`左右，小版本一定要匹配！
 
-官方下载地址：https://mirrors.aliyun.com/centos-vault/
+官方下载地址：https://mirrors.tuna.tsinghua.edu.cn/centos/
 
 > 3、上传挂载
 
