@@ -31,7 +31,7 @@ mount -o loop ~/CentOS-7-x86_64-DVD-1511.iso /media
 
 ```shell
 mkdir -p /yum && cp -r /media/* /yum/
-unmout /media
+umout /media
 ```
 
 > 5、删除原有yum源repo文件
