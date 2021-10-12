@@ -43,12 +43,12 @@ rm -f /etc/yum.repos.d/*.repo
 > 6、新建yum repo文件
 
 ```shell
-cat >> /etc/yum.repos.d/c7.repo <<EOF
+tee /etc/yum.repos.d/c7.repo <<EOF
 [c7repo]
 
 name=c7repo
 
-baseurl=file:///media
+baseurl=file:///yum
 
 enabled=1
 
@@ -63,4 +63,10 @@ EOF
 ```shell
 yum clean all && yum makecache
 yum install -y telnet vim
+```
+
+> 8.更新
+
+```shell
+yum update -y 
 ```
