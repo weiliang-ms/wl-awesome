@@ -3,13 +3,13 @@
 > 清理已有源
 
 ```bash
-rm -f /etc/apt/sources.list.d/*
+sudo rm -f /etc/apt/sources.list.d/*
 ```    
 
 > 添加清华源
 
 ```bash
-cat > /etc/apt/sources.list <<EOF
+sudo tee /etc/apt/sources.list <<EOF
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
@@ -20,5 +20,5 @@ EOF
 > 更新
 
 ```bash
-sudo apt-get update
+sudo apt-get update -y
 ```
