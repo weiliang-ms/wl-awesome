@@ -8,7 +8,7 @@
 > 安装
 
 ```shell script
-yum install -y btrfs-progs-devel gpgme-devel device-mapper-devel libassuan-devel
+yum install -y btrfs-progs-devel gpgme-devel device-mapper-devel libassuan-devel
 git clone https://github.com/containers/skopeo.git
 cd skopeo
 make bin/skopeo
