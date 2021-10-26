@@ -11,7 +11,7 @@
 
 ### 修复建议
 
-> `docker`宿主机增加数据盘`/dev/sdb`
+1. `docker`宿主机增加数据盘`/dev/sdb`
 
 ```shell script
 [root@localhost ~]# lsblk
@@ -25,7 +25,7 @@ sdb               8:16   0   30G  0 disk
 sr0              11:0    1  4.4G  0 rom
 ```
 
-> 格式化数据盘
+2. 格式化数据盘
 
 ```shell script
 [root@localhost ~]# mkfs.ext4 /dev/sdb
@@ -54,7 +54,7 @@ Creating journal (32768 blocks): done
 Writing superblocks and filesystem accounting information: done
 ```
 
-> 配置`/dev/sdb`挂载点为`/var/lib/docker`
+3. 配置`/dev/sdb`挂载点为`/var/lib/docker`
 
 **该步骤建议安装`docker`之后进行**
 
@@ -62,7 +62,7 @@ Writing superblocks and filesystem accounting information: done
 echo "/dev/sdb /var/lib/docker ext4 defaults 0 0" >> /etc/fstab
 ```
 
-> 重启主机测试是否生效
+4. 重启主机测试是否生效
 
 ```shell script
 [root@localhost ~]# reboot
