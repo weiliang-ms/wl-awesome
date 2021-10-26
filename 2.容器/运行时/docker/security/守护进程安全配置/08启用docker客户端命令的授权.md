@@ -28,7 +28,6 @@ $ cat /etc/docker/daemon.json|grep userland-proxy
 
 如无特殊需求，默认值即可
 
-
 ## 参考文档
 
 - Docker容器最佳安全实践白皮书（V1.0）
