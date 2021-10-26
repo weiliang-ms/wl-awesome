@@ -1,3 +1,4 @@
+{% raw %}
 ## Dockerfile指定USER
 
 ### 描述
@@ -34,3 +35,5 @@ RUN useradd -d /home/username -m -s /bin/bash username USER username
 
 - Docker容器最佳安全实践白皮书（V1.0）
 - [Docker官方文档](https://docs.docker.com/)
+
+{% endraw %}
