@@ -44,12 +44,7 @@
       "modify_format": "YYYY-MM-DD HH:mm:ss"
     },
     "sharing": {
-      "facebook": true,
-      "twitter": true,
-      "weibo": true,
-      "qq": true,
       "all": [
-        "douban",
         "google",
         "qzone",
         "linkedin"

@@ -1,3 +1,4 @@
+{% raw %}
 ## 镜像添加HEALTHCHECK
 
 ### 描述
@@ -28,3 +29,5 @@
 
 - Docker容器最佳安全实践白皮书（V1.0）
 - [Docker官方文档](https://docs.docker.com/)
+
+{% endraw %}
