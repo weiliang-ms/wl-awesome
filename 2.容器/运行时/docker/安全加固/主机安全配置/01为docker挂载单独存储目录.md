@@ -13,7 +13,7 @@
 
 1. `docker`宿主机增加数据盘`/dev/sdb`
 
-```shell script
+```bash
 [root@localhost ~]# lsblk
 NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
 sda               8:0    0   20G  0 disk
@@ -27,7 +27,7 @@ sr0              11:0    1  4.4G  0 rom
 
 2. 格式化数据盘
 
-```shell script
+```bash
 [root@localhost ~]# mkfs.ext4 /dev/sdb
 mke2fs 1.42.9 (28-Dec-2013)
 /dev/sdb is entire device, not just one partition!
@@ -64,7 +64,7 @@ echo "/dev/sdb /var/lib/docker ext4 defaults 0 0" >> /etc/fstab
 
 4. 重启主机测试是否生效
 
-```shell script
+```bash
 [root@localhost ~]# reboot
 [root@localhost ~]# lsblk
 NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
