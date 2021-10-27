@@ -15,5 +15,17 @@
 此字段仅适用于支持`fsGroup`控制的所有权和权限的卷类型。该字段有两个可能的值:
 
 - `OnRootMismatch`: 如果根目录的权限和所有权与卷的预期权限不匹配，将更改权限和所有权。这可以帮助缩短更改卷的所有权和许可所需的时间。
-- `Always`: 
+- `Always`: 总是在挂载卷时更改卷的权限和所有权
+
+> 样例
+
+```bash
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+  fsGroupChangePolicy: "OnRootMismatch"
+```
+
+**注意:** 该字段对临时卷类型(如secret、configMap和emptydir)没有影响。
 
