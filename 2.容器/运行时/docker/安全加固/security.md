@@ -1,42 +1,7 @@
 {% raw %}
 
 - [容器安全](#%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8)
-  - [2.`docker`守护进程配置](#2docker%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AE)
-    - [2.6 使用默认`cgroup`](#26-%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4cgroup)
-    - [2.7 设置容器的默认空间大小](#27-%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E7%9A%84%E9%BB%98%E8%AE%A4%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F)
-    - [2.8 启用`docker`客户端命令的授权](#28-%E5%90%AF%E7%94%A8docker%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%91%BD%E4%BB%A4%E7%9A%84%E6%8E%88%E6%9D%83)
-    - [2.9 配置集中和远程日志记录](#29-%E9%85%8D%E7%BD%AE%E9%9B%86%E4%B8%AD%E5%92%8C%E8%BF%9C%E7%A8%8B%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95)
-    - [2.10 禁用旧仓库版本（v1）上的操作](#210-%E7%A6%81%E7%94%A8%E6%97%A7%E4%BB%93%E5%BA%93%E7%89%88%E6%9C%ACv1%E4%B8%8A%E7%9A%84%E6%93%8D%E4%BD%9C)
-    - [2.11 启用实时恢复](#211-%E5%90%AF%E7%94%A8%E5%AE%9E%E6%97%B6%E6%81%A2%E5%A4%8D)
-    - [2.12 禁用`userland`代理](#212-%E7%A6%81%E7%94%A8userland%E4%BB%A3%E7%90%86)
-    - [2.13 应用守护进程范围的自定义`seccomp`配置文件](#213-%E5%BA%94%E7%94%A8%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E8%8C%83%E5%9B%B4%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89seccomp%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-    - [2.14 生产环境中避免实验性功能](#214-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E9%81%BF%E5%85%8D%E5%AE%9E%E9%AA%8C%E6%80%A7%E5%8A%9F%E8%83%BD)
-    - [2.15 限制容器获取新的权限](#215-%E9%99%90%E5%88%B6%E5%AE%B9%E5%99%A8%E8%8E%B7%E5%8F%96%E6%96%B0%E7%9A%84%E6%9D%83%E9%99%90)
-  - [3.`docker`守护程序文件配置](#3docker%E5%AE%88%E6%8A%A4%E7%A8%8B%E5%BA%8F%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE)
-    - [3.1 设置`docker`文件的所有权为`root:root`](#31-%E8%AE%BE%E7%BD%AEdocker%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.2 设置`docker.service`文件权限为644或更多限制性](#32-%E8%AE%BE%E7%BD%AEdockerservice%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.3 设置`docker.socket`文件的所有权为`root:root`](#33-%E8%AE%BE%E7%BD%AEdockersocket%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.4 设置`docker.socket`文件权限为`644`或更多限制性](#34-%E8%AE%BE%E7%BD%AEdockersocket%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.5 设置`/etc/docker`目录所有权为`root:root`](#35-%E8%AE%BE%E7%BD%AEetcdocker%E7%9B%AE%E5%BD%95%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.6 设置`/etc/docker`目录权限为`755`或更多限制性](#36-%E8%AE%BE%E7%BD%AEetcdocker%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%BA755%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.7 设置仓库证书文件所有权为`root:root`](#37-%E8%AE%BE%E7%BD%AE%E4%BB%93%E5%BA%93%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.8 设置仓库证书文件权限为`444`或更多限制性](#38-%E8%AE%BE%E7%BD%AE%E4%BB%93%E5%BA%93%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.9 设置`TLS CA`证书文件所有权为`root:root`](#39-%E8%AE%BE%E7%BD%AEtls-ca%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.10 设置`TLS CA`证书文件权限为`444`或更多限制性](#310-%E8%AE%BE%E7%BD%AEtls-ca%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA444%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.11 设置`docker`服务器证书文件所有权为`root:root`](#311-%E8%AE%BE%E7%BD%AEdocker%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.12 设置`Docker`服务器证书文件权限为`400`或更多限制](#312-%E8%AE%BE%E7%BD%AEdocker%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA400%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6)
-    - [3.13 设置`docker.sock`文件所有权为`root:docker`](#313-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootdocker)
-    - [3.14 设置`docker.sock`文件权限为`660`或更多限制性](#314-%E8%AE%BE%E7%BD%AEdockersock%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA660%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
-    - [3.15 设置`docker.json`文件所有权为`root:root`](#315-%E8%AE%BE%E7%BD%AEdockerjson%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%BArootroot)
-    - [3.16 设置`docker.json`文件权限为`644`或更多限制性](#316-%E8%AE%BE%E7%BD%AEdockerjson%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E4%B8%BA644%E6%88%96%E6%9B%B4%E5%A4%9A%E9%99%90%E5%88%B6%E6%80%A7)
   - [4.容器镜像和构建文件](#4%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E5%92%8C%E6%9E%84%E5%BB%BA%E6%96%87%E4%BB%B6)
-    - [4.1 创建容器的用户](#41-%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E7%9A%84%E7%94%A8%E6%88%B7)
-    - [4.2 容器使用可信的基础镜像](#42-%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E5%8F%AF%E4%BF%A1%E7%9A%84%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F)
-    - [4.3 容器中不安装没有必要的软件包](#43-%E5%AE%B9%E5%99%A8%E4%B8%AD%E4%B8%8D%E5%AE%89%E8%A3%85%E6%B2%A1%E6%9C%89%E5%BF%85%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85)
-    - [4.4 扫描镜像漏洞并且构建包含安全补丁的镜像](#44-%E6%89%AB%E6%8F%8F%E9%95%9C%E5%83%8F%E6%BC%8F%E6%B4%9E%E5%B9%B6%E4%B8%94%E6%9E%84%E5%BB%BA%E5%8C%85%E5%90%AB%E5%AE%89%E5%85%A8%E8%A1%A5%E4%B8%81%E7%9A%84%E9%95%9C%E5%83%8F)
-    - [4.5 启用`docker`内容信任](#45-%E5%90%AF%E7%94%A8docker%E5%86%85%E5%AE%B9%E4%BF%A1%E4%BB%BB)
-    - [4.6 将`HEALTHCHECK`说明添加到容器镜像](#46-%E5%B0%86healthcheck%E8%AF%B4%E6%98%8E%E6%B7%BB%E5%8A%A0%E5%88%B0%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F)
-    - [4.7 在`dockerfile`中使用`copy`而不是`add`](#47-%E5%9C%A8dockerfile%E4%B8%AD%E4%BD%BF%E7%94%A8copy%E8%80%8C%E4%B8%8D%E6%98%AFadd)
     - [4.8 涉密信息不存储在`dockerfile`](#48-%E6%B6%89%E5%AF%86%E4%BF%A1%E6%81%AF%E4%B8%8D%E5%AD%98%E5%82%A8%E5%9C%A8dockerfile)
     - [4.9 仅安装已经验证的软件包](#49-%E4%BB%85%E5%AE%89%E8%A3%85%E5%B7%B2%E7%BB%8F%E9%AA%8C%E8%AF%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85)
     - [4.10 正确设置容器上的`CPU`优先级](#410-%E6%AD%A3%E7%A1%AE%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E4%B8%8A%E7%9A%84cpu%E4%BC%98%E5%85%88%E7%BA%A7)
@@ -74,1006 +39,7 @@
 
 # 容器安全
 
-基于`Docker 19.03.8`
-
-## 概述
-
-云原生时代下，容器广受欢迎，因为它能简化应用或服务及其所有依赖项的构建、封装与推进，而且这种简化涵盖整个生命周期，并且跨越不同的环境和部署目标。
-然而，容器安全依然面临着一些挑战。本文从几个角度切入，剖析容器加固常用方式方法。
-
-在审查`Docker`安全性时，有四个主要方面需要考虑:
-
-- 内核的内在安全性及其对名称空间和`cgroup`的支持
-- `Docker`守护进程本身的攻击面
-- 容器配置文件中的漏洞，要么是默认的，要么是用户自定义的
-- 内核的`强化`安全特性以及它们如何与容器交互
-
-## 1 主机安全配置
-
-## 2.`docker`守护进程配置
-
-
-
-
-
-### 2.6 使用默认`cgroup`
-
-- 描述
-
-查看`--cgroup-parent`选项允许设置用于所有容器的默认`cgroup parent`。 如果没有特定用例,则该设置应保留默认值。
-
-- 隐患分析
-
-系统管理员可定义容器应运行的`cgroup`。 若系统管理员没有明确定义`cgroup`，容器也会在`docker cgroup`下运行。
-应该监测和确认使用情况。通过加到与默认不同的`cgroup`，导致不合理地共享资源，从而可能会主机资源耗尽
-
-- 审计方式
-
-```bash
-ps -ef|grep dockerd
-```
-
-确保`--cgroup-parent`参数未设置或设置为适当的非默认`cgroup`
-
-- 修复建议
-
-如无特殊需求，默认值即可
-
-### 2.7 设置容器的默认空间大小
-
-- 描述
-
-在某些情况下，可能需要大于`10G`（容器默认存储大小）的容器空间。需要仔细选择空间的大小
-
-- 隐患分析
-
-守护进程重启时可以增加容器空间的大小。用户可以通过设置默认容器空间值来进行扩大，但不允许缩小。
-设立该值的时候需要谨慎，防止设置不当带来空间耗尽的情况
-
-- 审计方式
-
-```bash
-ps -ef|grep dockerd
-```
-
-执行上述命令，它不应显示任何`--storage-opt dm.basesize`参数
-
-- 修复建议
-
-如无特殊需求，默认值即可
-
-### 2.8 启用`docker`客户端命令的授权
-
-- 描述
-
-使用本机`Docker`授权插件或第三方授权机制与`Docker`守护程序来管理对`Docker`客户端命令的访问。
-
-- 隐患分析
-
-`Docker`默认是没有对客户端命令进行授权管理的功能。
-任何有权访问`Docker`守护程序的用户都可以运行任何`Docker`客户端命令。
-对于使用`Docker`远程`API`来调用守护进程的调用者也是如此。
-如果需要细粒度的访问控制，可以使用授权插件并将其添加到`Docker`守护程序配置中。
-使用授权插件，`Docker`管理员可以配置更细粒度访问策略来管理对`Docker`守护进程的访问。
-`Docker`的第三方集成可以实现他们自己的授权模型，以要求`Docker`的本地授权插件
-（即`Kubernetes`，`Cloud Foundry`，`Openshift`）之外的`Docker`守护进程的授权。
-
-- 审计方式
-
-```bash
-ps -ef|grep dockerd
-或
-cat /etc/docker/daemon.json|grep userland-proxy
-```
-
-如果使用`Docker`本地授权，可使用`--authorization-plugin`参数加载授权插件。
-
-- 修复建议
-
-如无特殊需求，默认值即可
-
-### 2.9 配置集中和远程日志记录
-
-- 描述
-
-`Docker`现在支持各种日志驱动程序。存储日志的最佳方式是支持集中式和远程日志记录
-
-- 审计方式
-
-运行`docker info`并确保日志记录驱动程序属性被设置为适当的。
-
-```bash
-[root@localhost ~]# docker info --format '{{.LoggingDriver}}'
-json-file
-```
-
-- 修复建议
-
-> 配置`json-file`驱动
-
-```bash
-[root@localhost ~]# cat /etc/docker/daemon.json
-{
-     "log-driver":"json-file",
-     "log-opts":{
-         "max-size":"50m",
-         "max-file":"3"
-     }
-}
-```
-
-> 重启
-
-```bash
-systemctl daemon-reload
-systemctl restart docker
-```
-
-### 2.10 禁用旧仓库版本（v1）上的操作
-
-- 描述
-
-最新的`Docker`镜像仓库是`v2`。遗留镜像仓库版本`v1`上的所有操作都应受到限制
-
-- 隐患分析
-
-`Docker`镜像仓库`v2`在`v1`中引入了许多性能和安全性改进。
-它支持容器镜像来源验证和其他安全功能。因此，对`Docker v1`仓库的操作应该受到限制
-
-- 审计方式
-
-```bash
-ps -ef|grep dockerd
-```
-
-上面的命令应该列出`--disable-legacy-registry`作为传递给`Docker`守护进程的选项。
-
-- 修复建议
-
-**注意：**`17.12+`版本已移除，无需配置
-
-> 编辑配置文件
-
-```bash
-vi /etc/systemd/system/docker.service
-```
-
-`ExecStart=/usr/bin/dockerd`添加参数`--userns-remap=default`
-
-> 重载服务
-
-```bash
-systemctl daemon-reload
-systemctl restart docker
-```
-
-### 2.11 启用实时恢复
-
-- 描述
-
-`live-restore`参数可以支持无守护程序的容器运行。
-它确保`Docker`在关闭或恢复时不会停止容器，并在重新启动后重新连接到容器。
-
-- 隐患分析
-
-可用性作为安全一个重要的属性。 在`Docker`守护进程中设置`--live-restore`标志可确保当`Docker`守护进程不可用时容器执行不会中断。 
-这也意味着当更新和修复`Docker`守护进程而不会导致容器停止工作。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# docker info --format '{{.LiveRestoreEnabled}}'
-false
-```
-
-- 修复建议
-
-> 编辑文件
-
-```bash
-mkdir -p /etc/docker/
-vi /etc/docker/daemon.json
-```
-
-添加如下内容
-
-```
-"live-restore": true
-```
-
-> 重载服务
-
-```bash
-systemctl daemon-reload
-systemctl restart docker
-```
-
-### 2.12 禁用`userland`代理 
-
-- 描述
-
-当容器端口需要被映射时，`Docker`守护进程都会启动用于端口转发的`userland-proxy`方式。如果使用了`DNAT`方式，该功能可以被禁用
-
-- 隐患分析
-
-`Docker`引擎提供了两种机制将主机端口转发到容器,`DNAT`和`userland-proxy`。
-在大多数情况下，`DNAT`模式是首选，因为它提高了性能，并使用本地`Linux iptables`功能而需要附加组件。
-如果`DNAT`可用，则应在启动时禁用`userland-proxy`以减少安全风险。
-
-- 审计方法
-
-```bash
-ps -ef|grep dockerd
-或
-cat /etc/docker/daemon.json|grep userland-proxy
-```
-
-确保`userland-proxy`配置为`false`
-
-- 修复建议
-
-> 编辑文件
-
-```bash
-mkdir -p /etc/docker/
-vi /etc/docker/daemon.json
-```
-
-添加如下内容
-
-```
-"userland-proxy": false,
-```
-
-> 重载服务
-
-```bash
-systemctl daemon-reload
-systemctl restart docker
-```
-
-### 2.13 应用守护进程范围的自定义`seccomp`配置文件
-
-- 描述
-
-如果需要，您可以选择在守护进程级别自定义`seccomp`配置文件，并覆盖`Docker`的默认`seccomp`配置文件
-
-- 隐患分析
-
-大量系统调用暴露于每个用户级进程，其中许多系统调用在整个生命周期中都未被使用。
-大多数应用程序不需要所有的系统调用，因此可以通过减少可用的系统调用来增加安全性。
-可自定义`seccomp`配置文件，而不是使用`Docker`的默认`seccomp`配置文件。
-如果`Docker`的默认配置文件够用的话，则可以选择忽略此建议
-
-- 审计
-
-```bash
-[root@localhost ~]# docker info --format '{{.SecurityOptions}}'
-```
-
-- 修复建议
-
-错误配置的`seccomp`配置文件可能会中断的容器运行。`Docker`默认的策略兼容性很好，可以解决一些基本的安全问题。
-所以，在[重写默认值](https://docs.docker.com/engine/security/seccomp/) 时，你应该非常小心
-
-### 2.14 生产环境中避免实验性功能
-
-- 描述
-
-避免生产环境中的实验性功`-Experimental`
-
-- 隐患分析
-
-`Docker`实验功能现在是一个运行时`Docker`守护进程标志, 
-其作为运行时标志传递给`Docker`守护进程，激活实验性功能。
-实验性功能现在虽然比较稳定，但是一些功能可能没有大规模经使用，并不能保证`API`的稳定性，所以不建议在生产环境中使用
-
-- 审计方法
-
-```bash
-[root@localhost ~]# docker version --format '{{.Server.Experimental}}'
-false
-```
-
-- 修复建议
-
-不要将`--Experimental`作为运行时参数传递给`Docker`守护进程
-
-### 2.15 限制容器获取新的权限
-
-- 描述
-
-默认情况下，限制容器通过`suid`或`sgid`位获取附加权限
-
-- 隐患分析
-
-一个进程可以在内核中设置`no_new_priv`。 它支持`fork`，`clone`和`execve`。
-`no_new_priv`确保进程或其子进程不会通过`suid`或`sgid`位获得任何其他特权。
-这样，很多危险的操作就降低安全风险。在守护程序级别进行设置可确保默认情况下，所有新容器不能获取新的权限。
-
-- 审计方法
-
-```bash
-ps -ef|grep dockerd
-或
-cat /etc/docker/daemon.json|grep no-new-privileges
-```
-
-确保`no-new-privileges`配置为`false`
-
-- 修复建议
-
-> 编辑文件
-
-```bash
-mkdir -p /etc/docker/
-vi /etc/docker/daemon.json
-```
-
-添加如下内容
-
-```
-"no-new-privileges": false
-```
-
-> 重载服务
-
-```bash
-systemctl daemon-reload
-systemctl restart docker
-```
-
-## 3.`docker`守护程序文件配置
-
-### 3.1 设置`docker`文件的所有权为`root:root`
-
-- 描述
-
-- 隐患分析
-
-`docker.service`文件包含可能会改变`Docker`守护进程行为的敏感参数。
-因此，它应该由`root`拥有和归属，以保持文件的完整性。
-
-- 审计方式
-
-```bash
-systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 ls -l
-```
-
-返回值应为
-
-```
--rw-r--r-- 1 root root 1157 Apr 26 08:04 /etc/systemd/system/docker.service
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chown root:root
-```
-
-### 3.2 设置`docker.service`文件权限为644或更多限制性
-
-- 描述
-
-验证`docker.service`文件权限是否正确设置为`644`或更多限制
-
-- 隐患分析
-
-`docker.service`文件包含可能会改变`Docker`守护进程行为的敏感参数。
-因此，它应该由`root`拥有和归属，以保持文件的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
-644
-```
-
-- 修复建议
-
-若权限非`644`，修改授权
-```bash
-systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chmod 644
-```
-
-### 3.3 设置`docker.socket`文件的所有权为`root:root`
-
-- 描述
-
-验证`docker.socket`文件所有权和组所有权是否正确设置为`root`
-
-- 隐患分析
-
-`docker.socket`文件包含可能会改变`Docker`远程`API`行为的敏感参数。
-因此，它应该拥有`root`权限，以保持文件的完整性。
-
-- 审计方式
-
-```bash
-systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 ls -l
-```
-
-返回值应为
-
-```
--rw-r--r-- 1 root root 197 Mar 10  2020 /usr/lib/systemd/system/docker.socket
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chown root:root
-```
-
-### 3.4 设置`docker.socket`文件权限为`644`或更多限制性
-
-- 描述
-
-验证`docker.socket`文件权限是否正确设置为`644`或更多限制
-
-- 隐患分析
-
-`docker.socket`文件包含可能会改变`Docker`远程`API`行为的敏感参数。
-因此，它应该拥有`root`权限，以保持文件的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
-644
-```
-
-- 修复建议
-
-若权限非`644`，修改授权
-```bash
-systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chmod 644
-```
-
-### 3.5 设置`/etc/docker`目录所有权为`root:root`
-
-- 描述
-
-验证`/etc/docker`目录所有权和组所有权是否正确设置为`root:root`
-
-- 隐患分析
-
-除了各种敏感文件之外，`/etc/docker`目录还包含证书和密钥。 
-因此，它应该由`root:root`拥有和归组来维护目录的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %U:%G /etc/docker
-root:root
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chown root:root /etc/docker
-```
-
-### 3.6 设置`/etc/docker`目录权限为`755`或更多限制性
-
-- 描述
-
-验证`/etc/docker`目录权限是否正确设置为`755`
-
-- 隐患分析
-
-除了各种敏感文件之外，`/etc/docker`目录还包含证书和密钥。 
-因此，它应该由`root:root`拥有和归组来维护目录的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %a /etc/docker
-755
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chmod 755 /etc/docker
-```
-
-### 3.7 设置仓库证书文件所有权为`root:root`
-
-- 描述
-
-验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）均由`root`拥有并归组所有
-
-- 隐患分析
-
-`/etc/docker/certs.d/<registry-name>`目录包含`Docker`镜像仓库证书。
-这些证书文件必须由`root`和其组拥有，以维护证书的完整性
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %U:%G /etc/docker/certs.d/* 
-root:root
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chown root:root /etc/docker/certs.d/*
-```
-
-### 3.8 设置仓库证书文件权限为`444`或更多限制性 
-
-- 描述
-
-验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）所有权限是否正确设置为`444`
-
-- 隐患分析
-
-`/etc/docker/certs.d/<registry-name>`目录包含`Docker`镜像仓库证书。
-这些证书文件必须具有`444`权限，以维护证书的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %a /etc/docker/certs.d/*
-755
-```
-
-- 修复建议
-
-若权限非`444`，修改授权
-```bash
-chmod 444 /etc/docker/certs.d/*
-```
-
-### 3.9 设置`TLS CA`证书文件所有权为`root:root`
-
-- 描述
-
-验证`TLS CA`证书文件均由`root`拥有并归组所有
-
-- 隐患分析
-
-`TLS CA`证书文件应受到保护，不受任何篡改。它用于指定的`CA`证书验证。
-因此，它必须由`root`拥有，以维护`CA`证书的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# ls /etc/docker/certs.d/*/* |xargs -n1 stat -c %U:%G
-root:root
-root:root
-root:root
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chown root:root /etc/docker/certs.d/*/*
-```
-
-### 3.10 设置`TLS CA`证书文件权限为`444`或更多限制性
-
-- 描述
-
-验证所有仓库证书文件（通常位于`/etc/docker/certs.d/<registry-name>` 目录下）所有权限是否正确设置为`444`
-
-- 隐患分析
-
-`TLS CA`证书文件应受到保护，不受任何篡改。它用于指定的`CA`证书验证。
-这些证书文件必须具有`444`权限，以维护证书的完整性。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %a /etc/docker/certs.d/*/*
-644
-644
-644
-```
-
-- 修复建议
-
-若权限非`444`，修改授权
-```bash
-chmod 444 /etc/docker/certs.d/*/*
-```
-
-### 3.11 设置`docker`服务器证书文件所有权为`root:root`
-
-- 描述
-
-验证`Docker`服务器证书文件（与`--tlscert`参数一起传递的文件）是否由`root`和其组拥有
-
-- 隐患分析
-
-`Docker`服务器证书文件应受到保护，不受任何篡改。它用于验证`Docker`服务器。
-因此，它必须由`root`拥有以维护证书的完整性。
-
-- 审计方式
-
-**注意:** `/root/docker`替换为docker服务端实际证书存放目录
-
-```bash
-[root@localhost ~]# ls -l /root/docker
-total 44
--rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
--rw-r--r-- 1 root root 1980 Apr 26 02:56 ca.pem
--rw-r--r-- 1 root root   17 Apr 26 02:57 ca.srl
--rw-r--r-- 1 root root 1801 Apr 26 02:57 cert.pem
--rw-r--r-- 1 root root 1582 Apr 26 02:57 client.csr
--rw-r--r-- 1 root root   30 Apr 26 02:57 extfile-client.cnf
--rw-r--r-- 1 root root   86 Apr 26 02:56 extfile.cnf
--rw-r--r-- 1 root root 3243 Apr 26 02:57 key.pem
--rw-r--r-- 1 root root 1862 Apr 26 02:56 server-cert.pem
--rw-r--r-- 1 root root 1594 Apr 26 02:56 server.csr
--rw-r--r-- 1 root root 3243 Apr 26 02:56 server-key.pem
-
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chown root:root /root/docker/*
-```
-
-### 3.12 设置`Docker`服务器证书文件权限为`400`或更多限制
-
-- 描述
-
-验证`Docker`服务器证书文件（与`--tlscert`参数一起传递的文件）权限是否为`400`
-
-- 隐患分析
-
-`Docker`服务器证书文件应受到保护，不受任何篡改。它用于验证`Docker`服务器。
-因此，它必须由`root`拥有以维护证书的完整性。
-
-- 审计方式
-
-**注意:** `/root/docker`替换为docker服务端实际证书存放目录
-
-```bash
-[root@localhost ~]# ls -l /root/docker
-total 44
--rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
--rw-r--r-- 1 root root 1980 Apr 26 02:56 ca.pem
--rw-r--r-- 1 root root   17 Apr 26 02:57 ca.srl
--rw-r--r-- 1 root root 1801 Apr 26 02:57 cert.pem
--rw-r--r-- 1 root root 1582 Apr 26 02:57 client.csr
--rw-r--r-- 1 root root   30 Apr 26 02:57 extfile-client.cnf
--rw-r--r-- 1 root root   86 Apr 26 02:56 extfile.cnf
--rw-r--r-- 1 root root 3243 Apr 26 02:57 key.pem
--rw-r--r-- 1 root root 1862 Apr 26 02:56 server-cert.pem
--rw-r--r-- 1 root root 1594 Apr 26 02:56 server.csr
--rw-r--r-- 1 root root 3243 Apr 26 02:56 server-key.pem
-
-```
-
-- 修复建议
-
-若权限非`400`，修改授权
-```bash
-chmod 400 /root/docker/*
-```
-
-### 3.13 设置`docker.sock`文件所有权为`root:docker`
-
-- 描述
-
-验证`docker.sock`文件由`root`拥有，而用户组为`docker`。
-
-- 隐患分析
-
-`Docker`守护进程以`root`用户身份运行。 因此，默认的`Unix`套接字必须由`root`拥有。 
-如果任何其他用户或进程拥有此套接字，那么该非特权用户或进程可能与`Docker`守护进程交互。
-另外，这样的非特权用户或进程可能与容器交互，这样非常不安全。
-另外，`Docker`安装程序会创建一个名为`docker`的用户组。
-可以将用户添加到该组，然后这些用户将能够读写默认的`Docker Unix`套接字。
-`docker`组成员由系统管理员严格控制。 如果任何其他组拥有此套接字，那么该组的成员可能会与`Docker`守护进程交互。。
-因此，默认的`Docker Unix`套接字文件必须由`docker`组拥有权限，以维护套接字文件的完整性
-
-- 审计
-
-```bash
-[root@localhost ~]# stat -c %U:%G /var/run/docker.sock
-root:docker
-```
-
-- 修复建议
-
-若所属用户非`root:docker`，修改授权
-```bash
-chown root:docker /var/run/docker.sock
-```
-
-### 3.14 设置`docker.sock`文件权限为`660`或更多限制性
-
-- 描述
-
-验证`docker`套接字文件是否具有`660`或更多限制的权限
-
-- 隐患分析
-
-只有`root`和`docker`组的成员允许读取和写入默认的`Docker Unix`套接字。
-因此，`Docker`套接字文件必须具有`660`或更多限制的权限
-
-- 审计
-
-```bash
-[root@localhost ~]# stat -c %a /var/run/docker.sock
-660
-```
-
-- 修复建议
-
-若权限非`660`，修改授权
-```bash
-chmod 660 /var/run/docker.sock
-```
-
-### 3.15 设置`docker.json`文件所有权为`root:root` 
-
-- 描述
-
-验证`docker.json`文件由`root`归属。
-
-- 隐患分析
-
-`docker.json`文件包含可能会改变`Docker`守护程序行为的敏感参数。
-因此，它应该由`root`拥有，以维护文件的完整性
-
-- 审计
-
-```bash
-[root@localhost ~]# stat -c %U:%G /etc/docker/daemon.json
-root:root
-```
-
-- 修复建议
-
-若所属用户非`root:root`，修改授权
-```bash
-chown root:root /etc/docker/daemon.json
-```
-
-### 3.16 设置`docker.json`文件权限为`644`或更多限制性
-
-- 描述
-
-验证`docker.json`文件权限是否正确设置为`644`或更多限制
-
-- 隐患分析
-
-`docker.json`文件包含可能会改变`Docker`守护程序行为的敏感参数。
-因此，它应该由`root`拥有，以维护文件的完整性
-
-- 审计方式
-
-```bash
-[root@localhost ~]# stat -c %a /etc/docker/daemon.json
-644
-```
-
-- 修复建议
-
-若权限非`644`，修改授权
-```bash
-chmod 644 /etc/docker/daemon.json
-```
-
 ## 4.容器镜像和构建文件
-
-### 4.1 创建容器的用户
-
-- 描述
-
-为容器镜像的`Dockerfile`中的容器创建非`root`用户
-
-- 隐患分析
-
-如果可能，指定非`root`用户身份运行容器是个很好的做法。
-虽然用户命名空间映射可用，但是如果用户在容器镜像中指定了用户，则默认情况下容器将作为该用户运行，并且不需要特定的用户命名空间重新映射。
-
-- 审计方式
-
-```bash
-[root@localhost ~]# docker ps |grep ccc|awk '{print $1}'|xargs -n1 docker inspect --format='{{.Id}}:User={{.Config.User}}'
-4e53c86daf89a1bac0ed178d043663d2af162ca813ff17864ebdb964d8233459:User=
-```
-
-上述命令应该返回容器用户名或用户`ID`。 如果为空，则表示容器以`root`身份运行
-
-- 修复建议
-
-确保容器镜像的`Dockerfile`包含以下指令：`USER <用户名或 ID>`
-其中用户名或`ID`是指可以在容器基础镜像中找到的用户。 如果在容器基础镜像中没有创建特定用户，则在`USER`指令之前添加`useradd`命令以添加特定用户。
-例如，在`Dockerfile`中创建用户：
-```
-RUN useradd -d /home/username -m -s /bin/bash username USER username
-```
-
-**注意:** 如果镜像中有容器不需要的用户，请考虑删除它们。
-删除这些用户后，提交镜像，然后生成新的容器实例以供使用。
-
-### 4.2 容器使用可信的基础镜像
-
-- 描述
-
-确保容器镜像是从头开始编写的，或者是基于通过安全仓库下载的另一个已建立且可信的基本镜像
-
-- 隐患分析
-
-官方存储库是由`Docker`社区或供应商优化的`Docker`镜像。
-可能还存在其他不安全的公共存储库。 在从`Docker`和第三方获取容器镜像时，需谨慎使用。
-
-- 审计方式
-
-> 1.检查`Docker`主机以查看执行以下命令使用的`Docker`镜像：
-
-```bash
-docker images
-```
-
-这将列出当前可用于`Docker`主机的所有容器镜像。
-访谈系统管理员并获取证据，证明镜像列表是通过安全的镜像仓库获到的，也可简单的从镜像的`TAG`名称来判断是否为可信镜像。
-
-> 2.检查镜像信息
-
-对于在`Docker`主机上找到的每个`Docker`镜像，检查镜像的构建方式，以验证是否来自可信来源：
-
-```bash
-docker history  <imageName>
-```
-
-- 修复建议
-
-    - 中间件等应用使用官方镜像
-    - 构建镜像时选用`alpine`、`CentOS`等官方镜像
- 
-从源头杜绝不安全镜像
-
-### 4.3 容器中不安装没有必要的软件包
-
-- 描述
-
-容器往往是操作系统的最简的版本，不要安装任何不需要的软件。
-
-- 隐患分析
-
-安装不必要的软件可能会增加容器的攻击风险。因此，除了容器的真正需要的软件之外，不要安装其他多余的软件。
-
-- 审计方式
-
-> 1.通过执行以下命令列出所有运行的容器实例：
-
-```bash
-docker ps
-```
-> 对于每个容器实例，执行以下或等效的命令
-
-```bash
-docker exec <container-id> rpm -qa
-```
-
-`rpm -qa`命令可根据容器镜像系统类型进行相应变更
-
-- 修复建议
-
-    - 中间件等应用使用官方镜像
-    - 构建镜像时选用`alpine`、`CentOS`等官方精简后的镜像
-
-从源头杜绝安装没有必要的软件包
-
-### 4.4 扫描镜像漏洞并且构建包含安全补丁的镜像
-
-- 描述
-
-应该经常扫描镜像以查找漏洞。重建镜像安装最新的补丁。
-
-- 隐患分析
-
-安全补丁可以解决软件的安全问题。可以使用镜像漏洞扫描工具来查找镜像中的任何类型的漏洞，然后检查可用的补丁以减轻这些漏洞。
-修补程序将系统更新到最新的代码库。此外，如果镜像漏洞扫描工具可以执行二进制级别分析，而不仅仅是版本字符串匹配，则会更好
-
-- 审计方式
-
-> 1.通过执行以下命令列出所有运行的容器实例
-
-```bash
-docker ps --quiet
-```
-> 2.对于每个容器实例，执行下面的或等效的命令来查找容器中安装的包的列表,确保安装各种受影响软件包的安全更新。 
-
-```bash
-docker exec <container-id> rpm -qa
-```
-
-- 修复建议
-
-定期更新基础镜像版本`tag`（或使用`latest`版本镜像，每日执行构建）及镜像内必须软件版本
-
-### 4.5 启用`docker`内容信任
-
-- 描述
-
-默认情况下禁用内容信任，为了安全起见，可以启用
-
-- 隐患分析
-
-内容信任为向远程`Docker`镜像仓库发开和接收的数据提供了使用数字签名的能力。
-这些签名允许客户端验证特定镜像标签的完整性和发布者。这确保了容器镜像的来源的合法性。
-
-- 审计方式
-
-### 4.6 将`HEALTHCHECK`说明添加到容器镜像
-
-- 描述
-
-在`Docker`容器镜像中添加`HEALTHCHECK`指令以对正在运行的容器执行运行状况检查。
-
-- 安全出发点
-
-安全性最重要的一个特性就是可用性。将`HEALTHCHECK`指令添加到容器镜像可确保`Docker`引擎定期检查运行的容器实例是否符合该指令，
-以确保实例仍在运行。根据报告的健康状况，`Docker`引擎可以退出非工作容器并实例化新容器。
-
-- 审计
-
-运行以下命令，并确保`Docker`镜像对`HEALTHCHECK`指令设置
-
-```bash
-[root@localhost ~]# docker inspect --format='{{.Config.Healthcheck}}' 8a2fb25a19f5
-<nil>
-```
-
-应当返回设置值而非`nil`
-
-- 修复建议
-
-按照`Docker`文档，并使用`HEALTHCHECK`指令重建容器镜像。
-
-### 4.7 在`dockerfile`中使用`copy`而不是`add` 
-
-- 描述
-
-在`Dockerfile`中使用`COPY`指令而不是`ADD`指令
-
-- 隐患分析
-
-`COPY`指令只是将文件从本地主机复制到容器文件系统。
-`ADD`指令可能会从远程`URL`下载文件并执行诸如解包等操作。
-因此，`ADD`指令增加了从`URL`添加恶意文件的风险
-
-- 审计
-
-步骤 1：运行以下命令获取镜像列表
-
-```bash
-docker images
-```
-
-步骤 2：对上述列表中的每个镜像执行以下命令，并查找任何`ADD`指令：
-
-```
-for i in `docker images --quiet`;do
-docker history $i |grep ADD > /dev/null
-if [ $? -eq 0 ];then
-    echo "imageID: $i has 'ADD' direct..."
-fi
-done
-```
-
-- 修复建议
-
-在`Dockerfile`中使用`COPY`指令
 
 ### 4.8 涉密信息不存储在`dockerfile`
 
@@ -1090,12 +56,12 @@ done
 
 第 1 步：运行以下命令以获取镜像列表：
 
-```bash
+```shell script
 docker images
 ```
 第 2 步：对上面列表中的每个镜像运行以下命令，并查找是否有涉密信息：
 
-```bash
+```shell script
 docker history <imageID>
 ```
 
@@ -1119,13 +85,13 @@ docker history <imageID>
 
 第 1 步：运行以下命令以获取镜像列表：
 
-```bash
+```shell script
 docker images
 ```
 
 第 2 步：对上面列表中的每个镜像运行以下命令，并查看软件包的合法性
 
-```bash
+```shell script
 docker history <imageID>
 ```
 
@@ -1148,7 +114,7 @@ docker history <imageID>
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:CpuShares={{.HostConfig.CpuShares}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:CpuShares=0
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:CpuShares=0
@@ -1182,7 +148,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:CapAdd={{.HostConfig.CapAdd}} CapDrop={{.HostConfig.CapDrop}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:CapAdd=<no value> CapDrop=<no value>
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:CapAdd=<no value> CapDrop=<no value>
@@ -1196,7 +162,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:CapAdd=<no valu
 
 只添加必须功能特性
 
-```bash
+```shell script
 docker run -dit --cap-drop=all --cap-add={"NET_ADMIN", "SYS_ADMIN"} centos /bin/bash
 ```
 
@@ -1253,7 +219,7 @@ docker run -dit --cap-drop=all --cap-add={"NET_ADMIN", "SYS_ADMIN"} centos /bin/
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Privileged={{.HostConfig.Privileged}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Privileged=false
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Privileged=false
@@ -1267,7 +233,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Privileged=fals
 
 不要运行带有`--privileged`标志的容器。例如，不要启动如下容器：
 
-```bash
+```shell script
 docker run -idt --privileged centos /bin/bash
 ```
 
@@ -1277,7 +243,7 @@ docker run -idt --privileged centos /bin/bash
 
 不应允许将敏感的主机系统目录（如下所示）作为容器卷进行挂载，特别是在读写模式下。
 
-```bash
+```shell script
 boot dev etc lib lib64 proc run sbin sys usr var
 ```
 
@@ -1288,7 +254,7 @@ boot dev etc lib lib64 proc run sbin sys usr var
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Volumes={{.Mounts}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Volumes=[map[Destination:/config Driver:local Mode: Name:800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f Propagation: RW:true Source:/var/lib/docker/volumes/800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f/_data Type:volume]]
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[Destination:/var/lib/postgresql/data Driver:local Mode: Name:774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4 Propagation: RW:true Source:/var/lib/docker/volumes/774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4/_data Type:volume]]
@@ -1316,7 +282,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[De
 
 - 审计方式
 
-```bash
+```shell script
 for i in `docker ps --quiet`;do
 docker exec $i ps -el|grep sshd >/dev/null
 if [ $? -eq 0 ]; then
@@ -1327,7 +293,7 @@ done
 
 返回值如下，说明下面几个容器内部运行`ssh`服务
 
-```bash
+```shell script
 container : 0781479bef1b run sshd...
 container : fea9d4d5708a run sshd...
 container : 38bb65479056 run sshd...
@@ -1355,7 +321,7 @@ container : 212fec812c01 run sshd...
 
 通过执行以下命令列出容器的所有运行实例及其端口映射
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'                               7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Ports=map[6060/tcp:[map[HostIp:0.0.0.0 HostPort:6060]] 6061/tcp:<nil>]
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Ports=map[5432/tcp:[map[HostIp:0.0.0.0 HostPort:5432]]]
 7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:Ports=map[3000/tcp:[map[HostIp:0.0.0.0 HostPort:4000]]]
@@ -1382,7 +348,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Ports=map[5432/
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Ports=map[80/tcp:[map[HostIp:192.168.235.128 HostPort:18080]]]
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
@@ -1408,7 +374,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Memory={{.HostConfig.Memory}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Memory=0
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Memory=0
@@ -1424,7 +390,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Memory=0
 
 建议使用`--momery`参数运行容器，例如可以如下运行一个容器
 
-```bash
+```shell script
 docker run -idt --memory 256m centos
 ```
 
@@ -1441,7 +407,7 @@ docker run -idt --memory 256m centos
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:ReadonlyRootfs={{.HostConfig.ReadonlyRootfs}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:ReadonlyRootfs=false
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:ReadonlyRootfs=false
@@ -1458,7 +424,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:ReadonlyRootfs=
 
 在容器的运行时添加一个只读标志以强制容器的根文件系统以只读方式装入
 
-```bash
+```shell script
 docker run  <Run arguments> -read-only <Container Image Name or ID> <Command>
 ```
 
@@ -1466,13 +432,13 @@ docker run  <Run arguments> -read-only <Container Image Name or ID> <Command>
 
 > 1.使用`--tmpfs` 选项为非持久数据写入临时文件系统
 
-```bash
+```shell script
 docker run -idt --read-only --tmpfs "/run" --tmpfs "/tmp" centos bash
 ```
 
 > 2.启用Docker rw在容器的运行时载入，以便将容器数据直接保存在Docker主机文件系统上
 
-```bash
+```shell script
 docker run -idt --read-only -v /opt/app/data:/run/app/data:rw centos
 ```
 
@@ -1495,7 +461,7 @@ docker run -idt --read-only -v /opt/app/data:/run/app/data:rw centos
 
 通过执行以下命令列出容器的所有运行实例及其端口映射
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Ports=map[]
@@ -1511,7 +477,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 将容器端口绑定到所需主机端口上的特定主机接口。
 
-```bash
+```shell script
 [root@localhost ~]# docker run -idt --name=nginx2 -p 192.168.235.128:18080:80 --network=nginx-net nginx:1.14-alpine
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
@@ -1540,7 +506,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:RestartPolicyName={{.HostConfig.RestartPolicy.Name}} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:RestartPolicyName=no MaximumRetryCount=0
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:RestartPolicyName=no MaximumRetryCount=0
@@ -1553,7 +519,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:RestartPolicyNa
 
 如果一个容器需要自己重新启动，可以如下设置：
 
-```bash
+```shell script
 docker run -idt --restart=on-failure:5 nginx
 ```
 
@@ -1572,7 +538,7 @@ docker run -idt --restart=on-failure:5 nginx
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:PidMode={{.HostConfig.PidMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:PidMode=
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:PidMode=
@@ -1587,7 +553,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidMode=
 
 不要使用`--pid=host`参数启动容器。例如，不要启动一个容器，如下所示
 
-````bash
+````shell script
 docker run -idt --pid=host centos
 ````
 
@@ -1606,7 +572,7 @@ docker run -idt --pid=host centos
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:IpcMode={{.HostConfig.IpcMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:IpcMode=private
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:IpcMode=private
@@ -1621,7 +587,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:IpcMode=private
 
 不要使用`--ipc=host`参数启动容器。 例如，不要启动如下容器
 
-```bash
+```shell script
 docker run -idt --ipc=host centos
 ```
 
@@ -1632,7 +598,7 @@ docker run -idt --ipc=host centos
 在这种情况下，您仍然应该共享容器特定的`IPC`命名空间而不是整个主机`IPC`命名空间。
 可以将容器的`IPC`名称空间与另一个容器共享，如下所示：
 
-```bash
+```shell script
 docker run -idt --ipc=container:e43299eew043243284 centos
 ```
 
@@ -1648,7 +614,7 @@ docker run -idt --ipc=container:e43299eew043243284 centos
 不允许容器以特权模式运行以访问和操作主机设备默认情况下，容器将能够读取，写入和`mknod`这些设备。
 此外，容器可能会从主机中删除设备。 因此，不要直接将主机设备共享给容器。如果必须的将主机设备共享给容器，请适当地使用共享权限：
 
-```bash
+```shell script
 w -> write
 r -> read
 m -> mknod
@@ -1656,7 +622,7 @@ m -> mknod
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Devices={{.HostConfig.Devices}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Devices=[]
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Devices=[]
@@ -1671,7 +637,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Devices=[]
 
 不要将主机设备直接共享于容器。如果必须将主机设备共享给容器，请使用正确的一组权限，以下为错误示范
 
-```bash
+```shell script
 docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 ```
 
@@ -1688,7 +654,7 @@ docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{.Id}:Propagation={{range $mnt:=.Mounts}}{{json $mnt.Propagation}}{{end}}'
 {.Id}:Propagation=
 {.Id}:Propagation=
@@ -1703,7 +669,7 @@ docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 
 不建议以共享模式传播中安装卷。例如，不要启动容器，如下所示
 
-```bash
+```shell script
 docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image Name or ID> <Command>
 ```
 
@@ -1721,7 +687,7 @@ docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container I
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet --all |xargs docker inspect --format '{{.Id}}:UTSMode={{.HostConfig.UTSMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:UTSMode=
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:UTSMode=
@@ -1736,7 +702,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:UTSMode=
 
 不要使用`--uts=host`参数启动容器。例如，不要启动如下容器：
 
-```bash
+```shell script
 docker run -idt --uts=host alpine
 ```
 
@@ -1785,7 +751,7 @@ docker run -idt --uts=host alpine
 
 运行以下命令并确保所有容器都报告运行状况
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet |xargs -n1 docker inspect --format='{{.State.Health.Status}}'
 Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
 Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
@@ -1797,7 +763,7 @@ Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: 
 
 添加`--health-cmd`参数
 
-```bash
+```shell script
 [root@localhost ~]# docker run --name=test -d \
 >     --health-cmd='stat /etc/passwd || exit 1' \
 >     --health-interval=2s \
@@ -1829,7 +795,7 @@ unhealthy
 运行以下命令并确保`PidsLimit`未设置为`0`或`-1`。
 `PidsLimit`为`0`或`-1`意味着任何数量的进程可以同时在容器内分叉。
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:PidsLi                                                            mit={{.HostConfig.PidsLimit}}'
 0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:PidsLimit=<no value>
 d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:PidsLimit=<no value>
@@ -1840,7 +806,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidsLimit=<no v
 
 升级内核至`4.3+`，添加`--pids-limit参数`，如
 
-```bash
+```shell script
 docker run -idt --name=box --pids-limit=100 busybox:1.31.1
 ```
 
@@ -1859,7 +825,7 @@ docker run -idt --name=box --pids-limit=100 busybox:1.31.1
 
 运行以下命令，并验证容器是否在用户定义的网络上，而不是默认的`docker0`网桥
 
-```bash
+```shell script
 [root@localhost ~]# docker network ls --quiet|xargs docker network inspect --format='{{.Name}}.{{.Options}}'|grep docker0
 bridge.map[com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500]
 ```
@@ -1884,13 +850,13 @@ bridge.map[com.docker.network.bridge.default_bridge:true com.docker.network.brid
 
 > 创建自定义网桥
 
-```bash
+```shell script
 docker network create nginx-net
 ```
 
 > 运行测试用例
 
-```bash
+```shell script
 [root@localhost ~]# docker run -idt --name=nginx --network=nginx-net nginx:1.14-alpine
 [root@localhost ~]# docker run -idt --name=box --network=nginx-net busybox:1.31.1
 [root@localhost ~]# docker exec box wget nginx -S
@@ -1918,7 +884,7 @@ Connecting to nginx (172.18.0.2:80)
 
 - 审计方式
 
-```bash
+```shell script
 [root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:Volumes={{.Mounts}}'|grep docker.sock
 ```
 
@@ -1946,14 +912,14 @@ Connecting to nginx (172.18.0.2:80)
 
 > 1.通过执行以下命令列出当前实例化的所有镜像`ID`
 
-```bash
+```shell script
 [root@localhost ~]# docker images --quiet | xargs docker inspect --format='{{.Id}}:Image={{.Config.Image}}'
 sha256:d6e46aa2470df1d32034c6707c8041158b652f38d2a9ae3d7ad7e7532d22ebe0:Image=sha256:3543079adc6fb5170279692361be8b24e89ef1809a374c1b4429e1d560d1459c
 ```
 
 > 2.通过执行以下命令列出系统中存在的所有镜像
 
-```bash
+```shell script
 [root@localhost ~]# docker images
 REPOSITORY                         TAG       IMAGE ID       CREATED        SIZE
 harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
@@ -1982,13 +948,13 @@ harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
 
 > 1.查找主机上的容器总数
 
-```bash
+```shell script
 [root@localhost ~]# docker info --format '{{.Containers}}'
 1
 ```
 > 2.执行以下命令以查找主机上实际正在运行或处于停止状态的容器总数。
 
-```bash
+```shell script
 [root@localhost ~]# docker info --format '{{.ContainersStopped}}'
 0
 [root@localhost ~]# docker info --format '{{.ContainersRunning}}'
@@ -2032,7 +998,7 @@ Total reclaimed space: 0B
 
 > 配置`limit`参数
 
-```bash
+```shell script
 ulimit -HSn 65536
 cat <<EOF >>/etc/security/limits.conf
 *    soft    nofile    65536
@@ -2044,7 +1010,7 @@ EOF
 
 > 配置内核参数
 
-```bash
+```shell script
 cat <<EOF >>/etc/sysctl.conf
 net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-arptables = 1
@@ -2057,7 +1023,7 @@ sysctl -p
 
 > 配置`docker daemon`
 
-```bash
+```shell script
 mkdir -p /etc/docker
 cat <<EOF > /etc/docker/daemon.json
 {
@@ -2098,7 +1064,7 @@ systemctl restart docker
  
 ### 文件权限调整
 
-```bash
+```shell script
 chmod 755 /etc/docker
 chown root:root /etc/docker
 chmod 660 /var/run/docker.sock
