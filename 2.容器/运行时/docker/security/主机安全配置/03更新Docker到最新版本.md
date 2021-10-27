@@ -6,7 +6,7 @@
 
 查看[release](https://github.com/moby/moby/releases) 与本地版本比较
 
-```shell script
+```bash
 $ docker version
 ```
 
@@ -16,7 +16,7 @@ $ docker version
 
 ### 修复建议
 
-```shell script
+```bash
 #安装一些必要的系统工具
 $ yum -y install yum-utils device-mapper-persistent-data lvm2
 

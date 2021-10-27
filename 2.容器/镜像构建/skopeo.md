@@ -7,7 +7,7 @@
 
 > 安装
 
-```shell script
+```bash
 yum install -y btrfs-progs-devel gpgme-devel device-mapper-devel libassuan-devel
 git clone https://github.com/containers/skopeo.git
 cd skopeo
@@ -22,7 +22,7 @@ chmod +x /usr/local/bin/skopeo
 
 > 下载安装
 
-```shell script
+```bash
 wget https://github.com/weiliang-ms/skopeo/releases/download/v1.3.1/skopeo-1.3.1-linux-amd64.tar.gz
 tar zxvf skopeo-1.3.1-linux-amd64.tar.gz
 cp skopeo-1.3.1-linux-amd64/bin/skopeo /usr/local/bin
@@ -33,7 +33,7 @@ chmod +x /usr/local/bin/skopeo
 
 > 文件层级
 
-```shell script
+```bash
 harbor-export
 ├── download.sh
 ├── image-list.txt
@@ -42,7 +42,7 @@ harbor-export
 
 > `image-list.txt`
 
-```shell script
+```bash
 harbor.wl.com/kubernetes/csi-snapshotter:v3.0.2
 harbor.wl.com/kubernetes/csi-attacher:v3.0.2
 harbor.wl.com/kubernetes/csi-node-driver-registrar:v2.0.1
@@ -60,7 +60,7 @@ harbor.wl.com/kubernetes/coredns:1.6.9
 
 > 导出脚本`download.sh`
 
-```shell script
+```bash
 #!/bin/bash
 GREEN_COL="\\033[32;1m"
 RED_COL="\\033[1;31m"
@@ -157,7 +157,7 @@ sh download.sh library
 
 > 导入脚本`upload.sh`
 
-```shell script
+```bash
 #!/bin/bash
 REGISTRY_DOMAIN="harbor.wl.com"
 # 切换到 registry 存储主目录下
@@ -198,12 +198,12 @@ sync_image
 
 > 登录
 
-```shell script
+```bash
 skopeo login harbor.wl.com --tls-verify=false
 ```
 
 > 执行导入
 
-```shell script
+```bash
 sh upload.sh
 ```

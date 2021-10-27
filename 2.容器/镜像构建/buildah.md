@@ -7,7 +7,7 @@
 
 > 安装依赖
 
-```shell script
+```bash
 yum -y install \
     make \
     gcc \
@@ -26,7 +26,7 @@ yum -y install \
     skopeo-containers
 ```
 
-```shell script
+```bash
 mkdir ~/buildah
 cd ~/buildah
 export GOPATH=`pwd`
@@ -43,7 +43,7 @@ buildah --help
 
 - [buildah-release-1.21-linux-amd64.tar.gz](https://github.com/weiliang-ms/buildah/releases/download/v1.21.0/buildah-release-1.21-linux-amd64.tar.gz)
 
-```shell script
+```bash
 tar zxvf buildah-release-1.21-linux-amd64.tar.gz
 cp buildah-release-1.21-linux-amd64/bin/buildah /usr/bin
 ```

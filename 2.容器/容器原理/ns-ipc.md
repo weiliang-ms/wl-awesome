@@ -10,7 +10,7 @@
 
 > 获取当前进程`ID`
 
-```shell script
+```bash
 [root@localhost ~]# echo $$
 49265
 ```
@@ -19,7 +19,7 @@
 
 > 查看当前进程命名空间信息
 
-```shell script
+```bash
 [root@localhost ~]# ls -l /proc/$$/ns
 total 0
 lrwxrwxrwx 1 root root 0 Jul 14 07:27 cgroup -> cgroup:[4026531835]
@@ -34,7 +34,7 @@ lrwxrwxrwx 1 root root 0 Jul 14 07:27 uts -> uts:[4026531838]
 
 > 查看`PID-A`进程`ipc`信息
 
-```shell script
+```bash
 [root@localhost ~]# ipcs
 
 ------ Message Queues --------
@@ -51,13 +51,13 @@ key        semid      owner      perms      nsems
 
 > 使用`unshare`隔离`ipc namespace`
 
-```shell script
+```bash
 unshare --ipc /bin/bash
 ```
 
 查看进程`ID`，发现已变更
 
-```shell script
+```bash
 [root@localhost ~]# echo $$
 62293
 ```
@@ -66,7 +66,7 @@ unshare --ipc /bin/bash
 
 查看两个进程关系，显然`PID-A`与`PID-B`为父子关系的两个进程
 
-```shell script
+```bash
 [root@localhost ~]# ps -ef|grep 62293
 root      62293  49265  0 07:33 pts/0    00:00:00 /bin/bash
 root      62430  62293  0 07:33 pts/0    00:00:00 ps -ef
@@ -75,7 +75,7 @@ root      62431  62293  0 07:33 pts/0    00:00:00 grep --color=auto 62293
 
 > 查看`PID-B`进程的`ipc`信息
 
-```shell script
+```bash
 [root@localhost ~]# ipcs
 
 ------ Message Queues --------
@@ -92,7 +92,7 @@ key        semid      owner      perms      nsems
 
 > 测试: `PID-B`创建一个消息队列，是否`PID-A`中可以看到
 
-```shell script
+```bash
 [root@localhost ~]# ipcmk --queue
 Message queue id: 0
 [root@localhost ~]# ipcs
@@ -110,7 +110,7 @@ key        semid      owner      perms      nsems
 
 新开一个`ssh`链接（会产生新的进程），查看是否可以看到`PID-B`中消息队列
 
-```shell script
+```bash
 [root@localhost ~]# echo $$
 49857
 [root@localhost ~]# ipcs  -q
@@ -123,7 +123,7 @@ key        msqid      owner      perms      used-bytes   messages
 
 > 查看`PID-B`进程命名空间信息
 
-```shell script
+```bash
 [root@localhost ~]# ls -l /proc/62293/ns
 total 0
 lrwxrwxrwx 1 root root 0 Jul 14 07:47 cgroup -> cgroup:[4026531835]
@@ -151,7 +151,7 @@ lrwxrwxrwx 1 root root 0 Jul 14 07:47 uts -> uts:[4026531838]
 
 其中`信号量`，`共享内存`，`消息队列`基于内核的`IPC命名空间`实现
 
-```shell script
+```bash
 [root@localhost ~]# ipcs
 
 ------ Message Queues --------

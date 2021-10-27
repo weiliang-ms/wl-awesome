@@ -8,7 +8,7 @@
 
 ### 审计方式
 
-```shell script
+```bash
 [root@node105 ~]# docker info |grep  "Storage Driver:"
  Storage Driver: overlay2
 ```

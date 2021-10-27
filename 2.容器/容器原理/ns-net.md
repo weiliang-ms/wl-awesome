@@ -79,14 +79,14 @@
 
 > 创建测试用`net`命名空间
 
-```shell script
+```bash
 ip netns a ns0
 ip netns a ns1
 ```
 
 > 添加`veth0`和`veth1`设备，并配置`veth0 IP`地址，分别加入不同`net`命名空间
 
-```shell script
+```bash
 # 创建veth-pair对
 ip link add veth0 type veth peer name veth1
 # 分别加入不同命名空间
@@ -101,7 +101,7 @@ ip netns exec ns1 ip l s veth1 up
 
 > 互`ping`
 
-```shell script
+```bash
 [root@localhost ~]# ip netns exec ns0 ping -c 4 10.10.10.3
 PING 10.10.10.3 (10.10.10.3) 56(84) bytes of data.
 64 bytes from 10.10.10.3: icmp_seq=1 ttl=64 time=0.045 ms
@@ -127,7 +127,7 @@ rtt min/avg/max/mdev = 0.054/0.104/0.142/0.033 ms
 
 > 清除net命名空间
 
-```shell script
+```bash
 ip netns del ns0
 ip netns del ns1
 ```
@@ -144,7 +144,7 @@ ip netns del ns1
 
 > 创建`net`命名空间
 
-```shell script
+```bash
 # add the namespaces
 ip netns add ns1
 ip netns add ns2
@@ -153,7 +153,7 @@ ip netns add ns3
 
 > 创建并启用网桥
 
-```shell script
+```bash
 # create the switch
 yum install bridge-utils -y
 BRIDGE=br-test
@@ -164,7 +164,7 @@ ip link set dev $BRIDGE up
 
 > 创建三对`veth-pair`
 
-```shell script
+```bash
 ip l a veth0 type veth peer name br-veth0
 ip l a veth1 type veth peer name br-veth1
 ip l a veth2 type veth peer name br-veth2
@@ -172,7 +172,7 @@ ip l a veth2 type veth peer name br-veth2
 
 > 分别将三对`veth-pair`加入三个`net`命名空间和`br-test`
 
-```shell script
+```bash
 ip l s veth0 netns ns1
 ip l s br-veth0 master br-test
 ip l s br-veth0 up
@@ -188,7 +188,7 @@ ip l s br-veth2 up
 
 > 配置三个`ns`中的`veth-pair`的`IP`并启用
 
-```shell script
+```bash
 ip netns exec ns1 ip a a 10.10.10.2/24 dev veth0
 ip netns exec ns1 ip l s veth0 up
 
@@ -201,7 +201,7 @@ ip netns exec ns3 ip l s veth2 up
 
 > 互`ping`
 
-```shell script
+```bash
 [root@localhost ~]# ip netns exec ns1 ping -c 1 10.10.10.3
 PING 10.10.10.3 (10.10.10.3) 56(84) bytes of data.
 64 bytes from 10.10.10.3: icmp_seq=1 ttl=64 time=0.103 ms
@@ -251,7 +251,7 @@ rtt min/avg/max/mdev = 0.096/0.096/0.096/0.000 ms
 
 > 清理测试用例
 
-```shell script
+```bash
 ip netns del ns1
 ip netns del ns2
 ip netns del ns3
@@ -276,14 +276,14 @@ brctl delbr br-test
 
 > 关闭`selinux`
 
-```shell script
+```bash
 setenforce 0
 sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
 ```
 
 > 安装`OVS`编译依赖
 
-```shell script
+```bash
 yum install -y python-six selinux-policy-devel gcc make \
 python-devel openssl-devel kernel-devel graphviz kernel-debug-devel autoconf \
 automake rpm-build redhat-rpm-config libtool wget net-tools
@@ -293,7 +293,7 @@ automake rpm-build redhat-rpm-config libtool wget net-tools
 
 - [openvswitch-2.5.4.tar.gz](http://openvswitch.org/releases/openvswitch-2.5.4.tar.gz)
 
-```shell script
+```bash
 mkdir -p ~/rpmbuild/SOURCES
 tar -zxvf openvswitch-2.5.4.tar.gz
 cp openvswitch-2.5.4.tar.gz ~/rpmbuild/SOURCES/
@@ -307,7 +307,7 @@ systemctl start openvswitch.service
 
 > 创建`net`命名空间
 
-```shell script
+```bash
 ip netns add ns1
 ip netns add ns2
 ip netns add ns3
@@ -315,13 +315,13 @@ ip netns add ns3
 
 > 创建`osv`虚拟交换机
 
-```shell script
+```bash
 ovs-vsctl add-br ovs-br0
 ```
 
 > 创建`ovs port`
 
-```shell script
+```bash
 #### PORT 1
 # create an internal ovs port
 ovs-vsctl add-port ovs-br0 tap1 -- set Interface tap1 type=internal
@@ -349,7 +349,7 @@ ip netns exec ns3 ip link set dev tap3 up
 
 > 配置ip并启用
 
-```shell script
+```bash
 ip netns exec ns1 ip a a 10.10.10.2/24 dev tap1
 ip netns exec ns1 ip l s tap1 up
 
@@ -362,7 +362,7 @@ ip netns exec ns3 ip l s tap3 up
 
 > 分别将三对`veth-pair`加入三个`net`命名空间和`br-test`
 
-```shell script
+```bash
 ip l s veth0 netns ns1
 ip l s br-veth0 master br-test
 ip l s br-veth0 up
@@ -378,7 +378,7 @@ ip l s br-veth2 up
 
 > 互`ping`
 
-```shell script
+```bash
 [root@localhost ~]# ip netns exec ns1 ping -c 1 10.10.10.3
 PING 10.10.10.3 (10.10.10.3) 56(84) bytes of data.
 64 bytes from 10.10.10.3: icmp_seq=1 ttl=64 time=0.103 ms
@@ -428,7 +428,7 @@ rtt min/avg/max/mdev = 0.096/0.096/0.096/0.000 ms
 
 > 清除测试用例
 
-```shell script
+```bash
 ip netns del ns1
 ip netns del ns2
 ip netns del ns3
@@ -440,14 +440,14 @@ ovs-vsctl del-br ovs-br0
 
 > 启动测试容器
 
-```shell script
+```bash
 docker run -itd --name test1 busybox
 docker run -itd --name test2 busybox
 ```
 
 > 查看容器`ip`地址
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test1 ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -470,7 +470,7 @@ docker run -itd --name test2 busybox
 
 > 互`Ping`
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test2 ping -c 2 172.80.0.2
 PING 172.80.0.2 (172.80.0.2): 56 data bytes
 64 bytes from 172.80.0.2: seq=0 ttl=64 time=0.080 ms
@@ -493,7 +493,7 @@ round-trip min/avg/max = 0.055/0.104/0.153 ms
 
 > `ping`内网其他主机
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test1 ping -c 2 192.168.2.78
 PING 192.168.2.78 (192.168.2.78): 56 data bytes
 64 bytes from 192.168.2.78: seq=0 ttl=127 time=3.494 ms
@@ -526,7 +526,7 @@ round-trip min/avg/max = 3.301/3.371/3.442 ms
 
 > 清理测试用例
 
-```shell script
+```bash
 docker rm -f test1
 docker rm -f test2
 ```
@@ -535,21 +535,21 @@ docker rm -f test2
 
 > 创建测试网络
 
-```shell script
+```bash
 docker network create net-1
 docker network create net-2
 ```
 
 > 启动容器
 
-```shell script
+```bash
 docker run -itd --name test1 --network=net-1 busybox
 docker run -itd --name test2 --network=net-2 busybox
 ```
 
 > 查看`IP`
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test1 ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -572,7 +572,7 @@ docker run -itd --name test2 --network=net-2 busybox
 
 > 互`Ping`
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test1 ping -c 2 -i 1 172.80.2.2
 ^C
 [root@localhost ~]# docker exec test1 ping -c 2 -W 1 172.80.2.2
@@ -591,7 +591,7 @@ PING 172.80.1.2 (172.80.1.2): 56 data bytes
 
 > `Ping`外部主机
 
-```shell script
+```bash
 [root@localhost ~]# docker exec test2 ping -c 2 -W 1 192.168.2.78
 PING 192.168.2.78 (192.168.2.78): 56 data bytes
 64 bytes from 192.168.2.78: seq=0 ttl=127 time=3.282 ms
@@ -614,7 +614,7 @@ round-trip min/avg/max = 3.429/3.706/3.984 ms
 
 > 清理测试用例
 
-```shell script
+```bash
 docker rm -f test1
 docker rm -f test2
 ```

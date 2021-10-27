@@ -16,7 +16,7 @@ systemctl enable gitlab-runner --now
 
 > 编译安装git-cli
 
-```shell script
+```bash
 curl -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz -o ./git-2.9.5.tar.xz -k
 yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker -y
 tar xvf git-2.9.5.tar.xz

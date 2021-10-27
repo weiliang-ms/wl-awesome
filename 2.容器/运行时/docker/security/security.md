@@ -109,7 +109,7 @@
 
 - 审计方式
 
-```shell script
+```bash
 ps -ef|grep dockerd
 ```
 
@@ -132,7 +132,7 @@ ps -ef|grep dockerd
 
 - 审计方式
 
-```shell script
+```bash
 ps -ef|grep dockerd
 ```
 
@@ -160,7 +160,7 @@ ps -ef|grep dockerd
 
 - 审计方式
 
-```shell script
+```bash
 ps -ef|grep dockerd
 或
 cat /etc/docker/daemon.json|grep userland-proxy
@@ -182,7 +182,7 @@ cat /etc/docker/daemon.json|grep userland-proxy
 
 运行`docker info`并确保日志记录驱动程序属性被设置为适当的。
 
-```shell script
+```bash
 [root@localhost ~]# docker info --format '{{.LoggingDriver}}'
 json-file
 ```
@@ -191,7 +191,7 @@ json-file
 
 > 配置`json-file`驱动
 
-```shell script
+```bash
 [root@localhost ~]# cat /etc/docker/daemon.json
 {
      "log-driver":"json-file",
@@ -204,7 +204,7 @@ json-file
 
 > 重启
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl restart docker
 ```
@@ -222,7 +222,7 @@ systemctl restart docker
 
 - 审计方式
 
-```shell script
+```bash
 ps -ef|grep dockerd
 ```
 
@@ -234,7 +234,7 @@ ps -ef|grep dockerd
 
 > 编辑配置文件
 
-```shell script
+```bash
 vi /etc/systemd/system/docker.service
 ```
 
@@ -242,7 +242,7 @@ vi /etc/systemd/system/docker.service
 
 > 重载服务
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl restart docker
 ```
@@ -261,7 +261,7 @@ systemctl restart docker
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker info --format '{{.LiveRestoreEnabled}}'
 false
 ```
@@ -270,7 +270,7 @@ false
 
 > 编辑文件
 
-```shell script
+```bash
 mkdir -p /etc/docker/
 vi /etc/docker/daemon.json
 ```
@@ -283,7 +283,7 @@ vi /etc/docker/daemon.json
 
 > 重载服务
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl restart docker
 ```
@@ -302,7 +302,7 @@ systemctl restart docker
 
 - 审计方法
 
-```shell script
+```bash
 ps -ef|grep dockerd
 或
 cat /etc/docker/daemon.json|grep userland-proxy
@@ -314,7 +314,7 @@ cat /etc/docker/daemon.json|grep userland-proxy
 
 > 编辑文件
 
-```shell script
+```bash
 mkdir -p /etc/docker/
 vi /etc/docker/daemon.json
 ```
@@ -327,7 +327,7 @@ vi /etc/docker/daemon.json
 
 > 重载服务
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl restart docker
 ```
@@ -347,7 +347,7 @@ systemctl restart docker
 
 - 审计
 
-```shell script
+```bash
 [root@localhost ~]# docker info --format '{{.SecurityOptions}}'
 ```
 
@@ -370,7 +370,7 @@ systemctl restart docker
 
 - 审计方法
 
-```shell script
+```bash
 [root@localhost ~]# docker version --format '{{.Server.Experimental}}'
 false
 ```
@@ -393,7 +393,7 @@ false
 
 - 审计方法
 
-```shell script
+```bash
 ps -ef|grep dockerd
 或
 cat /etc/docker/daemon.json|grep no-new-privileges
@@ -405,7 +405,7 @@ cat /etc/docker/daemon.json|grep no-new-privileges
 
 > 编辑文件
 
-```shell script
+```bash
 mkdir -p /etc/docker/
 vi /etc/docker/daemon.json
 ```
@@ -418,7 +418,7 @@ vi /etc/docker/daemon.json
 
 > 重载服务
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl restart docker
 ```
@@ -436,7 +436,7 @@ systemctl restart docker
 
 - 审计方式
 
-```shell script
+```bash
 systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 ls -l
 ```
 
@@ -449,7 +449,7 @@ systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chown root:root
 ```
 
@@ -466,7 +466,7 @@ systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
 644
 ```
@@ -474,7 +474,7 @@ systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 
 - 修复建议
 
 若权限非`644`，修改授权
-```shell script
+```bash
 systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 chmod 644
 ```
 
@@ -491,7 +491,7 @@ systemctl show -p FragmentPath docker.service|sed "s/FragmentPath=//"|xargs -n1 
 
 - 审计方式
 
-```shell script
+```bash
 systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 ls -l
 ```
 
@@ -504,7 +504,7 @@ systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 l
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chown root:root
 ```
 
@@ -521,7 +521,7 @@ systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 c
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 stat -c %a
 644
 ```
@@ -529,7 +529,7 @@ systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 c
 - 修复建议
 
 若权限非`644`，修改授权
-```shell script
+```bash
 systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 chmod 644
 ```
 
@@ -546,7 +546,7 @@ systemctl show -p FragmentPath docker.socket|sed "s/FragmentPath=//"|xargs -n1 c
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %U:%G /etc/docker
 root:root
 ```
@@ -554,7 +554,7 @@ root:root
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chown root:root /etc/docker
 ```
 
@@ -571,7 +571,7 @@ chown root:root /etc/docker
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %a /etc/docker
 755
 ```
@@ -579,7 +579,7 @@ chown root:root /etc/docker
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chmod 755 /etc/docker
 ```
 
@@ -596,7 +596,7 @@ chmod 755 /etc/docker
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %U:%G /etc/docker/certs.d/* 
 root:root
 ```
@@ -604,7 +604,7 @@ root:root
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chown root:root /etc/docker/certs.d/*
 ```
 
@@ -621,7 +621,7 @@ chown root:root /etc/docker/certs.d/*
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %a /etc/docker/certs.d/*
 755
 ```
@@ -629,7 +629,7 @@ chown root:root /etc/docker/certs.d/*
 - 修复建议
 
 若权限非`444`，修改授权
-```shell script
+```bash
 chmod 444 /etc/docker/certs.d/*
 ```
 
@@ -646,7 +646,7 @@ chmod 444 /etc/docker/certs.d/*
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# ls /etc/docker/certs.d/*/* |xargs -n1 stat -c %U:%G
 root:root
 root:root
@@ -656,7 +656,7 @@ root:root
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chown root:root /etc/docker/certs.d/*/*
 ```
 
@@ -673,7 +673,7 @@ chown root:root /etc/docker/certs.d/*/*
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %a /etc/docker/certs.d/*/*
 644
 644
@@ -683,7 +683,7 @@ chown root:root /etc/docker/certs.d/*/*
 - 修复建议
 
 若权限非`444`，修改授权
-```shell script
+```bash
 chmod 444 /etc/docker/certs.d/*/*
 ```
 
@@ -702,7 +702,7 @@ chmod 444 /etc/docker/certs.d/*/*
 
 **注意:** `/root/docker`替换为docker服务端实际证书存放目录
 
-```shell script
+```bash
 [root@localhost ~]# ls -l /root/docker
 total 44
 -rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
@@ -722,7 +722,7 @@ total 44
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chown root:root /root/docker/*
 ```
 
@@ -741,7 +741,7 @@ chown root:root /root/docker/*
 
 **注意:** `/root/docker`替换为docker服务端实际证书存放目录
 
-```shell script
+```bash
 [root@localhost ~]# ls -l /root/docker
 total 44
 -rw-r--r-- 1 root root 3326 Apr 26 02:55 ca-key.pem
@@ -761,7 +761,7 @@ total 44
 - 修复建议
 
 若权限非`400`，修改授权
-```shell script
+```bash
 chmod 400 /root/docker/*
 ```
 
@@ -783,7 +783,7 @@ chmod 400 /root/docker/*
 
 - 审计
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %U:%G /var/run/docker.sock
 root:docker
 ```
@@ -791,7 +791,7 @@ root:docker
 - 修复建议
 
 若所属用户非`root:docker`，修改授权
-```shell script
+```bash
 chown root:docker /var/run/docker.sock
 ```
 
@@ -808,7 +808,7 @@ chown root:docker /var/run/docker.sock
 
 - 审计
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %a /var/run/docker.sock
 660
 ```
@@ -816,7 +816,7 @@ chown root:docker /var/run/docker.sock
 - 修复建议
 
 若权限非`660`，修改授权
-```shell script
+```bash
 chmod 660 /var/run/docker.sock
 ```
 
@@ -833,7 +833,7 @@ chmod 660 /var/run/docker.sock
 
 - 审计
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %U:%G /etc/docker/daemon.json
 root:root
 ```
@@ -841,7 +841,7 @@ root:root
 - 修复建议
 
 若所属用户非`root:root`，修改授权
-```shell script
+```bash
 chown root:root /etc/docker/daemon.json
 ```
 
@@ -858,7 +858,7 @@ chown root:root /etc/docker/daemon.json
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# stat -c %a /etc/docker/daemon.json
 644
 ```
@@ -866,7 +866,7 @@ chown root:root /etc/docker/daemon.json
 - 修复建议
 
 若权限非`644`，修改授权
-```shell script
+```bash
 chmod 644 /etc/docker/daemon.json
 ```
 
@@ -885,7 +885,7 @@ chmod 644 /etc/docker/daemon.json
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps |grep ccc|awk '{print $1}'|xargs -n1 docker inspect --format='{{.Id}}:User={{.Config.User}}'
 4e53c86daf89a1bac0ed178d043663d2af162ca813ff17864ebdb964d8233459:User=
 ```
@@ -919,7 +919,7 @@ RUN useradd -d /home/username -m -s /bin/bash username USER username
 
 > 1.检查`Docker`主机以查看执行以下命令使用的`Docker`镜像：
 
-```shell script
+```bash
 docker images
 ```
 
@@ -930,7 +930,7 @@ docker images
 
 对于在`Docker`主机上找到的每个`Docker`镜像，检查镜像的构建方式，以验证是否来自可信来源：
 
-```shell script
+```bash
 docker history  <imageName>
 ```
 
@@ -955,12 +955,12 @@ docker history  <imageName>
 
 > 1.通过执行以下命令列出所有运行的容器实例：
 
-```shell script
+```bash
 docker ps
 ```
 > 对于每个容器实例，执行以下或等效的命令
 
-```shell script
+```bash
 docker exec <container-id> rpm -qa
 ```
 
@@ -988,12 +988,12 @@ docker exec <container-id> rpm -qa
 
 > 1.通过执行以下命令列出所有运行的容器实例
 
-```shell script
+```bash
 docker ps --quiet
 ```
 > 2.对于每个容器实例，执行下面的或等效的命令来查找容器中安装的包的列表,确保安装各种受影响软件包的安全更新。 
 
-```shell script
+```bash
 docker exec <container-id> rpm -qa
 ```
 
@@ -1029,7 +1029,7 @@ docker exec <container-id> rpm -qa
 
 运行以下命令，并确保`Docker`镜像对`HEALTHCHECK`指令设置
 
-```shell script
+```bash
 [root@localhost ~]# docker inspect --format='{{.Config.Healthcheck}}' 8a2fb25a19f5
 <nil>
 ```
@@ -1056,7 +1056,7 @@ docker exec <container-id> rpm -qa
 
 步骤 1：运行以下命令获取镜像列表
 
-```shell script
+```bash
 docker images
 ```
 
@@ -1090,12 +1090,12 @@ done
 
 第 1 步：运行以下命令以获取镜像列表：
 
-```shell script
+```bash
 docker images
 ```
 第 2 步：对上面列表中的每个镜像运行以下命令，并查找是否有涉密信息：
 
-```shell script
+```bash
 docker history <imageID>
 ```
 
@@ -1119,13 +1119,13 @@ docker history <imageID>
 
 第 1 步：运行以下命令以获取镜像列表：
 
-```shell script
+```bash
 docker images
 ```
 
 第 2 步：对上面列表中的每个镜像运行以下命令，并查看软件包的合法性
 
-```shell script
+```bash
 docker history <imageID>
 ```
 
@@ -1148,7 +1148,7 @@ docker history <imageID>
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:CpuShares={{.HostConfig.CpuShares}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:CpuShares=0
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:CpuShares=0
@@ -1182,7 +1182,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:CpuShares=0
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:CapAdd={{.HostConfig.CapAdd}} CapDrop={{.HostConfig.CapDrop}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:CapAdd=<no value> CapDrop=<no value>
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:CapAdd=<no value> CapDrop=<no value>
@@ -1196,7 +1196,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:CapAdd=<no valu
 
 只添加必须功能特性
 
-```shell script
+```bash
 docker run -dit --cap-drop=all --cap-add={"NET_ADMIN", "SYS_ADMIN"} centos /bin/bash
 ```
 
@@ -1253,7 +1253,7 @@ docker run -dit --cap-drop=all --cap-add={"NET_ADMIN", "SYS_ADMIN"} centos /bin/
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Privileged={{.HostConfig.Privileged}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Privileged=false
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Privileged=false
@@ -1267,7 +1267,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Privileged=fals
 
 不要运行带有`--privileged`标志的容器。例如，不要启动如下容器：
 
-```shell script
+```bash
 docker run -idt --privileged centos /bin/bash
 ```
 
@@ -1277,7 +1277,7 @@ docker run -idt --privileged centos /bin/bash
 
 不应允许将敏感的主机系统目录（如下所示）作为容器卷进行挂载，特别是在读写模式下。
 
-```shell script
+```bash
 boot dev etc lib lib64 proc run sbin sys usr var
 ```
 
@@ -1288,7 +1288,7 @@ boot dev etc lib lib64 proc run sbin sys usr var
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Volumes={{.Mounts}}'
 7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Volumes=[map[Destination:/config Driver:local Mode: Name:800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f Propagation: RW:true Source:/var/lib/docker/volumes/800e943d52c78312b2d6dd53bed41999fd5f7780af5098f688a894fb74f4360f/_data Type:volume]]
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[Destination:/var/lib/postgresql/data Driver:local Mode: Name:774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4 Propagation: RW:true Source:/var/lib/docker/volumes/774546bf5c3dcfe5f90a60012c5f1f2bdeb57a5908cdc1922b3dc75550ceeaa4/_data Type:volume]]
@@ -1316,7 +1316,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Volumes=[map[De
 
 - 审计方式
 
-```shell script
+```bash
 for i in `docker ps --quiet`;do
 docker exec $i ps -el|grep sshd >/dev/null
 if [ $? -eq 0 ]; then
@@ -1327,7 +1327,7 @@ done
 
 返回值如下，说明下面几个容器内部运行`ssh`服务
 
-```shell script
+```bash
 container : 0781479bef1b run sshd...
 container : fea9d4d5708a run sshd...
 container : 38bb65479056 run sshd...
@@ -1355,7 +1355,7 @@ container : 212fec812c01 run sshd...
 
 通过执行以下命令列出容器的所有运行实例及其端口映射
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet |xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'                               7121e891641679fda571e67a0e9953d263feca2508b013c70ae2546f6336b1a0:Ports=map[6060/tcp:[map[HostIp:0.0.0.0 HostPort:6060]] 6061/tcp:<nil>]
 bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Ports=map[5432/tcp:[map[HostIp:0.0.0.0 HostPort:5432]]]
 7a3a2c9e524a9d44ae857abd52447f86940dd49e1947291e7985b98e3c6a309a:Ports=map[3000/tcp:[map[HostIp:0.0.0.0 HostPort:4000]]]
@@ -1382,7 +1382,7 @@ bb3875c107daa062f2eccb10bd48ad54954cecd7d51a5eba385335f377b7aae9:Ports=map[5432/
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Ports=map[80/tcp:[map[HostIp:192.168.235.128 HostPort:18080]]]
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
@@ -1408,7 +1408,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Memory={{.HostConfig.Memory}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:Memory=0
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Memory=0
@@ -1424,7 +1424,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Memory=0
 
 建议使用`--momery`参数运行容器，例如可以如下运行一个容器
 
-```shell script
+```bash
 docker run -idt --memory 256m centos
 ```
 
@@ -1441,7 +1441,7 @@ docker run -idt --memory 256m centos
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:ReadonlyRootfs={{.HostConfig.ReadonlyRootfs}}'
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377:ReadonlyRootfs=false
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:ReadonlyRootfs=false
@@ -1458,7 +1458,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:ReadonlyRootfs=
 
 在容器的运行时添加一个只读标志以强制容器的根文件系统以只读方式装入
 
-```shell script
+```bash
 docker run  <Run arguments> -read-only <Container Image Name or ID> <Command>
 ```
 
@@ -1466,13 +1466,13 @@ docker run  <Run arguments> -read-only <Container Image Name or ID> <Command>
 
 > 1.使用`--tmpfs` 选项为非持久数据写入临时文件系统
 
-```shell script
+```bash
 docker run -idt --read-only --tmpfs "/run" --tmpfs "/tmp" centos bash
 ```
 
 > 2.启用Docker rw在容器的运行时载入，以便将容器数据直接保存在Docker主机文件系统上
 
-```shell script
+```bash
 docker run -idt --read-only -v /opt/app/data:/run/app/data:rw centos
 ```
 
@@ -1495,7 +1495,7 @@ docker run -idt --read-only -v /opt/app/data:/run/app/data:rw centos
 
 通过执行以下命令列出容器的所有运行实例及其端口映射
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
 748901568eafe1d3c21bb8e544278ed36af019281d485eb74be39b41ca549605:Ports=map[80/tcp:[map[HostIp:0.0.0.0 HostPort:8080]]]
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Ports=map[]
@@ -1511,7 +1511,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 将容器端口绑定到所需主机端口上的特定主机接口。
 
-```shell script
+```bash
 [root@localhost ~]# docker run -idt --name=nginx2 -p 192.168.235.128:18080:80 --network=nginx-net nginx:1.14-alpine
 83243cce85b85f9091b4c3bd7ff981762ff91c50e42ca36f2a5f47502ff00377
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Ports={{.NetworkSettings.Ports}}'
@@ -1540,7 +1540,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Ports=map[]
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:RestartPolicyName={{.HostConfig.RestartPolicy.Name}} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:RestartPolicyName=no MaximumRetryCount=0
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:RestartPolicyName=no MaximumRetryCount=0
@@ -1553,7 +1553,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:RestartPolicyNa
 
 如果一个容器需要自己重新启动，可以如下设置：
 
-```shell script
+```bash
 docker run -idt --restart=on-failure:5 nginx
 ```
 
@@ -1572,7 +1572,7 @@ docker run -idt --restart=on-failure:5 nginx
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:PidMode={{.HostConfig.PidMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:PidMode=
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:PidMode=
@@ -1587,7 +1587,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidMode=
 
 不要使用`--pid=host`参数启动容器。例如，不要启动一个容器，如下所示
 
-````shell script
+````bash
 docker run -idt --pid=host centos
 ````
 
@@ -1606,7 +1606,7 @@ docker run -idt --pid=host centos
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:IpcMode={{.HostConfig.IpcMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:IpcMode=private
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:IpcMode=private
@@ -1621,7 +1621,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:IpcMode=private
 
 不要使用`--ipc=host`参数启动容器。 例如，不要启动如下容器
 
-```shell script
+```bash
 docker run -idt --ipc=host centos
 ```
 
@@ -1632,7 +1632,7 @@ docker run -idt --ipc=host centos
 在这种情况下，您仍然应该共享容器特定的`IPC`命名空间而不是整个主机`IPC`命名空间。
 可以将容器的`IPC`名称空间与另一个容器共享，如下所示：
 
-```shell script
+```bash
 docker run -idt --ipc=container:e43299eew043243284 centos
 ```
 
@@ -1648,7 +1648,7 @@ docker run -idt --ipc=container:e43299eew043243284 centos
 不允许容器以特权模式运行以访问和操作主机设备默认情况下，容器将能够读取，写入和`mknod`这些设备。
 此外，容器可能会从主机中删除设备。 因此，不要直接将主机设备共享给容器。如果必须的将主机设备共享给容器，请适当地使用共享权限：
 
-```shell script
+```bash
 w -> write
 r -> read
 m -> mknod
@@ -1656,7 +1656,7 @@ m -> mknod
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{{.Id}}:Devices={{.HostConfig.Devices}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:Devices=[]
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:Devices=[]
@@ -1671,7 +1671,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:Devices=[]
 
 不要将主机设备直接共享于容器。如果必须将主机设备共享给容器，请使用正确的一组权限，以下为错误示范
 
-```shell script
+```bash
 docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 ```
 
@@ -1688,7 +1688,7 @@ docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all|xargs docker inspect --format '{.Id}:Propagation={{range $mnt:=.Mounts}}{{json $mnt.Propagation}}{{end}}'
 {.Id}:Propagation=
 {.Id}:Propagation=
@@ -1703,7 +1703,7 @@ docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm centos bash
 
 不建议以共享模式传播中安装卷。例如，不要启动容器，如下所示
 
-```shell script
+```bash
 docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image Name or ID> <Command>
 ```
 
@@ -1721,7 +1721,7 @@ docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container I
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet --all |xargs docker inspect --format '{{.Id}}:UTSMode={{.HostConfig.UTSMode}}'
 3b8b371f5e800e25d85e7426020cb7088e6cccb5bd950ad269a185cadf6f7adc:UTSMode=
 5bf74b6014405acad5f724cb005b320a864528ac2dd48de1fbb0e37165befc71:UTSMode=
@@ -1736,7 +1736,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:UTSMode=
 
 不要使用`--uts=host`参数启动容器。例如，不要启动如下容器：
 
-```shell script
+```bash
 docker run -idt --uts=host alpine
 ```
 
@@ -1785,7 +1785,7 @@ docker run -idt --uts=host alpine
 
 运行以下命令并确保所有容器都报告运行状况
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet |xargs -n1 docker inspect --format='{{.State.Health.Status}}'
 Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
 Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: map has no entry for key "Health"
@@ -1797,7 +1797,7 @@ Template parsing error: template: :1:8: executing "" at <.State.Health.Status>: 
 
 添加`--health-cmd`参数
 
-```shell script
+```bash
 [root@localhost ~]# docker run --name=test -d \
 >     --health-cmd='stat /etc/passwd || exit 1' \
 >     --health-interval=2s \
@@ -1829,7 +1829,7 @@ unhealthy
 运行以下命令并确保`PidsLimit`未设置为`0`或`-1`。
 `PidsLimit`为`0`或`-1`意味着任何数量的进程可以同时在容器内分叉。
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:PidsLi                                                            mit={{.HostConfig.PidsLimit}}'
 0aede0130fd30b8cb40200aa9b61e84f0d911740617dda3dd707037655419854:PidsLimit=<no value>
 d35fd7bd5e90e6aebc237368453361f632f775490da3c1d28011b9f7e43ff75c:PidsLimit=<no value>
@@ -1840,7 +1840,7 @@ cff4f40d63e7ba39cb013706f0c73351c3a99325adf606c715df63b8c81001be:PidsLimit=<no v
 
 升级内核至`4.3+`，添加`--pids-limit参数`，如
 
-```shell script
+```bash
 docker run -idt --name=box --pids-limit=100 busybox:1.31.1
 ```
 
@@ -1859,7 +1859,7 @@ docker run -idt --name=box --pids-limit=100 busybox:1.31.1
 
 运行以下命令，并验证容器是否在用户定义的网络上，而不是默认的`docker0`网桥
 
-```shell script
+```bash
 [root@localhost ~]# docker network ls --quiet|xargs docker network inspect --format='{{.Name}}.{{.Options}}'|grep docker0
 bridge.map[com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500]
 ```
@@ -1884,13 +1884,13 @@ bridge.map[com.docker.network.bridge.default_bridge:true com.docker.network.brid
 
 > 创建自定义网桥
 
-```shell script
+```bash
 docker network create nginx-net
 ```
 
 > 运行测试用例
 
-```shell script
+```bash
 [root@localhost ~]# docker run -idt --name=nginx --network=nginx-net nginx:1.14-alpine
 [root@localhost ~]# docker run -idt --name=box --network=nginx-net busybox:1.31.1
 [root@localhost ~]# docker exec box wget nginx -S
@@ -1918,7 +1918,7 @@ Connecting to nginx (172.18.0.2:80)
 
 - 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# docker ps --quiet | xargs docker inspect --format='{{.Id}}:Volumes={{.Mounts}}'|grep docker.sock
 ```
 
@@ -1946,14 +1946,14 @@ Connecting to nginx (172.18.0.2:80)
 
 > 1.通过执行以下命令列出当前实例化的所有镜像`ID`
 
-```shell script
+```bash
 [root@localhost ~]# docker images --quiet | xargs docker inspect --format='{{.Id}}:Image={{.Config.Image}}'
 sha256:d6e46aa2470df1d32034c6707c8041158b652f38d2a9ae3d7ad7e7532d22ebe0:Image=sha256:3543079adc6fb5170279692361be8b24e89ef1809a374c1b4429e1d560d1459c
 ```
 
 > 2.通过执行以下命令列出系统中存在的所有镜像
 
-```shell script
+```bash
 [root@localhost ~]# docker images
 REPOSITORY                         TAG       IMAGE ID       CREATED        SIZE
 harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
@@ -1982,13 +1982,13 @@ harbor.wl.com/public/alpine   latest    d6e46aa2470d   6 months ago   5.57MB
 
 > 1.查找主机上的容器总数
 
-```shell script
+```bash
 [root@localhost ~]# docker info --format '{{.Containers}}'
 1
 ```
 > 2.执行以下命令以查找主机上实际正在运行或处于停止状态的容器总数。
 
-```shell script
+```bash
 [root@localhost ~]# docker info --format '{{.ContainersStopped}}'
 0
 [root@localhost ~]# docker info --format '{{.ContainersRunning}}'
@@ -2032,7 +2032,7 @@ Total reclaimed space: 0B
 
 > 配置`limit`参数
 
-```shell script
+```bash
 ulimit -HSn 65536
 cat <<EOF >>/etc/security/limits.conf
 *    soft    nofile    65536
@@ -2044,7 +2044,7 @@ EOF
 
 > 配置内核参数
 
-```shell script
+```bash
 cat <<EOF >>/etc/sysctl.conf
 net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-arptables = 1
@@ -2057,7 +2057,7 @@ sysctl -p
 
 > 配置`docker daemon`
 
-```shell script
+```bash
 mkdir -p /etc/docker
 cat <<EOF > /etc/docker/daemon.json
 {
@@ -2098,7 +2098,7 @@ systemctl restart docker
  
 ### 文件权限调整
 
-```shell script
+```bash
 chmod 755 /etc/docker
 chown root:root /etc/docker
 chmod 660 /var/run/docker.sock

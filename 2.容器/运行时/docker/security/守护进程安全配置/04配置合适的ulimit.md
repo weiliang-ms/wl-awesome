@@ -28,7 +28,7 @@
 
 确保含有`--default-ulimit`参数
 
-```shell script
+```bash
 [root@localhost ~]# ps -ef|grep dockerd
 root      65353      1  0 03:02 ?        00:00:00 /usr/bin/dockerd --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/server-cert.pem --tlskey=/root/docker/server-key.pem -H unix:///var/run/docker.sock -H tcp://192.168.235.128:2375
 ```
@@ -37,35 +37,35 @@ root      65353      1  0 03:02 ?        00:00:00 /usr/bin/dockerd --tlsverify -
 
 > 调整参数`LimitNOFILE`、`LimitNPROC`
 
-```shell script
+```bash
 $ sed -i "s#LimitNOFILE=infinity#LimitNOFILE=20480:40960#g" /etc/systemd/system/docker.service
 $ sed -i "s#LimitNPROC=infinity#LimitNPROC=1024:2048#g" /etc/systemd/system/docker.service
 ```
 
 > 重启
 
-```shell script
+```bash
 $ systemctl daemon-reload
 $ systemctl restart docker
 ```
 
 > 启动一个容器测试
 
-```shell script
+```bash
 [root@localhost ~]# docker run -idt --name ddd harbor.wl.com/public/alpine sh
 15eebdabbb8bd59366348ae95a89d79100370b9c9381b070fdfbb0119b516400
 ```
 
 > 查看容器`PID`
 
-```shell script
+```bash
 [root@localhost ~]# ps -ef|grep 15eebdabbb8bd59366348ae95a89d79100370b9c9381b070fdfbb0119b516400|grep -v grep|awk '{print $2}'
 80060
 ```
 
 > 查看`limit`
 
-```shell script
+```bash
 [root@localhost ~]# cat /proc/80060/limits
 Limit                     Soft Limit           Hard Limit           Units
 Max cpu time              unlimited            unlimited            seconds

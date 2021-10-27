@@ -11,7 +11,7 @@
 
 > 安装依赖
 
-```shell script
+```bash
 tar zxvf gmp-4.3.2.tar.gz
 cd gmp-4.3.2
 ./configure --prefix=/usr/local/gmp-4.3.2 \
@@ -32,14 +32,14 @@ cd mpc-1.0.1
 
 > 配置环境变量
 
-```shell script
+```bash
 echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/gmp-4.3.2/lib:/usr/local/mpc-1.0.1/lib:/usr/local/mpfr-2.4.2/lib" >> /etc/profile
 . /etc/profile
 ```
 
 > 编译`gcc`
 
-```shell script
+```bash
 tar -xzvf gcc-5.4.0.tar.gz && mkdir gcc-5.4.0/gcc-build && cd gcc-5.4.0/gcc-build \
 && ../configure --prefix=/usr/local/gcc-5.4.0 --enable-threads=posix \
 --disable-checking --disable-multilib --enable-languages=c,c++ \
@@ -49,7 +49,7 @@ tar -xzvf gcc-5.4.0.tar.gz && mkdir gcc-5.4.0/gcc-build && cd gcc-5.4.0/gcc-buil
 
 > 备份更新
 
-```shell script
+```bash
 mkdir -p /usr/local/bakup/gcc
 mv /usr/bin/{gcc,g++} /usr/local/bakup/gcc/
 cp /usr/local/gcc-5.4.0/bin/gcc /usr/bin/gcc

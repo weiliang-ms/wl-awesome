@@ -6,7 +6,7 @@
 
 > 下载解压配置
 
-```shell script
+```bash
 tar zxvf go1.16.5.linux-amd64.tar.gz -C /usr/local/
 cat >> ~/.bash_profile <<EOF
 export GOPROOT=/usr/local/go
@@ -17,7 +17,7 @@ EOF
 
 ### 编译全部组件
 
-```shell script
+```bash
 unzip kubernetes-1.18.6.zip
 cd kubernetes-1.18.6
 yum install -y rsync
@@ -33,14 +33,14 @@ make -j4
 
 - [etcd-v3.3.9-linux-amd64.tar.gz](https://github.com/etcd-io/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz)
 
-```shell script
+```bash
 tar -zxvf etcd-v3.3.9-linux-amd64.tar.gz
 sudo cp etcd-v3.3.9-linux-amd64/{etcd,etcdctl}  /usr/bin/
 ```
 
 > 配置服务
 
-```shell script
+```bash
 sudo tee /usr/lib/systemd/system/etcd.service <<EOF
 [Unit]
 Description=Etcd Server
@@ -59,20 +59,20 @@ EOF
 
 > 创建目录
 
-```shell script
+```bash
 mkdir /var/lib/etcd
 ```
 
 > 启动
 
-```shell script
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable etcd.service --now
 ```
 
 > 查看集群状态
 
-```shell script
+```bash
 [root@localhost ~]# etcdctl cluster-health
 member 8e9e05c52164694d is healthy: got healthy result from http://localhost:2379
 cluster is healthy

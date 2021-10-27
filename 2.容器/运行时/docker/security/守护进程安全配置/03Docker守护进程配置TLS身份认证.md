@@ -15,7 +15,7 @@
 
 ### 审计方法
 
-```shell script
+```bash
 [root@localhost ~]# systemctl status docker|grep /usr/bin/dockerd
            ├─1061 /usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
 ```
@@ -26,7 +26,7 @@
 
 > 生成`CA`私钥和公共密钥
 
-```shell script
+```bash
 $ mkdir -p /root/docker
 $ cd /root/docker
 $ openssl genrsa -aes256 -out ca-key.pem 4096
@@ -37,41 +37,41 @@ $ openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
 
 `192.168.235.128`为当前主机`IP`地址
 
-```shell script
+```bash
 $ openssl genrsa -out server-key.pem 4096
 $ openssl req -subj "/CN=192.168.235.128" -sha256 -new -key server-key.pem -out server.csr
 ```
 
 > 用`CA`来签署公共密钥
 
-```shell script
+```bash
 $ echo subjectAltName = DNS:192.168.235.128,IP:192.168.235.128 >> extfile.cnf
 $ echo extendedKeyUsage = serverAuth >> extfile.cnf
 ```
 
 > 生成`key`
 
-```shell script
+```bash
 $ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
   -CAcreateserial -out server-cert.pem -extfile extfile.cnf
 ```
 
 > 创建客户端密钥和证书签名请求
 
-```shell script
+```bash
 $ openssl genrsa -out key.pem 4096
 $ openssl req -subj '/CN=client' -new -key key.pem -out client.csr
 ```
 
 > 修改`extfile.cnf`
 
-```shell script
+```bash
 $ echo extendedKeyUsage = clientAuth > extfile-client.cnf
 ```
 
 > 生成签名私钥
 
-```shell script
+```bash
 $ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
   -CAcreateserial -out cert.pem -extfile extfile-client.cnf
 ```
@@ -80,13 +80,13 @@ $ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pe
 
 停服务
 
-```shell script
+```bash
 $ systemctl stop docker
 ```
 
 编辑配置文件
 
-```shell script
+```bash
 $ vi /etc/systemd/system/docker.service
 ```
 
@@ -98,14 +98,14 @@ ExecStart=/usr/bin/dockerd --tlsverify --tlscacert=/root/docker/ca.pem --tlscert
 
 重启
 
-```shell script
+```bash
 $ systemctl daemon-reload
 $ systemctl start docker
 ```
 
 > 测试`tls`
 
-```shell script
+```bash
 $ docker --tlsverify --tlscacert=/root/docker/ca.pem --tlscert=/root/docker/cert.pem --tlskey=/root/docker/key.pem -H=192.168.235.128:2375 version
 ```
 

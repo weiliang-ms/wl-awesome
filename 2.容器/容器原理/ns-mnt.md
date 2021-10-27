@@ -14,7 +14,7 @@
 
 > 查看当前进程挂载点信息
 
-```shell script
+```bash
 [root@localhost ns]# ll /proc/$$/mount*
 -r--r--r-- 1 root root 0 Jul 14 22:21 /proc/88929/mountinfo
 -r--r--r-- 1 root root 0 Jul 14 22:21 /proc/88929/mounts
@@ -23,7 +23,7 @@
 
 > 查看`mountinfo`内容
 
-```shell script
+```bash
 23 46 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:6 - sysfs sysfs rw
 24 46 0:5 / /proc rw,nosuid,nodev,noexec,relatime shared:5 - proc proc rw
 25 46 0:6 / /dev rw,nosuid shared:2 - devtmpfs devtmpfs rw,size=1985460k,nr_inodes=496365,mode=755
@@ -63,7 +63,7 @@
 
 > 查看`mount`内容
 
-```shell script
+```bash
 [root@localhost 88929]# cat /proc/$$/mounts
 sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
@@ -106,7 +106,7 @@ tmpfs /run/user/0 tmpfs rw,nosuid,nodev,relatime,size=400496k,mode=700 0 0
 
 挂载状态
 
-```shell script
+```bash
 [root@localhost ~]# cat /proc/$$/mountstats
 device sysfs mounted on /sys with fstype sysfs
 device proc mounted on /proc with fstype proc
@@ -159,13 +159,13 @@ device tmpfs mounted on /run/user/0 with fstype tmpfs
 
 > 安装`mkisofs`演示`mnt namespace`
 
-```shell script
+```bash
 yum install mkisofs -y
 ```
 
 > 创建演示用`iso`文件
 
-```shell script
+```bash
 hostnamectl set-hostname vm
 mkdir -p ~/iso/{A,B}
 echo "A" > ~/iso/A/a.txt
@@ -178,7 +178,7 @@ exec bash
 
 > 创建用于挂载的目录
 
-```shell script
+```bash
 mkdir -p /mnt/{isoA,isoB}
 ```
 
@@ -186,14 +186,14 @@ mkdir -p /mnt/{isoA,isoB}
 
 查看当前`mnt namepace`编号
 
-```shell script
+```bash
 [root@vm iso]# readlink /proc/$$/ns/mnt
 mnt:[4026531840]
 ```
 
 挂载
 
-```shell script
+```bash
 [root@vm iso]# mount ~/iso/A.iso /mnt/isoA
 mount: /dev/loop0 is write-protected, mounting read-only
 [root@vm iso]# cat /mnt/isoA/a.txt
@@ -202,14 +202,14 @@ A
 
 查看挂载状态
 
-```shell script
+```bash
 [root@vm iso]# mount |grep A.iso
 /root/iso/A.iso on /mnt/isoA type iso9660 (ro,relatime,nojoliet,check=s,map=n,blocksize=2048)
 ```
 
 > 创建并进入新的`mount`和`uts namespace`
 
-```shell script
+```bash
 unshare --mount --uts /bin/bash
 hostnamectl set-hostname container-A
 exec bash
@@ -219,13 +219,13 @@ exec bash
 
 查看`mnt`命名空间编号
 
-```shell script
+```bash
 [root@vm iso]# readlink /proc/$$/ns/mnt
 mnt:[4026532765]
 ```
 
 查看挂载信息
-```shell script
+```bash
 [root@vm iso]# mount|grep A.iso
 /root/iso/A.iso on /mnt/isoA type iso9660 (ro,relatime,nojoliet,check=s,map=n,blocksize=2048)
 ```
@@ -236,21 +236,21 @@ mnt:[4026532765]
 
 挂载
 
-```shell script
+```bash
 [root@vm iso]# mount ~/iso/B.iso /mnt/isoB
 mount: /dev/loop1 is write-protected, mounting read-only
 ```
 
 查看挂载状态
 
-```shell script
+```bash
 [root@vm iso]# mount |grep B.iso
 /root/iso/B.iso on /mnt/isoB type iso9660 (ro,relatime,nojoliet,check=s,map=n,blocksize=2048)
 ```
 
 > 新的`mount namespace`内卸载`/mnt/isoA`
 
-```shell script
+```bash
 [root@vm iso]# umount /mnt/isoA
 [root@vm iso]# ls /mnt/isoA
 ```
@@ -259,13 +259,13 @@ mount: /dev/loop1 is write-protected, mounting read-only
 
 通过新建`session`实现，并执行以下命令确认`mnt`命名空间(4026531840)
 
-```shell script
+```bash
 readlink /proc/$$/ns/mnt
 ```
 
 查看挂载信息
 
-```shell script
+```bash
 [root@container-a ~]# cat /mnt/isoA/a.txt
 A
 [root@container-a ~]# mount |grep iso

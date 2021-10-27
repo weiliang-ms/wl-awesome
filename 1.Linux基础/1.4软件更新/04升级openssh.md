@@ -6,7 +6,7 @@
 
 > 2.开启telnet(防止失败)
 
-```shell script
+```bash
 yum install -y telnet-server telnet xinetd 
 
 systemctl restart telnet.socket
@@ -51,7 +51,7 @@ ssh -V
 
 配置
 
-```shell script
+```bash
 cat > /etc/ssh/sshd_config <<EOF
 Protocol 2
 SyslogFacility AUTHPRIV
@@ -74,14 +74,14 @@ EOF
 
 调整`service`,重启`ssh`服务
 
-```shell script
+```bash
 sed -i "s;Type=notify;#Type=notify;g" /usr/lib/systemd/system/sshd.service
 systemctl daemon-reload && systemctl restart sshd
 ```
 
 成功后关闭`telnet`
 
-```shell script
+```bash
 systemctl disable telnet.socket --now
 systemctl disable xinetd --now
 ```

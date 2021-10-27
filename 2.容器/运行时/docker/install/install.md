@@ -52,7 +52,7 @@ curl -o /etc/yum.repos.d/epel-7.repo http://mirrors.aliyun.com/repo/epel-7.repo
 
 ### 清理旧版本docker
 
-```shell script
+```bash
 yum remove docker -y \
   docker-client \
   docker-client-latest \
@@ -76,7 +76,7 @@ rm -rf /etc/docker
 
 > 安装最新版
 
-```shell script
+```bash
 yum -y install yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 yum makecache fast
@@ -87,7 +87,7 @@ yum -y install docker-ce
 
 查看可选版本
 
-```shell script
+```bash
 [root@localhost ~]# yum list docker-ce --showduplicates|sort -r
  * updates: mirrors.aliyun.com
 Loading mirror speeds from cached hostfile
@@ -148,7 +148,7 @@ docker-ce.x86_64            17.03.0.ce-1.el7.centos             docker-ce-stable
 
 安装指定版本
 
-```shell script
+```bash
 yum install -y docker-ce-19.03.15-3.el7
 ```
 
@@ -156,14 +156,14 @@ yum install -y docker-ce-19.03.15-3.el7
 
 ### 关闭selinux
 
-```shell script
+```bash
 setenforce 0
 sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
 ```
     
 ### 调整系统参数
 
-```shell script
+```bash
 sed -i ':a;$!{N;ba};s@# docker limit BEGIN.*# docker limit END@@' /etc/security/limits.conf
 
 cat <<EOF >> /etc/security/limits.conf
@@ -202,7 +202,7 @@ awk ' !x[$0]++{print > "/etc/sysctl.conf"}' /etc/sysctl.conf
     
 > 配置`docker daemon`
 
-```shell script
+```bash
 mkdir -p /etc/docker
 cat <<EOF > /etc/docker/daemon.json
 {
@@ -247,7 +247,7 @@ EOF
 
 添加如下内容
 
-```shell script
+```bash
 "registry-mirrors": ["https://jz73200c.mirror.aliyuncs.com"]
 ```
 
@@ -260,7 +260,7 @@ sudo systemctl restart docker
 
 ## 启动
 
-```shell script
+```bash
 systemctl daemon-reload
 systemctl enable docker --now
 ```

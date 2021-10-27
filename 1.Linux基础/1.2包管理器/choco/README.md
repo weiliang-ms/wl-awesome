@@ -2,7 +2,7 @@
 
 管理员运行`cmd`，执行
 
-```shell script
+```bash
 @powershell -NoProfile -ExecutionPolicy Bypass -Command 
        "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=
        %PATH

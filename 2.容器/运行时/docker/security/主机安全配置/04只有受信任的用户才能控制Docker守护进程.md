@@ -13,7 +13,7 @@
 
 ### 审计方式
 
-```shell script
+```bash
 [root@localhost ~]# yum install glibc-common -y -q
 [root@localhost ~]# getent group docker
 docker:x:994:

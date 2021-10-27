@@ -2,7 +2,7 @@
 
 > 添加源
 
-```shell script
+```bash
 cat> /etc/yum.repos.d/gitlab-ce.repo<< EOF
 [gitlab-ce]
 name=Gitlab CE Repository
@@ -14,7 +14,7 @@ EOF
 
 > 安装
 
-```shell script
+```bash
 yum install curl policycoreutils-python openssh-server gitlab-ce -y
 ```
 
@@ -27,7 +27,7 @@ yum install curl policycoreutils-python openssh-server gitlab-ce -y
 - `external_url`(若80被占用建议使用8888)
 - 数据目录
 
-```shell script
+```bash
 git_data_dirs({
   "default" => {
     "path" => "/data/gitlab/data"
@@ -37,26 +37,26 @@ git_data_dirs({
 
 > 重载配置
 
-```shell script
+```bash
 gitlab-ctl reconfigure
 ```
 
 > 启动
 
-```shell script
+```bash
 gitlab-ctl start
 ```
 
 > 初始化`root`用户
 
 建立连接，需要大约半分钟左右
-```shell script
+```bash
 gitlab-rails console
 ```
 
 初始化
 
-```shell script
+```bash
 u=User.where(id:1).first
 u.password='Gitlab@321'
 u.password_confirmation='Gitlab@321'
@@ -68,7 +68,7 @@ quit
 
 ### 编译安装
 
-```shell script
+```bash
 curl -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz -o ./git-2.9.5.tar.xz -k
 yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker -y
 tar xvf git-2.9.5.tar.xz

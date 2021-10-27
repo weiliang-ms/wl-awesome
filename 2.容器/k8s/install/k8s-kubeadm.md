@@ -82,7 +82,7 @@ echo "DefaultLimitNPROC=1024000" >> /etc/systemd/system.conf
 
 > 查看版本列表
 
-```shell script
+```bash
 yum list kubeadm --showduplicates|sort -r
 ```
 
@@ -90,14 +90,14 @@ yum list kubeadm --showduplicates|sort -r
 
 安装`1.18.6`版本
 
-```shell script
+```bash
 version=1.18.6-0
 yum install -y kubelet-$version kubeadm-$version kubectl-$version --disableexcludes=kubernetes
 ```
     
 > 安装命令补全
 
-```shell script
+```bash
 yum install -y bash-completion
 source /usr/share/bash-completion/bash_completion
 source <(kubectl completion bash)
@@ -106,13 +106,13 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
     
 > 启动`kubelet`
 
-```shell script
+```bash
 systemctl enable kubelet --now
 ```
     
 下载k8s相关镜像
 
-```shell script
+```bash
 for i in `kubeadm config images list 2>/dev/null |sed 's/k8s.gcr.io\///g'`; do
     docker pull registry.aliyuncs.com/google-containers/${i}
     docker tag registry.aliyuncs.com/google-containers/${i} k8s.gcr.io/${i}

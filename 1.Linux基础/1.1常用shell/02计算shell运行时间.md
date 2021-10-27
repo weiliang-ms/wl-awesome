@@ -2,7 +2,7 @@
 
 > 用`date`相减
 
-```shell script
+```bash
 startTime=`date +%Y%m%d-%H:%M:%S`
 startTime_s=`date +%s`
 
@@ -16,7 +16,7 @@ echo "$startTime ---> $endTime" "Total:$sumTime seconds"
 
 > `time`
 
-```shell script
+```bash
 time sh xxx.sh
 # 会返回3个时间数据
 # real 该命令的总耗时, 包括user和sys及io等待, 时间片切换等待等等

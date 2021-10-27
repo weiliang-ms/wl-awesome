@@ -6,13 +6,13 @@
 
 > 2.安装必要依赖
 
-```shell script
+```bash
 yum install -y wget gcc perl
 ```
 
 > 3.解压编译
 
-```shell script
+```bash
 tar zxvf openssl-OpenSSL_*.tar.gz
 cd openssl-OpenSSL*
 ./config shared --openssldir=/usr/local/openssl --prefix=/usr/local/openssl
