@@ -77,15 +77,11 @@
 
 > Linux 常见的系统日志文件
 
-    /var/log/messages 内核及公共消息日志
-    
-    /var/log/cron 计划任务日志
-    
-    /var/log/dmesg 系统引导日志
-    
-    /var/log/maillog 邮件系统日志
-    
-    /var/log/secure 记录与访问限制相关日志
+- `/var/log/messages`: 内核及公共消息日志
+- `/var/log/cron`: 计划任务日志
+- `/var/log/dmesg`: 系统引导日志
+- `/var/log/maillog`: 邮件系统日志
+- `/var/log/secure`: 记录与访问限制相关日志
     
 > 3.讲一下 Keepalived 的工作原理
 
@@ -112,9 +108,10 @@
 
 - 主要性能排序
 
-    冗余从好到坏：raid 1  raid 10  raid 5  raid 0
-　　性能从好到坏：raid 0  raid 10  raid 5  raid 1
-　　成本从低到高：raid 0  raid 5   raid 1  raid 10
 
-- 
+    冗余从好到坏：raid 1  raid 10  raid 5  raid 0
+    性能从好到坏：raid 0  raid 10  raid 5  raid 1
+    成本从低到高：raid 0  raid 5   raid 1  raid 10
+
+
     

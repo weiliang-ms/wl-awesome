@@ -3,9 +3,9 @@
 
 ## 文档集
 
-文档记录了工作中遇到的问题，及相关知识的整理，详情请移步 [文档地址](https://weiliang-ms.github.io/wl-awesome)
+文档记录了工作中遇到的问题，及相关知识的整理，为了更好的阅读体验请移步 [文档地址](https://weiliang-ms.github.io/wl-awesome)
 
-整理内容大致如下：
+大纲内容如下：
 
 - 1.Linux基础
     - [1.1常用shell](1.Linux基础/1.1常用shell/README.md)
