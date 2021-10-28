@@ -280,6 +280,12 @@ $ cat /proc/1/status|grep CapEff
 CapEff: 0000000000000000
 ```
 
+### 使用场景分析
+
+> Dockerfile指定USER情况下，CAP生否生效：
+
+即
+
 ## 参考文献
 
 [Linux Capabilities 简介](https://www.cnblogs.com/sparkdev/p/11417781.html)
