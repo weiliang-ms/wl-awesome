@@ -214,7 +214,7 @@ $ capsh --decode=000001ffffffffff
 2. `cap_dac_override`: 忽略文件的`DAC`访问权限
 3. `cap_dac_read_search`: 忽略文件读及目录检索的`DAC`访问权限
 4. `cap_fowner`: 忽略文件属主`ID`必须与进程用户`ID`一致的权限
-5. `cap_fsetid`: 允许设置文件`setuid`位的权限
+5. `cap_fsetid`: 确保在文件被修改后不修改`setuid/setgid`位
 6. `cap_kill`: 允许对不属于自己的进程发送信号的权限
 7. `cap_setgid`: 允许修改进程的`GID`权限
 8. `cap_setuid`: 允许修改进程的`UID`权限
