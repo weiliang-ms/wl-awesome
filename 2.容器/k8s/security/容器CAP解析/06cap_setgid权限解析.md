@@ -77,3 +77,9 @@ cat: /tmp/ddd: Permission denied
 
 这是因为通过对`/home/test/demo`程序授予了`cap_setgid`的能力，允许程序可以使用`setgid()`函数。而通过`setgid()`函数，`/home/test/demo`修改了进程所属组到`root`（修改前为`test`）
 进而拥有了对`/tmp/ddd`文件的读权限。
+
+清理测试用例
+
+```shell
+$ userdel -r test
+```
