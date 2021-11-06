@@ -15,8 +15,8 @@
 3. `cap_fowner`: 忽略文件属主`ID`必须与进程用户`ID`一致的权限
 4. `cap_fsetid`: 确保在文件被修改后不修改`setuid/setgid`位
 5. `cap_kill`: 允许对不属于自己的进程发送信号的权限
-6. `cap_setgid`: 允许修改进程的`GID`权限
-7. `cap_setuid`: 允许修改进程的`UID`权限
+6. `cap_setgid`: 允许普通用户使用`setgid`函数
+7. `cap_setuid`: 允许普通用户使用`setuid`函数
 8. `cap_setpcap`: 允许对子进程进行`CAP`授权
 9. `cap_net_bind_service`: 允许绑定小于`1024`端口的权限
 10. `cap_net_raw`: 允许使用原始套接字的权限
