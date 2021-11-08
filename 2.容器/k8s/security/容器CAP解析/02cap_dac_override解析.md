@@ -1,4 +1,4 @@
-## cap_dac_override权限分析
+## cap_dac_override能力分析
 
 - `cap_dac_override`: 忽略对文件的`DAC`访问权限限制
 

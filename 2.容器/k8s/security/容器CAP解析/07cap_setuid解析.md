@@ -1,4 +1,4 @@
-## cap_setuid权限分析
+## cap_setuid能力分析
 
 - `cap_setuid`: 允许普通用户使用`setuid`函数
 

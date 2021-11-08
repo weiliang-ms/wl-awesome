@@ -1,4 +1,4 @@
-## cap_mknod权限分析
+## cap_mknod能力分析
 
 - `cap_mknod`: 允许使用`mknod()`系统调用
 

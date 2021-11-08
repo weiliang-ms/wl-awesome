@@ -1,4 +1,4 @@
-## cap_net_bind_service权限分析
+## cap_net_bind_service能力分析
 
 - `cap_net_bind_service`: 允许绑定小于`1024`端口
 

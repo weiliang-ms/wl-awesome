@@ -1,4 +1,4 @@
-## cap_setgid权限分析
+## cap_setgid能力分析
 
 - `cap_setgid`: 允许普通用户使用`setgid`函数
 

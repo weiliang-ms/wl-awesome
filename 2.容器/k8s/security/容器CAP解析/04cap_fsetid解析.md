@@ -1,4 +1,4 @@
-## cap_fsetid权限分析
+## cap_fsetid能力分析
 
 - `cap_fsetid`: 确保在文件被修改后不修改`setuid/setgid`位
 
