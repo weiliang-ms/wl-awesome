@@ -71,6 +71,21 @@ $ getcap /usr/bin/vim
 $ setcap -r /usr/bin/vim
 ```
 
+关于容器特权用户下默认的`14`条`CAP`解析如下：
+
+- [cap_chown解析](./01cap_chown解析.md)
+- [cap_dac_override解析](./02cap_dac_override解析.md)
+- [cap_fowner解析](./03cap_fowner解析.md)
+- [cap_fsetid解析](./04cap_fsetid解析.md)
+- [cap_kill解析](./05cap_kill解析.md)
+- [cap_setgid解析](./06cap_setgid解析.md)
+- [cap_setuid解析](./07cap_setuid解析.md)
+- [cap_net_bind_service解析](./09cap_net_bind_service解析.md)
+- [cap_sys_chroot解析](./11cap_sys_chroot解析.md)
+- [cap_mknod解析](./12cap_mknod解析.md)
+- [cap_audit_write解析](./13cap_audit_write解析.md)
+
+
 ## 参考文章
 
 - [Linux的capability深入分析](https://www.cnblogs.com/iamfy/archive/2012/09/20/2694977.html)
