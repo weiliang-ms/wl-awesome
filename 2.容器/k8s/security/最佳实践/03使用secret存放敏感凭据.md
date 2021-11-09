@@ -1,4 +1,4 @@
-# 使用secret存放登录凭据
+# 使用secret存放敏感凭据
 
 > `Applications credentials in configuration files`扫描异常样例
 
