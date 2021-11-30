@@ -4,6 +4,8 @@
 
 ## pod沙箱创建流程
 
+![](images/pod-create-process.png)
+
 > 流程解析
 
 pod沙箱创建流程，主要分为以下步骤:
@@ -20,7 +22,7 @@ pod沙箱创建流程，主要分为以下步骤:
 - `pod`沙箱标签集合
     - `pod`定义标签: `metadata.labels`字段
     - `kubelet`注入标签: `io.kubernetes.pod.name`、`io.kubernetes.pod.namespace`、`io.kubernetes.pod.uid`
-- `pod`沙箱注解集合: `metadata.annonations`字段
+- `pod`沙箱注释集合: `metadata.annonations`字段
 - `linux`相关配置: 系统调用、`SELinuxOptions`等
 
 2. 创建`pod`沙箱日志目录(`/var/log/pods/<pod namespace>_<pod name>_<pod uid>`)
