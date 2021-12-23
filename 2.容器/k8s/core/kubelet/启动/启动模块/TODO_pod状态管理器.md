@@ -144,3 +144,80 @@ type versionedPodStatus struct {
 - `newPod`处于`terminated`状态，但`pod cgroup`沙盒未被清理完毕，返回`false`
 
 当`newPod`可以被安全删除，调用`apiserver`对`newPod`执行删除操作，删除成功后将`newPod`从`statusManager.podStatuses`（该对象缓存`pod`状态信息）中删除
+
+![](images/sync-func.drawio.svg)
+
+> 核心源码
+
+```go
+func (m *manager) syncPod(uid types.UID, status versionedPodStatus) {
+	if !m.needsUpdate(uid, status) {
+		klog.V(1).Infof("Status for pod %q is up-to-date; skipping", uid)
+		return
+	}
+
+	// TODO: make me easier to express from client code
+	pod, err := m.kubeClient.CoreV1().Pods(status.podNamespace).Get(context.TODO(), status.podName, metav1.GetOptions{})
+	if errors.IsNotFound(err) {
+		klog.V(3).Infof("Pod %q does not exist on the server", format.PodDesc(status.podName, status.podNamespace, uid))
+		// If the Pod is deleted the status will be cleared in
+		// RemoveOrphanedStatuses, so we just ignore the update here.
+		return
+	}
+	if err != nil {
+		klog.Warningf("Failed to get status for pod %q: %v", format.PodDesc(status.podName, status.podNamespace, uid), err)
+		return
+	}
+
+	// 获取pod真实uid（针对static类型pod的uid需要做转换）
+	translatedUID := m.podManager.TranslatePodUID(pod.UID)
+	// Type convert original uid just for the purpose of comparison.
+	if len(translatedUID) > 0 && translatedUID != kubetypes.ResolvedPodUID(uid) {
+		klog.V(2).Infof("Pod %q was deleted and then recreated, skipping status update; old UID %q, new UID %q", format.Pod(pod), uid, translatedUID)
+		m.deletePodStatus(uid)
+		return
+	}
+
+	oldStatus := pod.Status.DeepCopy()
+	newPod, patchBytes, unchanged, err := statusutil.PatchPodStatus(m.kubeClient, pod.Namespace, pod.Name, pod.UID, *oldStatus, mergePodStatus(*oldStatus, status.status))
+	klog.V(3).Infof("Patch status for pod %q with %q", format.Pod(pod), patchBytes)
+	if err != nil {
+		klog.Warningf("Failed to update status for pod %q: %v", format.Pod(pod), err)
+		return
+	}
+	if unchanged {
+		klog.V(3).Infof("Status for pod %q is up-to-date: (%d)", format.Pod(pod), status.version)
+	} else {
+		klog.V(3).Infof("Status for pod %q updated successfully: (%d, %+v)", format.Pod(pod), status.version, status.status)
+		pod = newPod
+	}
+
+	m.apiStatusVersions[kubetypes.MirrorPodUID(pod.UID)] = status.version
+
+	// We don't handle graceful deletion of mirror pods.
+	if m.canBeDeleted(pod, status.status) {
+		deleteOptions := metav1.DeleteOptions{
+			GracePeriodSeconds: new(int64),
+			// Use the pod UID as the precondition for deletion to prevent deleting a
+			// newly created pod with the same name and namespace.
+			Preconditions: metav1.NewUIDPreconditions(string(pod.UID)),
+		}
+		err = m.kubeClient.CoreV1().Pods(pod.Namespace).Delete(context.TODO(), pod.Name, deleteOptions)
+		if err != nil {
+			klog.Warningf("Failed to delete status for pod %q: %v", format.Pod(pod), err)
+			return
+		}
+		klog.V(3).Infof("Pod %q fully terminated and removed from etcd", format.Pod(pod))
+		m.deletePodStatus(uid)
+	}
+}
+```
+
+## syncBatch()处理流程解析
+
+`syncBatch()`主要是将`statusManager.podStatuses`中的数据与`statusManager.apiStatusVersions`和`statusManager.podManager`中的数据进行对比是否一致，若不一致则以`statusManager.podStatuses`中的数据为准同步至`apiserver`。
+
+
+- `statusManager.podStatuses`
+- `statusManager.podManager`
+- `statusManager.apiStatusVersions`: 维护最新的`pod status`版本号，`map`类型集合，`key`为`pod uid`，`value`为`pod status`
