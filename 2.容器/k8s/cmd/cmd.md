@@ -79,7 +79,9 @@ openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text |grep ' Not '
 - 手动更新证书
 
 ```shell
-kubeadm alpha certs renew
+kubeadm alpha certs renew all
+docker ps | grep -v pause | grep -E "etcd|scheduler|controller|apiserver" | awk '{print $1}' | awk '{print "docker","restart",$1}' | bash
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 ```
 
 > 删除孤儿`Pod`
