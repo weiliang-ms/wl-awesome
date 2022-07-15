@@ -102,9 +102,6 @@ allowedHostPaths:
   - `MustRunAsNonRoot`: 
   - ``:
 
-
-
-
 ## 开启PSP
 
 `Pod`安全策略控制是作为可选的允许控制器实现的，`PodSecurityPolicies`是通过启用允许控制器来执行的 ，但是在不授权任何策略的情况下执行将会阻止在集群中创建任何`pod`。

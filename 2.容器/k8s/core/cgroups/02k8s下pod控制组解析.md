@@ -21,7 +21,9 @@
 
 ![](images/oom-score.png)
 
-`OOM`得分越高，该进程的优先级越低，越容易被终止；根据公式，`Burstable`优先级的`pod`中，`requests`内存申请越多，越容易在`OOM`的时候被终止。
+`OOM`得分越高，该进程的优先级越低，越容易被终止；
+
+根据公式，`Burstable`优先级的`pod`中，`requests`内存申请越多，越容易在`OOM`的时候被终止。
 
 ## pod的cpu控制组解析
 

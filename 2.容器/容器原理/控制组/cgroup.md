@@ -58,12 +58,14 @@ nodev   cgroup2
 
 创建死循环脚本
 
-    cat > ~/demo.sh <<EOF
-    # !/bin/bash
-    while [ 1 == 1 ];do
-        echo "----" > /dev/null
-    done
-    EOF
+```shell
+cat > ~/demo.sh <<EOF
+# !/bin/bash
+while [ 1 == 1 ];do
+    echo "----" > /dev/null
+done
+EOF
+```
     
 执行死循环脚本
 
@@ -72,16 +74,18 @@ nodev   cgroup2
     
 查看进程占用系统资源
 
-    top - 23:38:34 up 20 min,  1 user,  load average: 0.76, 0.20, 0.11
-    Tasks: 128 total,   2 running, 126 sleeping,   0 stopped,   0 zombie
-    %Cpu(s): 19.7 us,  5.3 sy,  0.0 ni, 74.5 id,  0.0 wa,  0.0 hi,  0.6 si,  0.0 st
-    KiB Mem :  3861280 total,  3284036 free,   203144 used,   374100 buff/cache
-    KiB Swap:  2097148 total,  2097148 free,        0 used.  3425504 avail Mem
-    
-       PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
-     15319 root      20   0  113288   1184   1012 R  99.7  0.0   0:43.61 sh
-         9 root      20   0       0      0      0 S   1.0  0.0   0:01.43 rcu_sched
-      1037 root      20   0  157828   6668   5120 S   0.3  0.2   0:01.83 sshd
+```shell
+top - 23:38:34 up 20 min,  1 user,  load average: 0.76, 0.20, 0.11
+Tasks: 128 total,   2 running, 126 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 19.7 us,  5.3 sy,  0.0 ni, 74.5 id,  0.0 wa,  0.0 hi,  0.6 si,  0.0 st
+KiB Mem :  3861280 total,  3284036 free,   203144 used,   374100 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.  3425504 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 15319 root      20   0  113288   1184   1012 R  99.7  0.0   0:43.61 sh
+     9 root      20   0       0      0      0 S   1.0  0.0   0:01.43 rcu_sched
+  1037 root      20   0  157828   6668   5120 S   0.3  0.2   0:01.83 sshd
+```
       
 `kill`该进程
 

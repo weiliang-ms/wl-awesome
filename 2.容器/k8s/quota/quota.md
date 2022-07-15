@@ -200,19 +200,21 @@
 
 指定命名空间`test01`生效
 
-    cat <<EOF | kubectl -n test01 apply -f -
-    apiVersion: v1
-    kind: ResourceQuota
-    metadata:
-      name: compute-resources
-    spec:
-      hard:
-        pods: "4"
-        requests.cpu: "1"
-        requests.memory: 1Gi
-        limits.cpu: "2"
-        limits.memory: 2Gi
-    EOF
+```shell
+cat <<EOF | kubectl -n test01 apply -f -
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-resources
+spec:
+  hard:
+    pods: "4"
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+EOF
+```
 
 ### 命名空间容器默认配额设置
 

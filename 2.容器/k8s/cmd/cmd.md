@@ -3,20 +3,28 @@
 
 允许调度
 
-    kubectl patch node <NodeName> -p "{\"spec\":{\"unschedulable\":false}}"
+```shell
+kubectl patch node <NodeName> -p "{\"spec\":{\"unschedulable\":false}}"
+```
     
 修改默认sc
 
-    kubectl patch storageclass <sc-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```shell
+kubectl patch storageclass <sc-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
 
 节点标签
 
-    # kubectl label nodes <node-name> key=value
-    kubectl label nodes ceph01 role=storage-node
+```shell
+# kubectl label nodes <node-name> key=value
+kubectl label nodes ceph01 role=storage-node
+```
     
 > 驱逐业务容器
 
-    kubectl drain --ignore-daemonsets --delete-local-data <node name>
+```shell
+kubectl drain --ignore-daemonsets --delete-local-data <node name>
+```
     
 > 清理`Evicted`状态`pod`
 
@@ -130,3 +138,7 @@ done
 +-----------------------------------------------------------------------+------------------+-------------------+---------------+-----------+
 
 ```
+
+### calico
+
+https://blog.csdn.net/u010039418/article/details/120797425

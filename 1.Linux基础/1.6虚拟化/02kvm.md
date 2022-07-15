@@ -13,8 +13,10 @@
 
 关闭selinux
 	
-	setenforce 0
-	sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
+```shell
+setenforce 0
+sed -i "s#SELINUX=enforcing#SELINUX=disabled#g" /etc/selinux/config
+```
 
 安装依赖
 
