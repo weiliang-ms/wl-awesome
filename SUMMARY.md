@@ -122,7 +122,18 @@
       * [进程](1.Linux基础/111.trouble shooting/mem/进程.md)
     - [network](1.Linux基础/111.trouble shooting/network/README.md)
   - rockylinux
+    * [00背景介绍](1.Linux基础/rockylinux/00背景介绍.md)
     * [01系统安装](1.Linux基础/rockylinux/01系统安装.md)
+    * [02ssh相关](1.Linux基础/rockylinux/02ssh相关.md)
+    * [03包管理器](1.Linux基础/rockylinux/03包管理器.md)
+    * [04防火墙与selinux](1.Linux基础/rockylinux/04防火墙与selinux.md)
+    * [05安装docker](1.Linux基础/rockylinux/05安装docker.md)
+    * [05安装redis](1.Linux基础/rockylinux/05安装redis.md)
+    * [06安装nginx](1.Linux基础/rockylinux/06安装nginx.md)
+    * [07安装jdk](1.Linux基础/rockylinux/07安装jdk.md)
+    * [08安装mysql](1.Linux基础/rockylinux/08安装mysql.md)
+    * [09安装ks](1.Linux基础/rockylinux/09安装ks.md)
+    * [系统软件版本信息](1.Linux基础/rockylinux/系统软件版本信息.md)
   * [skill](1.Linux基础/skill.md)
 - 2.容器
   - k8s
@@ -246,6 +257,7 @@
       - [pod](2.容器/k8s/workload/pod/README.md)
         * [01静态pod](2.容器/k8s/workload/pod/01静态pod.md)
         * [Pod安全策略](2.容器/k8s/workload/pod/Pod安全策略.md)
+        * [pod摘流](2.容器/k8s/workload/pod/pod摘流.md)
         * [Pod配置CAP](2.容器/k8s/workload/pod/Pod配置CAP.md)
         * [为Pod配置服务账号](2.容器/k8s/workload/pod/为Pod配置服务账号.md)
         * [为容器设置Seccomp配置文件](2.容器/k8s/workload/pod/为容器设置Seccomp配置文件.md)
