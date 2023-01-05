@@ -20,7 +20,7 @@ make -j $(nproc) && make install
 sed -i '/\/usr\/local\/openssl\/lib/d' /etc/ld.so.conf
 echo "/usr/local/openssl/lib" >> /etc/ld.so.conf
 ldconfig -v
-mv /usr/bin/openssl /usr/bin/openssl.old
+\mv /usr/bin/openssl /usr/bin/openssl.old
 ln -s /usr/local/openssl/bin/openssl  /usr/bin/openssl
 cd -
 openssl version

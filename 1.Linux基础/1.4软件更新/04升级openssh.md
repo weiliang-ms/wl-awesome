@@ -58,7 +58,6 @@ SyslogFacility AUTHPRIV
 PermitRootLogin yes
 PasswordAuthentication yes
 ChallengeResponseAuthentication no
-PermitRootLogin yes
 PubkeyAuthentication yes
 UsePAM yes
 UseDNS no

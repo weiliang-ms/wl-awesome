@@ -16,7 +16,7 @@ $ ceph osd pool set-quota devops_cephfs_data max_bytes 4T
 
 ## 获取Gitlab组
 
-1. 获取Gitlab组的gitlab-runner tocken，用于后续注册
+1. 获取Gitlab组的gitlab-runner token，用于后续注册
 
 ```
 Wf-qTAsNjBBDZPDzsXwT

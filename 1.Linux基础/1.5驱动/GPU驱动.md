@@ -140,3 +140,20 @@ Copyright (c) 2005-2019 NVIDIA Corporation
 Built on Fri_Feb__8_19:08:17_PST_2019
 Cuda compilation tools, release 10.1, V10.1.105
 ```
+
+测试
+
+```shell
+$ conda create -n yourEnv python=3.6 numpy pandas
+$ conda activate yourEnv
+$ conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch
+```
+
+测试cuda是否可用
+
+```shell
+$ python
+>>> import torch
+>>> print(torch.cuda.is_available())
+True
+```
