@@ -9,17 +9,17 @@ https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.38-linux-glibc2.12-
 2. 解压
 
 ```shell
-$ tar zxvf mysql-5.7.38-linux-glibc2.12-x86_64.tar.gz -C /usr/local
+tar zxvf mysql-5.7.38-linux-glibc2.12-x86_64.tar.gz -C /usr/local
 ```
 
 3. 创建用户授权
 
 ```shell
-$ useradd mysql
-$ mv /usr/local/mysql-5.7.38-linux-glibc2.12-x86_64 /usr/local/mysql
-$ chown mysql:mysql -R /usr/local/mysql
-$ echo "export PATH=\$PATH:/usr/local/mysql/bin" >> ~/.bash_profile
-$ source ~/.bash_profile
+useradd mysql
+mv /usr/local/mysql-5.7.38-linux-glibc2.12-x86_64 /usr/local/mysql
+chown mysql:mysql -R /usr/local/mysql
+echo "export PATH=\$PATH:/usr/local/mysql/bin" >> ~/.bash_profile
+source ~/.bash_profile
 ```
 
 4. 创建配置文件
@@ -103,11 +103,11 @@ EOF
 5. 创建所需目录
 
 ```shell
-$ mkdir -p /var/run/mysqld
-$ chown mysql:mysql /var/run/mysqld
-$ touch /var/log/mysqld.log /var/log/slow-query.log
-$ chown mysql:mysql /var/log/mysqld.log
-$ chown mysql:mysql /var/log/slow-query.log
+mkdir -p /var/run/mysqld
+chown mysql:mysql /var/run/mysqld
+touch /var/log/mysqld.log /var/log/slow-query.log
+chown mysql:mysql /var/log/mysqld.log
+chown mysql:mysql /var/log/slow-query.log
 ```
 
 6. 创建service
@@ -158,7 +158,7 @@ EOF
 7. 初始化数据
 
 ```shell
-$ /usr/local/mysql/bin/mysql_install_db --user=mysql --datadir=/var/lib/mysql
+/usr/local/mysql/bin/mysql_install_db --user=mysql --datadir=/var/lib/mysql
 ```
 
 8. 启动mysql

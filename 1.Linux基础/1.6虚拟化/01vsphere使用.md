@@ -84,5 +84,4 @@ df -h
 ```
     
 ![](images/extended_disk.jpg)
-
     

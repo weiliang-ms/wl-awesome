@@ -11,7 +11,7 @@
     - [1.1常用shell](1.Linux基础/1.1常用shell/README.md)
         * [01查询文件内`tab`键](1.Linux基础/1.1常用shell/01查询文件内`tab`键.md)
         * [02计算shell运行时间](1.Linux基础/1.1常用shell/02计算shell运行时间.md)
-        * [03防火墙开放端口](1.Linux基础/1.1常用shell/03防火墙开放端口.md)
+        * [03防火墙开放端口](1.Linux基础/1.1常用shell/防火墙相关.md)
         * [04关闭selinux](1.Linux基础/1.1常用shell/04关闭selinux.md)
         * [05开启tcp端口监听](1.Linux基础/1.1常用shell/05开启tcp端口监听.md)
         * [06文件切割](1.Linux基础/1.1常用shell/06文件切割.md)

@@ -15,3 +15,9 @@ EOF
 ```shell
 $ systemctl enable chronyd --now
 ```
+
+手动同步
+
+```shell
+timedatectl set-ntp true
+```

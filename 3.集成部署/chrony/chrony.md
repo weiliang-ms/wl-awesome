@@ -74,3 +74,16 @@ dns.sdly.hsip.gov.cn.165>  24  11   30m     -0.003      0.032   -255ns    21us
 ```
 
 观察`Offset`那列即可
+
+
+强制同步
+
+```shell
+chronyc -a makestep
+timedatectl set-ntp yes
+```
+
+查看同步状态
+```shell
+timedatectl
+```

@@ -137,10 +137,12 @@
 
 安装自动补全
 
-	yum install -y bash-completion
-	source /usr/share/bash-completion/bash_completion
-	source <(kubectl completion bash)
-	echo "source <(kubectl completion bash)" >> ~/.bashrc
+```shell
+yum install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+```
 
 > 13、查看节点信息
 
@@ -150,45 +152,46 @@
 
 > 14、发布应用测试
 
-	cat >> nginx.yaml <<EOF
-	apiVersion: v1
-	kind: Service
-	metadata:
-	  labels:
-	    app: nginx-service
-	  name: nginx-service
-	  namespace: default
-	spec:
-	  ports:
-	  - port: 80
-	    protocol: TCP
-	    targetPort: 80
-	  selector:
-	    app: nginx
-	  sessionAffinity: None
-	  type: ClusterIP
-	---
-	apiVersion: apps/v1
-	kind: Deployment
-	metadata:
-	  name: nginx-deployment
-	spec:
-	  selector:
-	    matchLabels:
-	      app: nginx
-	  replicas: 6
-	  template:
-	    metadata:
-	      labels:
-	        app: nginx
-	    spec:
-	      containers:
-	      - name: nginx
-	        image: nginx:1.16.0
-	        ports:
-	        - containerPort: 80
-	EOF
-
+```shell
+cat >> nginx.yaml <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-service
+  name: nginx-service
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 6
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16.0
+        ports:
+        - containerPort: 80
+EOF
+```
 创建
 
 	kubectl apply -f nginx.yaml
