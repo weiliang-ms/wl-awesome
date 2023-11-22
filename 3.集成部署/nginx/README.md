@@ -484,3 +484,9 @@ keepalive与断开连接
 > 示例图
 
 ![request-flow.png](https://upload-images.jianshu.io/upload_images/1967881-0f25f669eea357c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+### 安全配置
+
+```shell
+more_set_headers "X-Content-Type-Options nosniff";more_set_headers "Content-Security-Policy frame-ancestors http://hs.192.168.174.71.nip.io:30933 http://tpd.10.9.20.42.nip.io:30750;default-src *;style-src 'self' http://192.168.174.69:30459 http://192.168.174.106:8088 'unsafe-inline';script-src 'self' http://192.168.174.69:30459 http://192.168.174.106:8088 'unsafe-inline' 'unsafe-eval';img-src * data:;worker-src * blob:;font-src 'self' http://192.168.174.69:30459 http://192.168.174.106:8088 http://at.alicdn.com data:;"; more_set_headers "Access-Control-Allow-Origin http://192.168.174.69:30459";more_set_headers "Access-Control-Allow-Methods GET, POST, PUT, DELETE, OPTIONS";
+```

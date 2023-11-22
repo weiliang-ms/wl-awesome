@@ -78,9 +78,30 @@ sed -i "s;Type=notify;#Type=notify;g" /usr/lib/systemd/system/sshd.service
 systemctl daemon-reload && systemctl restart sshd
 ```
 
+查看ssh服务是否健康
+
+```shell
+journalctl -xef -u sshd
+```
+
+启动时，如果报`sshd: no hostkeys available — exiting`错误，执行以下步骤修复
+
+```shell
+ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+chmod 600 /etc/ssh/*
+```
+
+重启ssh
+
+```shell
+systemctl restart sshd
+```
+
 成功后关闭`telnet`
 
 ```bash
 systemctl disable telnet.socket --now
 systemctl disable xinetd --now
 ```
+
