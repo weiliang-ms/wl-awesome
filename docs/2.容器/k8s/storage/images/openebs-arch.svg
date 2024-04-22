@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1210.2 717.6" style="enable-background:new 0 0 1210.2 717.6;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.45;fill:#BEE2D5;enable-background:new    ;}
+	.st1{fill:none;stroke:#6E6F72;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:6,6;}
+	.st2{fill:#FFFFFF;stroke:#5288A4;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:6;}
+	.st3{fill:#5288A4;}
+	.st4{font-family:'Helvetica';}
+	.st5{font-size:36px;}
+	.st6{fill:#6E6F72;}
+	.st7{fill:#868687;}
+	.st8{font-size:18px;}
+	.st9{fill:none;stroke:#C1272D;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:6,6;}
+	.st10{fill:#C1272D;}
+	.st11{letter-spacing:-1.1;}
+	.st12{fill:#FFFFFF;stroke:#5288A4;stroke-miterlimit:10;}
+	.st13{font-family:'Helvetica-Bold';}
+	.st14{fill:#FFFFFF;stroke:#C0E4D7;stroke-miterlimit:10;}
+	.st15{enable-background:new    ;}
+	.st16{font-size:24px;}
+</style>
+<path class="st0" d="M89.3,208.5h302.8c4.8,0,8.7,5.6,8.7,12.6v289c0,6.9-3.9,12.6-8.7,12.6H89.3c-4.8,0-8.7-5.6-8.7-12.6v-289
+	C80.6,214.1,84.5,208.5,89.3,208.5z"/>
+<title>OpenEBS Architecture</title>
+<path class="st1" d="M1158.9,673.3H51.4c-7.3,0-13.2-6.6-13.2-14.7v-587c0-8.1,5.9-14.7,13.2-14.7h1107.5c7.3,0,13.2,6.6,13.2,14.7
+	v587c0,8.1-5.8,14.7-13.1,14.7H1158.9z"/>
+<path class="st0" d="M450.8,214h302.8c4.8,0,8.7,5.6,8.7,12.6v289c0,6.9-3.9,12.6-8.7,12.6H450.8c-4.8,0-8.7-5.6-8.7-12.6v-289
+	C442.2,219.7,446,214,450.8,214z"/>
+<path class="st2" d="M742.1,632.1h-641c-4.2,0-7.6-0.7-7.6-1.5v-59.4c0-0.8,3.4-1.5,7.6-1.5h641c4.2,0,7.6,0.7,7.6,1.5v59.4
+	C749.8,631.5,746.4,632.1,742.1,632.1L742.1,632.1z"/>
+<g>
+	<text transform="matrix(0.94 0 0 1 330.8605 611.4608)" class="st3 st4 st5">Control Plane</text>
+	<text transform="matrix(0.94 0 0 1 526.6871 611.4608)" class="st3 st4 st5"> </text>
+</g>
+<text transform="matrix(0.94 0 0 1 87.9594 163.5179)" class="st6 st4 st5">Cluster components</text>
+<text transform="matrix(0.94 0 0 1 462.6607 161.2723)" class="st6 st4 st5">Node components</text>
+<text transform="matrix(0.94 0 0 1 818.0289 160.1495)" class="st6 st4 st5">Cluster components</text>
+<text transform="matrix(0.94 0 0 1 900.1017 704.6575)" class="st7 st4 st8">Applicable in OpenEBS version 1.0.0</text>
+<path class="st9" d="M1107.2,631.6H828.3c-1.8,0-3.3-0.7-3.3-1.5v-58.4c0-0.8,1.5-1.5,3.3-1.5h278.9c1.8,0,3.3,0.7,3.3,1.5v58.4
+	C1110.5,630.9,1109,631.6,1107.2,631.6L1107.2,631.6z"/>
+<text transform="matrix(0.94 0 0 1 899.4394 613.3067)" class="st10 st4 st5">Data Plane</text>
+<text transform="matrix(0.94 0 0 1 997.4472 613.3067)" class="st10 st4 st5 st11"> </text>
+<path class="st12" d="M921.6,80.9H303.5c-4.7,0-8.5-3.2-8.5-7.2l0,0V48.3c0-4,3.8-7.2,8.5-7.2h618.1c4.7,0,8.5,3.2,8.5,7.2v25.4
+	C930.1,77.6,926.3,80.8,921.6,80.9C921.6,80.9,921.6,80.9,921.6,80.9z"/>
+<text transform="matrix(0.94 0 0 1 423.7478 72.8566)" class="st6 st13 st5">OpenEBS Architecture</text>
+<text transform="matrix(0.94 0 0 1 623.2985 126.7508)" class="st6 st13 st5 st11"> </text>
+<g>
+	<g>
+		<path class="st14" d="M352.5,305.9H128.9c-6.6,0-12-5.4-12-12V247c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+			C364.5,300.5,359.1,305.9,352.5,305.9z"/>
+		<text transform="matrix(0.94 0 0 1 151.3859 277.2559)" class="st3 st4 st5">m-apiserver</text>
+	</g>
+	<g>
+		<path class="st14" d="M352.5,402.8H128.9c-6.6,0-12-5.4-12-12v-46.9c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+			C364.5,397.4,359.1,402.8,352.5,402.8z"/>
+		<text transform="matrix(0.94 0 0 1 156.0703 374.1287)" class="st3 st4 st5">Provisioner</text>
+	</g>
+	<g>
+		<path class="st14" d="M352.5,496.1H128.9c-6.6,0-12-5.4-12-12v-46.9c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+			C364.5,490.7,359.1,496.1,352.5,496.1z"/>
+		<text transform="matrix(0.94 0 0 1 130.6987 467.4731)" class="st3 st4 st5">NDM Operator</text>
+	</g>
+</g>
+<path class="st14" d="M712.6,434H488.9c-6.6,0-12-5.4-12-12v-80.8c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12V422
+	C724.6,428.6,719.2,434,712.6,434z"/>
+<text transform="matrix(0.94 0 0 1 562.2338 376.8662)" class="st15"><tspan x="0" y="0" class="st3 st4 st5">NDM</tspan><tspan x="-22.4" y="28.8" class="st3 st4 st16">DaemonSet</tspan></text>
+<path class="st0" d="M812.7,218.8h302.8c4.8,0,8.7,5.6,8.7,12.6v289c0,6.9-3.9,12.6-8.7,12.6H812.7c-4.8,0-8.7-5.6-8.7-12.6v-289
+	C804,224.4,807.9,218.8,812.7,218.8z"/>
+<g>
+	<path class="st14" d="M1075.9,317.4H852.3c-6.6,0-12-5.4-12-12v-46.9c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+		C1087.9,312,1082.5,317.4,1075.9,317.4z"/>
+	<g>
+		<text transform="matrix(0.94 0 0 1 921.6724 288.7587)" class="st10 st4 st5">cStor</text>
+	</g>
+</g>
+<g>
+	<path class="st14" d="M1075.9,413.5H852.3c-6.6,0-12-5.4-12-12v-46.9c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+		C1087.9,408.1,1082.5,413.5,1075.9,413.5z"/>
+	<g>
+		<text transform="matrix(0.94 0 0 1 927.238 384.909)" class="st10 st4 st5">Jiva</text>
+	</g>
+</g>
+<path class="st14" d="M1075.9,505.2H852.3c-6.6,0-12-5.4-12-12v-46.9c0-6.6,5.4-12,12-12h223.6c6.6,0,12,5.4,12,12v46.9
+	C1087.9,499.8,1082.5,505.2,1075.9,505.2z"/>
+<g>
+	<text transform="matrix(0.94 0 0 1 901.0746 476.5246)" class="st10 st4 st5">LocalPV</text>
+</g>
+</svg>
