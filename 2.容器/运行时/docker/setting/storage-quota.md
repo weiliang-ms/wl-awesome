@@ -105,7 +105,7 @@ $ docker exec -it ddd sh
 4. 查看容器磁盘使用量
 
 ```shell
-$ docker system df -v |grep "alpine:latest"
+$   |grep "alpine:latest"
 a8c777259823  alpine:latest  "/bin/sh" 0 42.9GB 27 minutes ago  Up 27 minutes  ddd
 ```
 
