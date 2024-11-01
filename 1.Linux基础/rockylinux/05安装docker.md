@@ -120,9 +120,9 @@ EOF
 7. 启动containerd、dockerd
 
 ```shell
-$ groupadd docker
-$ systemctl enable --now containerd.service
-$ systemctl enable --now docker.service
+groupadd docker
+systemctl enable --now containerd.service
+systemctl enable --now docker.service
 ```
 
 8. 测试docker

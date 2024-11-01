@@ -503,7 +503,7 @@ Total reclaimed space: 0B
 
 > 安装最新稳定版`docker-ce`
 
-- [docker-ce 二进制下载地址](https://download.docker.com/mac/static/stable/x86_64/)
+- [docker-ce 二进制下载地址](https://download.docker.com/linux/static/stable/x86_64/)
 - [docker-ce 镜像源](https://mirrors.tuna.tsinghua.edu.cn/docker-ce/)
 
 ### 配置
@@ -536,43 +536,7 @@ sysctl -p
 > 配置`docker daemon`
 
 ```shell script
-mkdir -p /etc/docker
-cat <<EOF > /etc/docker/daemon.json
-{
-  "log-opts": {
-    "max-size": "5m",
-    "max-file":"3"
-  },
-  "userland-proxy": false,
-  "live-restore": true,
-  "default-ulimits": {
-    "nofile": {
-      "Hard": 64000,
-      "Name": "nofile",
-      "Soft": 64000
-    }
-  },
-  "default-address-pools": [
-    {
-      "base": "172.80.0.0/16",
-      "size": 24
-    },
-    {
-      "base": "172.90.0.0/16",
-      "size": 24
-    }
-  ],
-  "no-new-privileges": false,
-  "default-gateway": "",
-  "default-gateway-v6": "",
-  "default-runtime": "runc",
-  "default-shm-size": "64M",
-  "exec-opts": ["native.cgroupdriver=systemd"]
-}
-EOF
-systemctl daemon-reload
-systemctl restart docker
-```
+ ```
  
 ### 文件权限调整
 

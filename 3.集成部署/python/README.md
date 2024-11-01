@@ -9,11 +9,15 @@
 2. 安装编译依赖
 
 ```shell
-
+yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel libffi-devel
 ```
 
 3. 编译安装
 
 ```shell
-yum -y install make gcc zlib-devel gcc-c++ openssl-devel
+tar zxvf Python-3.9.18.tgz
+cd Python-3.9.18
+./configure
+make && make install
+make altinstall
 ```
