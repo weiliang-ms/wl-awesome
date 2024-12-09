@@ -302,76 +302,82 @@ done
     
 添加以下配置
 
-    frontend kubernetes-apiserver
-        mode                 tcp
-        bind                 *:8443
-        option               tcplog
-        default_backend      kubernetes-apiserver
-    backend kubernetes-apiserver
-        mode        tcp
-        balance     roundrobin
-        server      node1 172.16.145.160:6443 check
-        server      node2 172.16.145.161:6443 check
-        server      node3 172.16.145.162:6443 check
+frontend kubernetes-apiserver
+    mode                 tcp
+    bind                 *:8443
+    option               tcplog
+    default_backend      kubernetes-apiserver
+backend kubernetes-apiserver
+    mode        tcp
+    balance     roundrobin
+    server      node1 172.16.145.160:6443 check
+    server      node2 172.16.145.161:6443 check
+    server      node3 172.16.145.162:6443 check
       
         
 启动
 
-    systemctl enable haproxy --now
+```shell
+systemctl enable haproxy --now
+```
 
 安装keepalived
 
-    yum install -y keepalived
+yum install -y keepalived
     
 node1节点配置
 
-    cat > /etc/keepalived/keepalived.conf <<-'EOF'
-    ! Configuration File for keepalived
-    
-    global_defs {
-       router_id k8s-master01
+```shell
+cat > /etc/keepalived/keepalived.conf <<-'EOF'
+! Configuration File for keepalived
+
+global_defs {
+   router_id k8s-master01
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface ens33
+    virtual_router_id 51
+    priority 150
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass weiliang
     }
-    
-    vrrp_instance VI_1 {
-        state MASTER
-        interface ens33
-        virtual_router_id 51
-        priority 150
-        advert_int 1
-        authentication {
-            auth_type PASS
-            auth_pass weiliang
-        }
-        virtual_ipaddress {
-            172.16.145.200/24
-        }
+    virtual_ipaddress {
+        172.16.145.200/24
     }
-    EOF
+}
+EOF
+```
     
 node2节点配置
 
-    cat > /etc/keepalived/keepalived.conf <<-'EOF'
-    ! Configuration File for keepalived
-    
-    global_defs {
-       router_id k8s-master02
+```shell
+cat > /etc/keepalived/keepalived.conf <<-'EOF'
+! Configuration File for keepalived
+
+global_defs {
+   router_id k8s-master02
+}
+
+vrrp_instance VI_1 {
+    state BAKUP
+    interface ens33
+    virtual_router_id 51
+    priority 150
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass weiliang
     }
-    
-    vrrp_instance VI_1 {
-        state BAKUP
-        interface ens33
-        virtual_router_id 51
-        priority 150
-        advert_int 1
-        authentication {
-            auth_type PASS
-            auth_pass weiliang
-        }
-        virtual_ipaddress {
-            172.16.145.200/24
-        }
+    virtual_ipaddress {
+        172.16.145.200/24
     }
-    EOF
+}
+EOF
+```
     
 node3节点配置
 

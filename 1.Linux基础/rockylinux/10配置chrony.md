@@ -13,11 +13,12 @@ EOF
 
 启动
 ```shell
-$ systemctl enable chronyd --now
+systemctl enable chronyd --now
 ```
 
 手动同步
 
 ```shell
-timedatectl set-ntp true
+chronyc -a makestep
+timedatectl set-ntp yes
 ```

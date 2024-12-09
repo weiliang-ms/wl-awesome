@@ -35,13 +35,13 @@ https://www.cnblogs.com/dudu/p/16269093.html
 查看模式
 
 ```shell
-$ kubectl exec -it -n kube-system ds/cilium -- cilium status | grep KubeProxyReplacement
+kubectl exec -it -n kube-system ds/cilium -- cilium status | grep KubeProxyReplacement
 ```
 
 查看服务列表
 
 ```shell
-$ kubectl exec -it -n kube-system daemonset/cilium -- cilium service list
+kubectl exec -it -n kube-system daemonset/cilium -- cilium service list
 ```
 
 删除iptables
