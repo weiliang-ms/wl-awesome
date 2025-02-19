@@ -50,7 +50,7 @@ vgs
 
 ```shell
 lvs
-lvextend -L +69.9G /dev/centos/root
+lvextend -l +100%FREE /dev/centos/root
 ```
     
 ![](images/extend_lvs.png)

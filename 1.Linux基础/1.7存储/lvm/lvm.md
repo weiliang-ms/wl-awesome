@@ -32,7 +32,7 @@ mkfs.ext4 /dev/data-volume/data-lv
 
 ```shell
 mkdir /data
-mount /dev/data-volume/data-lv
+mount /dev/data-volume/data-lv /data
 ```
 
 6. 设置自动挂载

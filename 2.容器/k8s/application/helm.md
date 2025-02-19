@@ -11,10 +11,12 @@
 
 安装
     
-    curl -O https://storage.googleapis.com/kubernetes-helm/helm-v2.14.3-linux-amd64.tar.gz
-    tar zxvf helm-v2.12.1-linux-amd64.tar.gz
-    chmod +x linux-amd64/helm
-    mv linux-amd64/helm /usr/local/bin
+```shell
+curl -O https://storage.googleapis.com/kubernetes-helm/helm-v2.14.3-linux-amd64.tar.gz
+tar zxvf helm-v2.12.1-linux-amd64.tar.gz
+chmod +x linux-amd64/helm
+mv linux-amd64/helm /usr/local/bin
+```
     
 添加helm service account 并添加到clusteradmin 这个clusterrole上
     
